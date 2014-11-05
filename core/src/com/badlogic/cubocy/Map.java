@@ -15,6 +15,7 @@ public class Map {
     static int ROCKET = 0x0000ff;
     static int MOVING_SPIKES = 0xffff00;
     static int LASER = 0x00ffff;
+    static int TREAT_BOX = 0xff8a00;
 
     int[][] tiles;
     public Giana giana;
@@ -25,6 +26,7 @@ public class Map {
     Array<MovingSpikes> movingSpikes = new Array<MovingSpikes>();
     Array<Laser> lasers = new Array<Laser>();
     Array<Diamond> diamonds = new Array<Diamond>();
+    Array<TreatBox> treatBoxes = new Array<TreatBox>();
     public EndDoor endDoor;
 
     public Map() {
@@ -46,6 +48,8 @@ public class Map {
 
                 } else if (match(pix, DIAMOND)) {
                     diamonds.add(new Diamond(this, x, pixmap.getHeight() - 1 - y));
+                } else if (match(pix, TREAT_BOX)) {
+                    treatBoxes.add(new TreatBox(this, x, pixmap.getHeight() - 1 - y));
                 } else if (match(pix, DISPENSER)) {
                     Dispenser dispenser = new Dispenser(x, pixmap.getHeight() - 1 - y);
                     dispensers.add(dispenser);
@@ -94,6 +98,9 @@ public class Map {
         }
         for (Diamond diamond : diamonds) {
             diamond.update(deltaTime);
+        }
+        for (TreatBox box : treatBoxes) {
+            box.update(deltaTime);
         }
         for (int i = 0; i < lasers.size; i++) {
             lasers.get(i).update();

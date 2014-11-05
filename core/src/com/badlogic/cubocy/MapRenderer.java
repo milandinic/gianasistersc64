@@ -1,5 +1,8 @@
 package com.badlogic.cubocy;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
@@ -28,7 +31,8 @@ public class MapRenderer {
     Animation bobIdleRight;
     Animation bobDead;
     Animation zap;
-    Animation diamond;
+    Animation diamondAnim;
+    Animation treatBoxAnim;
 
     TextureRegion dispenser;
     Animation spawn;
@@ -85,8 +89,18 @@ public class MapRenderer {
         Texture bobTexture = new Texture(Gdx.files.internal("data/bob.png"));
         Texture gianaTexture = new Texture(Gdx.files.internal("data/giana.png"));
         Texture diamondTexture = new Texture(Gdx.files.internal("data/diamond.png"));
+        Texture treatboxTexture = new Texture(Gdx.files.internal("data/treatbox.png"));
 
-        diamond = new Animation(0.1f, new TextureRegion(diamondTexture).split(20, 16)[0]);
+        diamondAnim = new Animation(0.5f, new TextureRegion(diamondTexture).split(20, 16)[0]);
+        TextureRegion[] treatboxRegion = new TextureRegion(treatboxTexture).split(30, 20)[0];
+        List<TextureRegion> tbArray = new ArrayList<TextureRegion>();
+        for (int i = 0; i < treatboxRegion.length; i++) {
+            tbArray.add(treatboxRegion[i]);
+        }
+        for (int i = treatboxRegion.length - 1; i >= 0; i--) {
+            tbArray.add(treatboxRegion[i]);
+        }
+        treatBoxAnim = new Animation(0.3f, tbArray.toArray(new TextureRegion[10]));
 
         TextureRegion gianaRegion = new TextureRegion(gianaTexture);
         gianaRegion.setRegion(0, 0, 189, 28);
@@ -159,6 +173,7 @@ public class MapRenderer {
         renderMovingSpikes();
         renderBob();
         renderDiamonds();
+        renderTreatBoxes();
 
         renderRockets();
         batch.end();
@@ -223,9 +238,15 @@ public class MapRenderer {
     private void renderDiamonds() {
         for (Diamond currentDiamond : map.diamonds) {
             if (currentDiamond.active) {
-                batch.draw(diamond.getKeyFrame(currentDiamond.stateTime, true), currentDiamond.pos.x,
+                batch.draw(diamondAnim.getKeyFrame(currentDiamond.stateTime, true), currentDiamond.pos.x,
                         currentDiamond.pos.y, 1, 0.7f);
             }
+        }
+    }
+
+    private void renderTreatBoxes() {
+        for (TreatBox box : map.treatBoxes) {
+            batch.draw(treatBoxAnim.getKeyFrame(box.stateTime, true), box.pos.x, box.pos.y, 1, 1);
         }
     }
 
