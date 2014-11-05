@@ -28,6 +28,7 @@ public class MapRenderer {
     Animation bobIdleRight;
     Animation bobDead;
     Animation zap;
+    Animation diamond;
 
     TextureRegion dispenser;
     Animation spawn;
@@ -44,7 +45,7 @@ public class MapRenderer {
     public MapRenderer(Map map) {
         this.map = map;
         this.cam = new OrthographicCamera(24, 16);
-        this.cam.position.set(map.bob.pos.x, map.bob.pos.y, 0);
+        this.cam.position.set(map.giana.pos.x, map.giana.pos.y, 0);
         this.cache = new SpriteCache(this.map.tiles.length * this.map.tiles[0].length, false);
         this.blocks = new int[(int) Math.ceil(this.map.tiles.length / 24.0f)][(int) Math
                 .ceil(this.map.tiles[0].length / 16.0f)];
@@ -83,6 +84,9 @@ public class MapRenderer {
         this.tile = new TextureRegion(new Texture(Gdx.files.internal("data/sprites.png")), 150, 103, 24, 16);
         Texture bobTexture = new Texture(Gdx.files.internal("data/bob.png"));
         Texture gianaTexture = new Texture(Gdx.files.internal("data/giana.png"));
+        Texture diamondTexture = new Texture(Gdx.files.internal("data/diamond.png"));
+
+        diamond = new Animation(0.1f, new TextureRegion(diamondTexture).split(20, 16)[0]);
 
         TextureRegion gianaRegion = new TextureRegion(gianaTexture);
         gianaRegion.setRegion(0, 0, 189, 28);
@@ -128,7 +132,7 @@ public class MapRenderer {
 
     public void render(float deltaTime) {
 
-        cam.position.lerp(lerpTarget.set(map.bob.pos.x, 153, 0), 4f * deltaTime);
+        cam.position.lerp(lerpTarget.set(map.giana.pos.x, 153, 0), 4f * deltaTime);
 
         cam.update();
 
@@ -154,6 +158,7 @@ public class MapRenderer {
         renderLasers();
         renderMovingSpikes();
         renderBob();
+        renderDiamonds();
 
         renderRockets();
         batch.end();
@@ -165,33 +170,33 @@ public class MapRenderer {
     private void renderBob() {
         Animation anim = null;
         boolean loop = true;
-        if (map.bob.state == Giana.RUN) {
-            if (map.bob.dir == Giana.LEFT)
+        if (map.giana.state == Giana.RUN) {
+            if (map.giana.dir == Giana.LEFT)
                 anim = bobLeft;
             else
                 anim = bobRight;
         }
-        if (map.bob.state == Giana.IDLE) {
-            if (map.bob.dir == Giana.LEFT)
+        if (map.giana.state == Giana.IDLE) {
+            if (map.giana.dir == Giana.LEFT)
                 anim = bobIdleLeft;
             else
                 anim = bobIdleRight;
         }
-        if (map.bob.state == Giana.JUMP) {
-            if (map.bob.dir == Giana.LEFT)
+        if (map.giana.state == Giana.JUMP) {
+            if (map.giana.dir == Giana.LEFT)
                 anim = bobJumpLeft;
             else
                 anim = bobJumpRight;
         }
-        if (map.bob.state == Giana.SPAWN) {
+        if (map.giana.state == Giana.SPAWN) {
             anim = spawn;
             loop = false;
         }
-        if (map.bob.state == Giana.DYING) {
+        if (map.giana.state == Giana.DYING) {
             anim = dying;
             loop = false;
         }
-        batch.draw(anim.getKeyFrame(map.bob.stateTime, loop), map.bob.pos.x, map.bob.pos.y, 1, 1);
+        batch.draw(anim.getKeyFrame(map.giana.stateTime, loop), map.giana.pos.x, map.giana.pos.y, 1, 1);
     }
 
     private void renderRockets() {
@@ -212,6 +217,15 @@ public class MapRenderer {
         for (int i = 0; i < map.dispensers.size; i++) {
             Dispenser dispenser = map.dispensers.get(i);
             batch.draw(this.dispenser, dispenser.bounds.x, dispenser.bounds.y, 1, 1);
+        }
+    }
+
+    private void renderDiamonds() {
+        for (Diamond currentDiamond : map.diamonds) {
+            if (currentDiamond.active) {
+                batch.draw(diamond.getKeyFrame(currentDiamond.stateTime, true), currentDiamond.pos.x,
+                        currentDiamond.pos.y, 1, 0.7f);
+            }
         }
     }
 

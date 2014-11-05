@@ -20,6 +20,8 @@ public class Giana {
     static final float MAX_VEL = 6f;
     static final float DAMP = 0.90f;
 
+    int diamondsCollected;
+
     Vector2 pos = new Vector2();
     Vector2 accel = new Vector2();
     Vector2 vel = new Vector2();

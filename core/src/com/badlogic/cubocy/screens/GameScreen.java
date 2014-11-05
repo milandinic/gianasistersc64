@@ -34,7 +34,7 @@ public class GameScreen extends CubocScreen {
 		renderer.render(delta);
 		controlRenderer.render();
 
-		if (map.bob.bounds.overlaps(map.endDoor.bounds)) {
+		if (map.giana.bounds.overlaps(map.endDoor.bounds)) {
 			game.setScreen(new GameOverScreen(game));
 		}
 

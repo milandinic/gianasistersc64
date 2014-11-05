@@ -76,7 +76,7 @@ public class Laser {
 		startPoint.set(pos).add(0.5f, 0.5f);
 		cappedEndPoint.set(endPoint).add(0.5f, 0.5f);
 
-		Rectangle bbounds = map.bob.bounds;
+		Rectangle bbounds = map.giana.bounds;
 
 		boolean kill = false;
 
@@ -119,9 +119,9 @@ public class Laser {
 			}
 		}
 
-		if (kill && map.bob.state != Giana.DYING) {
-			map.bob.state = Giana.DYING;
-			map.bob.stateTime = 0;
+		if (kill && map.giana.state != Giana.DYING) {
+			map.giana.state = Giana.DYING;
+			map.giana.stateTime = 0;
 		}
 	}
 }

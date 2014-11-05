@@ -85,10 +85,10 @@ public class MovingSpikes {
 		bounds.x = pos.x;
 		bounds.y = pos.y;
 
-		if (map.bob.bounds.overlaps(bounds)) {
-			if (map.bob.state != Giana.DYING) {
-				map.bob.state = Giana.DYING;
-				map.bob.stateTime = 0;
+		if (map.giana.bounds.overlaps(bounds)) {
+			if (map.giana.state != Giana.DYING) {
+				map.giana.state = Giana.DYING;
+				map.giana.stateTime = 0;
 			}
 		}
 
