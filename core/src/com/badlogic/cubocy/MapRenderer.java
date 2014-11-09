@@ -45,9 +45,10 @@ public class MapRenderer {
     Animation rocketExplosion;
     TextureRegion rocketPad;
     TextureRegion endDoor;
-    TextureRegion movingSpikes;
+    TextureRegion movingSpikesOld;
     TextureRegion laser;
     FPSLogger fps = new FPSLogger();
+    private Animation movingSpikesAnim;
 
     public MapRenderer(Map map) {
         this.map = map;
@@ -77,7 +78,7 @@ public class MapRenderer {
                         int posY = height - y - 1;
                         if (map.match(map.tiles[x][y], Map.TILE))
                             cache.add(tile, posX, posY, 1, 1);
-                        if (map.match(map.tiles[x][y], Map.SPIKES))
+                        if (map.match(map.tiles[x][y], Map.MOVING_SPIKES))
                             cache.add(spikes, posX, posY, 1, 1);
                     }
                 }
@@ -93,6 +94,9 @@ public class MapRenderer {
         Texture gianaTexture = new Texture(Gdx.files.internal("data/giana.png"));
         Texture diamondTexture = new Texture(Gdx.files.internal("data/diamond.png"));
         Texture treatboxTexture = new Texture(Gdx.files.internal("data/treatbox.png"));
+        Texture movingSpikesTexture = new Texture(Gdx.files.internal("data/movingspikes.png"));
+
+        movingSpikesAnim = new Animation(0.3f, new TextureRegion(movingSpikesTexture).split(48, 16)[0]);
 
         diamondAnim = new Animation(0.3f, new TextureRegion(diamondTexture).split(16, 16)[0]);
         TextureRegion[] treatboxRegion = new TextureRegion(treatboxTexture).split(30, 20)[0];
@@ -104,7 +108,7 @@ public class MapRenderer {
         for (int i = treatboxRegion.length - 1; i >= 0; i--) {
             tbArray.add(treatboxRegion[i]);
         }
-        treatBoxAnim = new Animation(0.3f, tbArray.toArray(new TextureRegion[10]));
+        treatBoxAnim = new Animation(0.2f, tbArray.toArray(new TextureRegion[10]));
 
         TextureRegion gianaRegion = new TextureRegion(gianaTexture);
         gianaRegion.setRegion(0, 0, 189, 28);
@@ -141,7 +145,7 @@ public class MapRenderer {
         rocketExplosion = new Animation(0.1f, split[0], split[1], split[2], split[3], split[4], split[4]);
         split = new TextureRegion(bobTexture).split(20, 20)[5];
         endDoor = split[2];
-        movingSpikes = split[0];
+        movingSpikesOld = split[0];
         laser = split[1];
     }
 
@@ -174,6 +178,7 @@ public class MapRenderer {
         if (map.endDoor != null)
             batch.draw(endDoor, map.endDoor.bounds.x, map.endDoor.bounds.y, 1, 1);
         renderLasers();
+        renderMovingSpikesOld();
         renderMovingSpikes();
         renderBob();
         renderDiamonds();
@@ -251,10 +256,17 @@ public class MapRenderer {
         }
     }
 
+    private void renderMovingSpikesOld() {
+        for (int i = 0; i < map.movingSpikesOld.size; i++) {
+            Fish spikes = map.movingSpikesOld.get(i);
+            batch.draw(movingSpikesOld, spikes.pos.x, spikes.pos.y, 0.5f, 0.5f, 1, 1, 1, 1, spikes.angle);
+        }
+    }
+
     private void renderMovingSpikes() {
         for (int i = 0; i < map.movingSpikes.size; i++) {
             MovingSpikes spikes = map.movingSpikes.get(i);
-            batch.draw(movingSpikes, spikes.pos.x, spikes.pos.y, 0.5f, 0.5f, 1, 1, 1, 1, spikes.angle);
+            batch.draw(movingSpikesAnim.getKeyFrame(spikes.stateTime, true), spikes.pos.x, spikes.pos.y, 3, 1);
         }
     }
 

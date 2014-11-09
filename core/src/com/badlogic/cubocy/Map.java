@@ -13,9 +13,9 @@ public class Map {
     static int END = 0xff00ff;
 
     static int DIAMOND = 5570300;
-    static int SPIKES = 0x00ff00;
+    static int MOVING_SPIKES = 0x00ff00;
     static int ROCKET = 0x0000ff;
-    static int MOVING_SPIKES = 0xffff00;
+    static int MOVING_SPIKES_OLD = 0xffff00;
     static int LASER = 0x00ffff;
     static int TREAT_BOX = 0xff8a00;
 
@@ -23,10 +23,11 @@ public class Map {
     public Giana giana;
 
     Array<Rocket> rockets = new Array<Rocket>();
-    Array<MovingSpikes> movingSpikes = new Array<MovingSpikes>();
+    Array<Fish> movingSpikesOld = new Array<Fish>();
     Array<Laser> lasers = new Array<Laser>();
     Array<Diamond> diamonds = new Array<Diamond>();
     Array<TreatBox> treatBoxes = new Array<TreatBox>();
+    Array<MovingSpikes> movingSpikes = new Array<MovingSpikes>();
     StartPosition startPosition;
     // row, column
     ArrayMap<Integer, ArrayMap<Integer, TreatBox>> treatBoxesMap = new ArrayMap<Integer, ArrayMap<Integer, TreatBox>>();
@@ -51,6 +52,8 @@ public class Map {
 
                 } else if (match(pix, DIAMOND)) {
                     diamonds.add(new Diamond(this, x, pixmap.getHeight() - 1 - y));
+                } else if (match(pix, MOVING_SPIKES)) {
+                    movingSpikes.add(new MovingSpikes(this, x, pixmap.getHeight() - 1 - y));
                 } else if (match(pix, TREAT_BOX)) {
                     TreatBox treatBox = new TreatBox(this, x, pixmap.getHeight() - 1 - y);
                     treatBoxes.add(treatBox);
@@ -59,8 +62,8 @@ public class Map {
                 } else if (match(pix, ROCKET)) {
                     Rocket rocket = new Rocket(this, x, pixmap.getHeight() - 1 - y);
                     rockets.add(rocket);
-                } else if (match(pix, MOVING_SPIKES)) {
-                    movingSpikes.add(new MovingSpikes(this, x, pixmap.getHeight() - 1 - y));
+                } else if (match(pix, MOVING_SPIKES_OLD)) {
+                    movingSpikesOld.add(new Fish(this, x, pixmap.getHeight() - 1 - y));
                 } else if (match(pix, LASER)) {
                     lasers.add(new Laser(this, x, pixmap.getHeight() - 1 - y));
                 } else if (match(pix, END)) {
@@ -71,8 +74,8 @@ public class Map {
             }
         }
 
-        for (int i = 0; i < movingSpikes.size; i++) {
-            movingSpikes.get(i).init();
+        for (int i = 0; i < movingSpikesOld.size; i++) {
+            movingSpikesOld.get(i).init();
         }
         for (int i = 0; i < lasers.size; i++) {
             lasers.get(i).init();
@@ -91,7 +94,7 @@ public class Map {
         for (Rocket rocket : rockets) {
             rocket.update(deltaTime);
         }
-        for (MovingSpikes spikes : movingSpikes) {
+        for (Fish spikes : movingSpikesOld) {
             spikes.update(deltaTime);
         }
         for (Diamond diamond : diamonds) {
@@ -100,12 +103,15 @@ public class Map {
         for (TreatBox box : treatBoxes) {
             box.update(deltaTime);
         }
+        for (MovingSpikes mSpike : movingSpikes) {
+            mSpike.update(deltaTime);
+        }
         for (int i = 0; i < lasers.size; i++) {
             lasers.get(i).update();
         }
     }
 
     public boolean isDeadly(int tileId) {
-        return tileId == SPIKES;
+        return tileId == MOVING_SPIKES;
     }
 }

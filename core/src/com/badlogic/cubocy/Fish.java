@@ -4,7 +4,7 @@ import com.badlogic.cubocy.Giana.GianaState;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-public class MovingSpikes {
+public class Fish {
     static final int FORWARD = 1;
     static final int BACKWARD = -1;
     static final float FORWARD_VEL = 10;
@@ -22,7 +22,7 @@ public class MovingSpikes {
     int bx = 0;
     int by = 0;
 
-    public MovingSpikes(Map map, float x, float y) {
+    public Fish(Map map, float x, float y) {
         this.map = map;
         pos.x = x;
         pos.y = y;
@@ -35,21 +35,9 @@ public class MovingSpikes {
         int ix = (int) pos.x;
         int iy = (int) pos.y;
 
-        int left = map.tiles[ix - 1][map.tiles[0].length - 1 - iy];
-        int right = map.tiles[ix + 1][map.tiles[0].length - 1 - iy];
         int top = map.tiles[ix][map.tiles[0].length - 1 - iy - 1];
         int bottom = map.tiles[ix][map.tiles[0].length - 1 - iy + 1];
 
-        if (left == Map.TILE) {
-            vel.x = FORWARD_VEL;
-            angle = -90;
-            fx = 1;
-        }
-        if (right == Map.TILE) {
-            vel.x = -FORWARD_VEL;
-            angle = 90;
-            bx = 1;
-        }
         if (top == Map.TILE) {
             vel.y = -FORWARD_VEL;
             angle = 180;
