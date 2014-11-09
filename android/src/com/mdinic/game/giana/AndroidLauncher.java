@@ -1,4 +1,4 @@
-package com.mdinic.android.game.giana;
+package com.mdinic.game.giana;
 
 import android.os.Bundle;
 

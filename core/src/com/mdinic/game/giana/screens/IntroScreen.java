@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
-public class IntroScreen extends CubocScreen {
+public class IntroScreen extends GianaSistersScreen {
     TextureRegion intro;
     SpriteBatch batch;
     float time = 0;
@@ -48,7 +48,7 @@ public class IntroScreen extends CubocScreen {
 
     @Override
     public void hide() {
-        Gdx.app.debug("Cubocy", "dispose intro");
+        Gdx.app.debug("GianaSisters", "dispose intro");
         batch.dispose();
         // intro.getTexture().dispose();
     }

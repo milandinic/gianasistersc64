@@ -89,7 +89,7 @@ public class MapRenderer {
                 blocks[blockX][blockY] = cache.endCache();
             }
         }
-        Gdx.app.debug("Cubocy", "blocks created");
+        Gdx.app.debug("GianaSisters", "blocks created");
     }
 
     private void createAnimations() {
@@ -305,7 +305,6 @@ public class MapRenderer {
                 throw new IllegalStateException("ground monster type is not supported " + monster.type);
             }
             batch.draw(anim.getKeyFrame(monster.stateTime, true), monster.pos.x, monster.pos.y, 1, 1);
-            System.out.println(monster.pos.x + " " + monster.pos.y);
         }
     }
 

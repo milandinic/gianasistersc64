@@ -4,10 +4,10 @@ package com.mdinic.game.giana.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 
-public abstract class CubocScreen implements Screen {
+public abstract class GianaSistersScreen implements Screen {
 	Game game;
 
-	public CubocScreen (Game game) {
+	public GianaSistersScreen (Game game) {
 		this.game = game;
 	}
 
