@@ -1,8 +1,10 @@
 package com.badlogic.cubocy;
 
+import com.badlogic.cubocy.Giana.GianaState;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.ArrayMap;
 
 public class Map {
     static int EMPTY = 0;
@@ -27,6 +29,9 @@ public class Map {
     Array<Laser> lasers = new Array<Laser>();
     Array<Diamond> diamonds = new Array<Diamond>();
     Array<TreatBox> treatBoxes = new Array<TreatBox>();
+
+    // row, column
+    ArrayMap<Integer, ArrayMap<Integer, TreatBox>> treatBoxesMap = new ArrayMap<Integer, ArrayMap<Integer, TreatBox>>();
     public EndDoor endDoor;
 
     public Map() {
@@ -37,6 +42,7 @@ public class Map {
         Pixmap pixmap = new Pixmap(Gdx.files.internal("data/levels.png"));
         tiles = new int[pixmap.getWidth()][pixmap.getHeight()];
         for (int y = 0; y < 35; y++) {
+            treatBoxesMap.put(new Integer(y), new ArrayMap<Integer, TreatBox>());
             for (int x = 0; x < 150; x++) {
                 int pix = (pixmap.getPixel(x, y) >>> 8) & 0xffffff;
                 if (match(pix, START)) {
@@ -44,12 +50,15 @@ public class Map {
                     dispensers.add(dispenser);
                     activeDispenser = dispenser;
                     giana = new Giana(this, activeDispenser.bounds.x, activeDispenser.bounds.y);
-                    giana.state = Giana.SPAWN;
+                    giana.state = GianaState.SPAWN;
 
                 } else if (match(pix, DIAMOND)) {
                     diamonds.add(new Diamond(this, x, pixmap.getHeight() - 1 - y));
                 } else if (match(pix, TREAT_BOX)) {
-                    treatBoxes.add(new TreatBox(this, x, pixmap.getHeight() - 1 - y));
+                    TreatBox treatBox = new TreatBox(this, x, pixmap.getHeight() - 1 - y);
+                    treatBoxes.add(treatBox);
+                    treatBoxesMap.get(y).put(x, treatBox);
+                    tiles[x][y] = pix;
                 } else if (match(pix, DISPENSER)) {
                     Dispenser dispenser = new Dispenser(x, pixmap.getHeight() - 1 - y);
                     dispensers.add(dispenser);
@@ -82,7 +91,7 @@ public class Map {
 
     public void update(float deltaTime) {
         giana.update(deltaTime);
-        if (giana.state == Giana.DEAD)
+        if (giana.state == GianaState.DEAD)
             giana = new Giana(this, activeDispenser.bounds.x, activeDispenser.bounds.y);
 
         for (int i = 0; i < dispensers.size; i++) {

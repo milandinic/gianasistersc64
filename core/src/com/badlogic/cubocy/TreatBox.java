@@ -26,10 +26,10 @@ public class TreatBox {
         if (active) {
             stateTime += deltaTime;
 
-            // if (map.giana.bounds.overlaps(bounds)) {
-            // active = false;
-            // map.giana.diamondsCollected++;
-            // }
+            if (map.giana.bounds.overlaps(bounds)) {
+                active = false;
+                // map.giana.diamondsCollected++;
+            }
         }
     }
 

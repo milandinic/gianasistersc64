@@ -22,16 +22,22 @@ public class Giana {
 
     int diamondsCollected;
 
+    Rectangle nowayCollidableRect = new Rectangle(-1, -1, 0, 0);
+
     Vector2 pos = new Vector2();
     Vector2 accel = new Vector2();
     Vector2 vel = new Vector2();
     public Rectangle bounds = new Rectangle();
 
-    int state = SPAWN;
+    GianaState state;
     float stateTime = 0;
     int dir = LEFT;
     Map map;
     boolean grounded = false;
+
+    enum GianaState {
+        SPAWN, IDLE, DYING, DEAD, JUMP, RUN
+    }
 
     public Giana(Map map, float x, float y) {
         this.map = map;
@@ -41,7 +47,7 @@ public class Giana {
         bounds.height = 0.8f;
         bounds.x = pos.x + 0.2f;
         bounds.y = pos.y;
-        state = SPAWN;
+        state = GianaState.SPAWN;
         stateTime = 0;
     }
 
@@ -61,15 +67,15 @@ public class Giana {
         tryMove();
         vel.scl(1.0f / deltaTime);
 
-        if (state == SPAWN) {
+        if (state == GianaState.SPAWN) {
             if (stateTime > 0.4f) {
-                state = IDLE;
+                state = GianaState.IDLE;
             }
         }
 
-        if (state == DYING) {
+        if (state == GianaState.DYING) {
             if (stateTime > 0.4f) {
-                state = DEAD;
+                state = GianaState.DEAD;
             }
         }
 
@@ -77,7 +83,7 @@ public class Giana {
     }
 
     private void processKeys() {
-        if (state == SPAWN || state == DYING)
+        if (state == GianaState.SPAWN || state == GianaState.DYING)
             return;
 
         float x0 = (Gdx.input.getX(0) / (float) Gdx.graphics.getWidth()) * 480;
@@ -90,25 +96,25 @@ public class Giana {
         boolean jumpButton = (Gdx.input.isTouched(0) && x0 > 416 && x0 < 480 && y0 < 64)
                 || (Gdx.input.isTouched(1) && x1 > 416 && x1 < 480 && y0 < 64);
 
-        if ((Gdx.input.isKeyPressed(Keys.W) || jumpButton) && state != JUMP) {
-            state = JUMP;
+        if ((Gdx.input.isKeyPressed(Keys.W) || jumpButton) && state != GianaState.JUMP) {
+            state = GianaState.JUMP;
             vel.y = JUMP_VELOCITY;
             grounded = false;
         }
 
         if (Gdx.input.isKeyPressed(Keys.A) || leftButton) {
-            if (state != JUMP)
-                state = RUN;
+            if (state != GianaState.JUMP)
+                state = GianaState.RUN;
             dir = LEFT;
             accel.x = ACCELERATION * dir;
         } else if (Gdx.input.isKeyPressed(Keys.D) || rightButton) {
-            if (state != JUMP)
-                state = RUN;
+            if (state != GianaState.JUMP)
+                state = GianaState.RUN;
             dir = RIGHT;
             accel.x = ACCELERATION * dir;
         } else {
-            if (state != JUMP)
-                state = IDLE;
+            if (state != GianaState.JUMP)
+                state = GianaState.IDLE;
             accel.x = 0;
         }
     }
@@ -137,8 +143,8 @@ public class Giana {
                 if (vel.y < 0) {
                     bounds.y = rect.y + rect.height + 0.01f;
                     grounded = true;
-                    if (state != DYING && state != SPAWN)
-                        state = Math.abs(accel.x) > 0.1f ? RUN : IDLE;
+                    if (state != GianaState.DYING && state != GianaState.SPAWN)
+                        state = Math.abs(accel.x) > 0.1f ? GianaState.RUN : GianaState.IDLE;
                 } else
                     bounds.y = rect.y - bounds.height - 0.01f;
                 vel.y = 0;
@@ -152,42 +158,52 @@ public class Giana {
     private void fetchCollidableRects() {
         int p1x = (int) bounds.x;
         int p1y = (int) Math.floor(bounds.y);
+
         int p2x = (int) (bounds.x + bounds.width);
         int p2y = (int) Math.floor(bounds.y);
+
         int p3x = (int) (bounds.x + bounds.width);
         int p3y = (int) (bounds.y + bounds.height);
+
         int p4x = (int) bounds.x;
         int p4y = (int) (bounds.y + bounds.height);
 
-        int[][] tiles = map.tiles;
-        int tile1 = tiles[p1x][map.tiles[0].length - 1 - p1y];
-        int tile2 = tiles[p2x][map.tiles[0].length - 1 - p2y];
-        int tile3 = tiles[p3x][map.tiles[0].length - 1 - p3y];
-        int tile4 = tiles[p4x][map.tiles[0].length - 1 - p4y];
+        System.out.println(p1x + "\t" + p1y + "\t" + p2x + "\t" + p2y + "\t" + p3x + "\t" + p3y + "\t" + p4x + "\t"
+                + p4y);
 
-        if (state != DYING
+        int[][] tiles = map.tiles;
+        int tile1 = tiles[p1x][map.tiles[0].length - 1 - p1y]; // to the right
+        int tile2 = tiles[p2x][map.tiles[0].length - 1 - p2y];// to the left
+        int tile3 = tiles[p3x][map.tiles[0].length - 1 - p3y]; // up
+        int tile4 = tiles[p4x][map.tiles[0].length - 1 - p4y];// down
+
+        if (state != GianaState.DYING
                 && (map.isDeadly(tile1) || map.isDeadly(tile2) || map.isDeadly(tile3) || map.isDeadly(tile4))) {
-            state = DYING;
+            state = GianaState.DYING;
             stateTime = 0;
         }
 
-        if (tile1 == Map.TILE)
+        if (tile1 == Map.TILE || tile1 == Map.TREAT_BOX)
             r[0].set(p1x, p1y, 1, 1);
         else
-            r[0].set(-1, -1, 0, 0);
-        if (tile2 == Map.TILE)
+            r[0].set(nowayCollidableRect);
+        if (tile2 == Map.TILE || tile2 == Map.TREAT_BOX)
             r[1].set(p2x, p2y, 1, 1);
         else
-            r[1].set(-1, -1, 0, 0);
-        if (tile3 == Map.TILE)
+            r[1].set(nowayCollidableRect);
+        if (tile3 == Map.TILE || tile3 == Map.TREAT_BOX)
             r[2].set(p3x, p3y, 1, 1);
         else
-            r[2].set(-1, -1, 0, 0);
-        if (tile4 == Map.TILE)
+            r[2].set(nowayCollidableRect);
+        if (tile4 == Map.TILE || tile4 == Map.TREAT_BOX)
             r[3].set(p4x, p4y, 1, 1);
         else
-            r[3].set(-1, -1, 0, 0);
+            r[3].set(nowayCollidableRect);
 
-        r[4].set(-1, -1, 0, 0);
+        r[4].set(nowayCollidableRect);
+
+        if (tile3 == Map.TREAT_BOX)
+            map.treatBoxesMap.get(map.tiles[0].length - 1 - p3y).get(p3x).active = false;
+
     }
 }

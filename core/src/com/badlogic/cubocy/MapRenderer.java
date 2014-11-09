@@ -3,6 +3,7 @@ package com.badlogic.cubocy;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.badlogic.cubocy.Giana.GianaState;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
@@ -91,7 +92,7 @@ public class MapRenderer {
         Texture diamondTexture = new Texture(Gdx.files.internal("data/diamond.png"));
         Texture treatboxTexture = new Texture(Gdx.files.internal("data/treatbox.png"));
 
-        diamondAnim = new Animation(0.5f, new TextureRegion(diamondTexture).split(20, 16)[0]);
+        diamondAnim = new Animation(0.2f, new TextureRegion(diamondTexture).split(16, 16)[0]);
         TextureRegion[] treatboxRegion = new TextureRegion(treatboxTexture).split(30, 20)[0];
         List<TextureRegion> tbArray = new ArrayList<TextureRegion>();
         for (int i = 0; i < treatboxRegion.length; i++) {
@@ -155,11 +156,11 @@ public class MapRenderer {
         cache.setProjectionMatrix(cam.combined);
         Gdx.gl.glDisable(GL20.GL_BLEND);
         cache.begin();
-        int b = 0;
+        // int b = 0;
         for (int blockY = 0; blockY < 4; blockY++) {
             for (int blockX = 0; blockX < 6; blockX++) {
                 cache.draw(blocks[blockX][blockY]);
-                b++;
+                // b++;
             }
         }
         cache.end();
@@ -185,29 +186,29 @@ public class MapRenderer {
     private void renderBob() {
         Animation anim = null;
         boolean loop = true;
-        if (map.giana.state == Giana.RUN) {
+        if (map.giana.state == GianaState.RUN) {
             if (map.giana.dir == Giana.LEFT)
                 anim = bobLeft;
             else
                 anim = bobRight;
         }
-        if (map.giana.state == Giana.IDLE) {
+        if (map.giana.state == GianaState.IDLE) {
             if (map.giana.dir == Giana.LEFT)
                 anim = bobIdleLeft;
             else
                 anim = bobIdleRight;
         }
-        if (map.giana.state == Giana.JUMP) {
+        if (map.giana.state == GianaState.JUMP) {
             if (map.giana.dir == Giana.LEFT)
                 anim = bobJumpLeft;
             else
                 anim = bobJumpRight;
         }
-        if (map.giana.state == Giana.SPAWN) {
+        if (map.giana.state == GianaState.SPAWN) {
             anim = spawn;
             loop = false;
         }
-        if (map.giana.state == Giana.DYING) {
+        if (map.giana.state == GianaState.DYING) {
             anim = dying;
             loop = false;
         }
@@ -239,7 +240,7 @@ public class MapRenderer {
         for (Diamond currentDiamond : map.diamonds) {
             if (currentDiamond.active) {
                 batch.draw(diamondAnim.getKeyFrame(currentDiamond.stateTime, true), currentDiamond.pos.x,
-                        currentDiamond.pos.y, 1, 0.7f);
+                        currentDiamond.pos.y, 0.8f, 0.8f);
             }
         }
     }
