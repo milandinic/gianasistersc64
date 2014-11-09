@@ -7,8 +7,8 @@ import com.mdinic.game.giana.Giana.GianaState;
 public class GroundMonster {
     static final int FORWARD = 1;
     static final int BACKWARD = -1;
-    static final float FORWARD_VEL = 10;
-    static final float BACKWARD_VEL = 4;
+    static final float FORWARD_VEL = 1;
+    static final float BACKWARD_VEL = 1;
 
     enum GoundMonsterType {
         OWL, JELLY, LOBSTER
@@ -36,6 +36,7 @@ public class GroundMonster {
         bounds.x = x;
         bounds.y = y;
         bounds.width = bounds.height = 1;
+        vel.set(-1, 0);
     }
 
     public void init() {
@@ -57,16 +58,6 @@ public class GroundMonster {
             angle = 90;
             bx = 1;
         }
-        // if (top == Map.TILE) {
-        // vel.y = -FORWARD_VEL;
-        // angle = 180;
-        // by = -1;
-        // }
-        // if (bottom == Map.TILE) {
-        // vel.y = FORWARD_VEL;
-        // angle = 0;
-        // fy = -1;
-        // }
     }
 
     public void update(float deltaTime) {
@@ -75,8 +66,11 @@ public class GroundMonster {
         boolean change = false;
         if (state == FORWARD) {
             change = map.tiles[(int) pos.x + fx][map.tiles[0].length - 1 - (int) pos.y + fy] == Map.TILE;
+
+            change = change || map.tiles[(int) pos.x + fx + 1][map.tiles[0].length - 1 - (int) pos.y + fy + 1] == 0;
         } else {
             change = map.tiles[(int) pos.x + bx][map.tiles[0].length - 1 - (int) pos.y + by] == Map.TILE;
+            change = change || map.tiles[(int) pos.x + bx + 1][map.tiles[0].length - 1 - (int) pos.y + by + 1] == 0;
         }
         if (change) {
             pos.x -= vel.x * deltaTime;

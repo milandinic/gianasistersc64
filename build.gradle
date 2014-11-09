@@ -20,7 +20,7 @@ allprojects {
     
     version = "1.0"
     ext {
-        appName = "libgdx-demo-cuboc"
+        appName = "gianasistersc64"
         gdxVersion = "1.0-SNAPSHOT"
         roboVMVersion = "0.0.11"
     }
