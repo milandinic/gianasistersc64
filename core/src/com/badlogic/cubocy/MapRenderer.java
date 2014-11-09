@@ -35,7 +35,9 @@ public class MapRenderer {
     Animation diamondAnim;
     Animation treatBoxAnim;
 
-    TextureRegion dispenser;
+    TextureRegion usedTreatBox;
+
+    // TextureRegion dispenser;
     Animation spawn;
     Animation dying;
     TextureRegion spikes;
@@ -49,7 +51,7 @@ public class MapRenderer {
 
     public MapRenderer(Map map) {
         this.map = map;
-        this.cam = new OrthographicCamera(24, 16);
+        this.cam = new OrthographicCamera(16, 16);
         this.cam.position.set(map.giana.pos.x, map.giana.pos.y, 0);
         this.cache = new SpriteCache(this.map.tiles.length * this.map.tiles[0].length, false);
         this.blocks = new int[(int) Math.ceil(this.map.tiles.length / 24.0f)][(int) Math
@@ -92,8 +94,9 @@ public class MapRenderer {
         Texture diamondTexture = new Texture(Gdx.files.internal("data/diamond.png"));
         Texture treatboxTexture = new Texture(Gdx.files.internal("data/treatbox.png"));
 
-        diamondAnim = new Animation(0.2f, new TextureRegion(diamondTexture).split(16, 16)[0]);
+        diamondAnim = new Animation(0.3f, new TextureRegion(diamondTexture).split(16, 16)[0]);
         TextureRegion[] treatboxRegion = new TextureRegion(treatboxTexture).split(30, 20)[0];
+        usedTreatBox = treatboxRegion[treatboxRegion.length - 1];
         List<TextureRegion> tbArray = new ArrayList<TextureRegion>();
         for (int i = 0; i < treatboxRegion.length; i++) {
             tbArray.add(treatboxRegion[i]);
@@ -130,7 +133,7 @@ public class MapRenderer {
         split = new TextureRegion(bobTexture).split(20, 20)[2];
         spawn = new Animation(0.1f, split[4], split[3], split[2], split[1]);
         dying = new Animation(0.1f, split[1], split[2], split[3], split[4]);
-        dispenser = split[5];
+
         split = new TextureRegion(bobTexture).split(20, 20)[3];
         rocket = new Animation(0.1f, split[0], split[1], split[2], split[3]);
         rocketPad = split[4];
@@ -167,7 +170,7 @@ public class MapRenderer {
         stateTime += deltaTime;
         batch.setProjectionMatrix(cam.combined);
         batch.begin();
-        renderDispensers();
+
         if (map.endDoor != null)
             batch.draw(endDoor, map.endDoor.bounds.x, map.endDoor.bounds.y, 1, 1);
         renderLasers();
@@ -229,13 +232,6 @@ public class MapRenderer {
         }
     }
 
-    private void renderDispensers() {
-        for (int i = 0; i < map.dispensers.size; i++) {
-            Dispenser dispenser = map.dispensers.get(i);
-            batch.draw(this.dispenser, dispenser.bounds.x, dispenser.bounds.y, 1, 1);
-        }
-    }
-
     private void renderDiamonds() {
         for (Diamond currentDiamond : map.diamonds) {
             if (currentDiamond.active) {
@@ -247,7 +243,11 @@ public class MapRenderer {
 
     private void renderTreatBoxes() {
         for (TreatBox box : map.treatBoxes) {
-            batch.draw(treatBoxAnim.getKeyFrame(box.stateTime, true), box.pos.x, box.pos.y, 1, 1);
+            if (box.active) {
+                batch.draw(treatBoxAnim.getKeyFrame(box.stateTime, true), box.pos.x, box.pos.y, 1, 1);
+            } else {
+                batch.draw(usedTreatBox, box.pos.x, box.pos.y, 1, 1);
+            }
         }
     }
 

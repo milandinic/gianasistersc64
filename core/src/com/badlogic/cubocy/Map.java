@@ -11,7 +11,7 @@ public class Map {
     static int TILE = 0xffffff;
     static int START = 0xff0000;
     static int END = 0xff00ff;
-    static int DISPENSER = 0xff0100;
+
     static int DIAMOND = 5570300;
     static int SPIKES = 0x00ff00;
     static int ROCKET = 0x0000ff;
@@ -22,14 +22,12 @@ public class Map {
     int[][] tiles;
     public Giana giana;
 
-    Array<Dispenser> dispensers = new Array<Dispenser>();
-    Dispenser activeDispenser = null;
     Array<Rocket> rockets = new Array<Rocket>();
     Array<MovingSpikes> movingSpikes = new Array<MovingSpikes>();
     Array<Laser> lasers = new Array<Laser>();
     Array<Diamond> diamonds = new Array<Diamond>();
     Array<TreatBox> treatBoxes = new Array<TreatBox>();
-
+    StartPosition startPosition;
     // row, column
     ArrayMap<Integer, ArrayMap<Integer, TreatBox>> treatBoxesMap = new ArrayMap<Integer, ArrayMap<Integer, TreatBox>>();
     public EndDoor endDoor;
@@ -46,10 +44,9 @@ public class Map {
             for (int x = 0; x < 150; x++) {
                 int pix = (pixmap.getPixel(x, y) >>> 8) & 0xffffff;
                 if (match(pix, START)) {
-                    Dispenser dispenser = new Dispenser(x, pixmap.getHeight() - 1 - y);
-                    dispensers.add(dispenser);
-                    activeDispenser = dispenser;
-                    giana = new Giana(this, activeDispenser.bounds.x, activeDispenser.bounds.y);
+                    startPosition = new StartPosition(x, pixmap.getHeight() - 1 - y);
+
+                    giana = new Giana(this, startPosition.bounds.x, startPosition.bounds.y);
                     giana.state = GianaState.SPAWN;
 
                 } else if (match(pix, DIAMOND)) {
@@ -59,9 +56,6 @@ public class Map {
                     treatBoxes.add(treatBox);
                     treatBoxesMap.get(y).put(x, treatBox);
                     tiles[x][y] = pix;
-                } else if (match(pix, DISPENSER)) {
-                    Dispenser dispenser = new Dispenser(x, pixmap.getHeight() - 1 - y);
-                    dispensers.add(dispenser);
                 } else if (match(pix, ROCKET)) {
                     Rocket rocket = new Rocket(this, x, pixmap.getHeight() - 1 - y);
                     rockets.add(rocket);
@@ -92,13 +86,8 @@ public class Map {
     public void update(float deltaTime) {
         giana.update(deltaTime);
         if (giana.state == GianaState.DEAD)
-            giana = new Giana(this, activeDispenser.bounds.x, activeDispenser.bounds.y);
+            giana = new Giana(this, startPosition.bounds.x, startPosition.bounds.y);
 
-        for (int i = 0; i < dispensers.size; i++) {
-            if (giana.bounds.overlaps(dispensers.get(i).bounds)) {
-                activeDispenser = dispensers.get(i);
-            }
-        }
         for (Rocket rocket : rockets) {
             rocket.update(deltaTime);
         }

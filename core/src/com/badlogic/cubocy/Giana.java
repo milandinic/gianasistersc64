@@ -168,9 +168,6 @@ public class Giana {
         int p4x = (int) bounds.x;
         int p4y = (int) (bounds.y + bounds.height);
 
-        System.out.println(p1x + "\t" + p1y + "\t" + p2x + "\t" + p2y + "\t" + p3x + "\t" + p3y + "\t" + p4x + "\t"
-                + p4y);
-
         int[][] tiles = map.tiles;
         int tile1 = tiles[p1x][map.tiles[0].length - 1 - p1y]; // to the right
         int tile2 = tiles[p2x][map.tiles[0].length - 1 - p2y];// to the left

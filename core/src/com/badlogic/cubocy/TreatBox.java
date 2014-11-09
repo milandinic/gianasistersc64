@@ -25,11 +25,6 @@ public class TreatBox {
     public void update(float deltaTime) {
         if (active) {
             stateTime += deltaTime;
-
-            if (map.giana.bounds.overlaps(bounds)) {
-                active = false;
-                // map.giana.diamondsCollected++;
-            }
         }
     }
 
