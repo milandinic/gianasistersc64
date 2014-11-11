@@ -23,6 +23,8 @@ public class Map {
     static int JELLY = 0x5a2b8f;
     static int LOBSTER = 0x5ad68f;
 
+    static int LEVEL_PIXELBUFFER = 20;
+
     int[][] tiles;
     public Giana giana;
 
@@ -36,17 +38,17 @@ public class Map {
     ArrayMap<Integer, ArrayMap<Integer, TreatBox>> treatBoxesMap = new ArrayMap<Integer, ArrayMap<Integer, TreatBox>>();
     public EndDoor endDoor;
 
-    public Map() {
-        loadBinary();
+    public Map(int level) {
+        loadBinary(level);
     }
 
-    private void loadBinary() {
+    public void loadBinary(int level) {
         Pixmap pixmap = new Pixmap(Gdx.files.internal("data/levels.png"));
         tiles = new int[pixmap.getWidth()][pixmap.getHeight()];
         for (int y = 0; y < 16; y++) {
             treatBoxesMap.put(new Integer(y), new ArrayMap<Integer, TreatBox>());
             for (int x = 0; x < 150; x++) {
-                int pix = (pixmap.getPixel(x, y) >>> 8) & 0xffffff;
+                int pix = (pixmap.getPixel(x, y + (level * LEVEL_PIXELBUFFER)) >>> 8) & 0xffffff;
                 if (match(pix, START)) {
                     startPosition = new StartPosition(x, pixmap.getHeight() - 1 - y);
 
@@ -61,8 +63,9 @@ public class Map {
                 } else if (match(pix, JELLY)) {
                     groundMonsters.add(new GroundMonster(this, x, pixmap.getHeight() - 1 - y, GoundMonsterType.JELLY));
                 } else if (match(pix, LOBSTER)) {
-                    groundMonsters
-                            .add(new GroundMonster(this, x, pixmap.getHeight() - 1 - y, GoundMonsterType.LOBSTER));
+                    // groundMonsters
+                    // .add(new GroundMonster(this, x, pixmap.getHeight() - 1 -
+                    // y, GoundMonsterType.LOBSTER));
                 } else if (match(pix, MOVING_SPIKES)) {
                     movingSpikes.add(new MovingSpikes(this, x, pixmap.getHeight() - 1 - y));
                 } else if (match(pix, TREAT_BOX)) {

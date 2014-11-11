@@ -12,14 +12,17 @@ public class GameScreen extends GianaSistersScreen {
     Map map;
     MapRenderer renderer;
     OnscreenControlRenderer controlRenderer;
+    int level;
 
-    public GameScreen(Game game) {
+    public GameScreen(Game game, int level) {
         super(game);
+        this.level = level;
     }
 
     @Override
     public void show() {
-        map = new Map();
+        System.out.println("level" + level);
+        map = new Map(level);
         renderer = new MapRenderer(map);
         controlRenderer = new OnscreenControlRenderer(map);
     }
@@ -34,7 +37,7 @@ public class GameScreen extends GianaSistersScreen {
         controlRenderer.render();
 
         if (map.giana.bounds.overlaps(map.endDoor.bounds)) {
-            game.setScreen(new GameOverScreen(game));
+            game.setScreen(new LevelOverScreen(game, level + 1));
         }
 
         if (Gdx.input.isKeyPressed(Keys.ESCAPE)) {

@@ -34,7 +34,7 @@ public class GameOverScreen extends GianaSistersScreen {
         time += delta;
         if (time > 1) {
             if (Gdx.input.isKeyPressed(Keys.ANY_KEY) || Gdx.input.justTouched()) {
-                game.setScreen(new GameScreen(game));
+                game.setScreen(new GameScreen(game, 0));
             }
         }
     }

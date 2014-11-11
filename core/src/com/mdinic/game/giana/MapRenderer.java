@@ -103,16 +103,17 @@ public class MapRenderer {
         Texture treatboxTexture = new Texture(Gdx.files.internal("data/treatbox.png"));
         Texture movingSpikesTexture = new Texture(Gdx.files.internal("data/movingspikes.png"));
 
-        Texture groundMonstersTexture = new Texture(Gdx.files.internal("data/monsters.png"));
+        Texture groundMonstersTexture = new Texture(Gdx.files.internal("data/groundmonsters.png"));
+        Texture lobsterTexture = new Texture(Gdx.files.internal("data/lobster.png"));
 
         TextureRegion groundMonstersRegion = new TextureRegion(groundMonstersTexture);
-        groundMonstersRegion.setRegion(0, 0, 300, 20);
+        groundMonstersRegion.setRegion(0, 0, 240, 20);
 
-        owlAnim = new Animation(0.2f, groundMonstersRegion.split(30, 20)[0]);
-        groundMonstersRegion.setRegion(299, 0, 300, 20);
-        jellyAnim = new Animation(0.2f, groundMonstersRegion.split(30, 20)[0]);
-        groundMonstersRegion.setRegion(599, 0, 300, 20);
-        lobsterAnim = new Animation(0.2f, groundMonstersRegion.split(30, 20)[0]);
+        owlAnim = new Animation(0.2f, groundMonstersRegion.split(24, 20)[0]);
+        groundMonstersRegion.setRegion(240, 0, 240, 20);
+        jellyAnim = new Animation(0.2f, groundMonstersRegion.split(24, 20)[0]);
+
+        lobsterAnim = new Animation(0.2f, new TextureRegion(lobsterTexture).split(24, 20)[0]);
 
         movingSpikesAnim = new Animation(0.3f, new TextureRegion(movingSpikesTexture).split(48, 16)[0]);
 
@@ -155,10 +156,18 @@ public class MapRenderer {
 
     public void render(float deltaTime) {
 
-        if (map.giana.pos.x > 7 && map.giana.pos.x < 137) {
-            cam.position.lerp(lerpTarget.set(map.giana.pos.x, 153, 0), 4f * deltaTime);
-            cam.update();
+        float camX = map.giana.pos.x;
+        if (camX < 7) {
+            camX = 7;
+
         }
+
+        if (camX > 137) {
+            camX = 137;
+        }
+
+        cam.position.lerp(lerpTarget.set(camX, 153, 0), 4f * deltaTime);
+        cam.update();
 
         cache.setProjectionMatrix(cam.combined);
         Gdx.gl.glDisable(GL20.GL_BLEND);
