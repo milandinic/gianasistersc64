@@ -26,9 +26,6 @@ public class Map {
     int[][] tiles;
     public Giana giana;
 
-    Array<Rocket> rockets = new Array<Rocket>();
-    Array<Fish> movingSpikesOld = new Array<Fish>();
-    Array<Laser> lasers = new Array<Laser>();
     Array<Diamond> diamonds = new Array<Diamond>();
     Array<TreatBox> treatBoxes = new Array<TreatBox>();
     Array<MovingSpikes> movingSpikes = new Array<MovingSpikes>();
@@ -46,7 +43,7 @@ public class Map {
     private void loadBinary() {
         Pixmap pixmap = new Pixmap(Gdx.files.internal("data/levels.png"));
         tiles = new int[pixmap.getWidth()][pixmap.getHeight()];
-        for (int y = 0; y < 35; y++) {
+        for (int y = 0; y < 16; y++) {
             treatBoxesMap.put(new Integer(y), new ArrayMap<Integer, TreatBox>());
             for (int x = 0; x < 150; x++) {
                 int pix = (pixmap.getPixel(x, y) >>> 8) & 0xffffff;
@@ -62,11 +59,10 @@ public class Map {
                 } else if (match(pix, OWL)) {
                     groundMonsters.add(new GroundMonster(this, x, pixmap.getHeight() - 1 - y, GoundMonsterType.OWL));
                 } else if (match(pix, JELLY)) {
-                    // groundMonsters.add(new GroundMonster(this, x,
-                    // pixmap.getHeight() - 1 - y, GoundMonsterType.JELLY));
+                    groundMonsters.add(new GroundMonster(this, x, pixmap.getHeight() - 1 - y, GoundMonsterType.JELLY));
                 } else if (match(pix, LOBSTER)) {
-                    // groundMonsters.add(new GroundMonster(this, x,
-                    // pixmap.getHeight() - 1 - y, GoundMonsterType.LOBSTER));
+                    groundMonsters
+                            .add(new GroundMonster(this, x, pixmap.getHeight() - 1 - y, GoundMonsterType.LOBSTER));
                 } else if (match(pix, MOVING_SPIKES)) {
                     movingSpikes.add(new MovingSpikes(this, x, pixmap.getHeight() - 1 - y));
                 } else if (match(pix, TREAT_BOX)) {
@@ -75,25 +71,21 @@ public class Map {
                     treatBoxesMap.get(y).put(x, treatBox);
                     tiles[x][y] = pix;
                 } else if (match(pix, ROCKET)) {
-                    Rocket rocket = new Rocket(this, x, pixmap.getHeight() - 1 - y);
-                    rockets.add(rocket);
+                    // Rocket rocket = new Rocket(this, x, pixmap.getHeight() -
+                    // 1 - y);
+                    // rockets.add(rocket);
                 } else if (match(pix, MOVING_SPIKES_OLD)) {
-                    movingSpikesOld.add(new Fish(this, x, pixmap.getHeight() - 1 - y));
+                    // movingSpikesOld.add(new Fish(this, x, pixmap.getHeight()
+                    // - 1 - y));
                 } else if (match(pix, LASER)) {
-                    lasers.add(new Laser(this, x, pixmap.getHeight() - 1 - y));
+                    // lasers.add(new Laser(this, x, pixmap.getHeight() - 1 -
+                    // y));
                 } else if (match(pix, END)) {
                     endDoor = new EndDoor(x, pixmap.getHeight() - 1 - y);
                 } else {
                     tiles[x][y] = pix;
                 }
             }
-        }
-
-        for (int i = 0; i < movingSpikesOld.size; i++) {
-            movingSpikesOld.get(i).init();
-        }
-        for (int i = 0; i < lasers.size; i++) {
-            lasers.get(i).init();
         }
 
         for (GroundMonster monster : groundMonsters) {
@@ -110,12 +102,6 @@ public class Map {
         if (giana.state == GianaState.DEAD)
             giana = new Giana(this, startPosition.bounds.x, startPosition.bounds.y);
 
-        for (Rocket rocket : rockets) {
-            rocket.update(deltaTime);
-        }
-        for (Fish spikes : movingSpikesOld) {
-            spikes.update(deltaTime);
-        }
         for (Diamond diamond : diamonds) {
             diamond.update(deltaTime);
         }
@@ -128,9 +114,7 @@ public class Map {
         for (GroundMonster monster : groundMonsters) {
             monster.update(deltaTime);
         }
-        for (int i = 0; i < lasers.size; i++) {
-            lasers.get(i).update();
-        }
+
     }
 
     public boolean isDeadly(int tileId) {

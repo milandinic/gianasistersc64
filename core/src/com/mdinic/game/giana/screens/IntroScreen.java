@@ -35,7 +35,7 @@ public class IntroScreen extends GianaSistersScreen {
 
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        batch.draw(anim.getKeyFrame(time, true), 0, 0);
+        // batch.draw(anim.getKeyFrame(time, true), 0, 0);
         batch.end();
 
         time += delta;

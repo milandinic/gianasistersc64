@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Giana {
+    private static final float MIN_MOVE = 0.1f;
     static final int IDLE = 0;
     static final int RUN = 1;
     static final int JUMP = 2;
@@ -39,6 +40,8 @@ public class Giana {
         SPAWN, IDLE, DYING, DEAD, JUMP, RUN
     }
 
+    // boolean dying
+
     public Giana(Map map, float x, float y) {
         this.map = map;
         pos.x = x;
@@ -52,31 +55,40 @@ public class Giana {
     }
 
     public void update(float deltaTime) {
-        processKeys();
-
-        accel.y = -GRAVITY;
-        accel.scl(deltaTime);
-        vel.add(accel.x, accel.y);
-        if (accel.x == 0)
-            vel.x *= DAMP;
-        if (vel.x > MAX_VEL)
-            vel.x = MAX_VEL;
-        if (vel.x < -MAX_VEL)
-            vel.x = -MAX_VEL;
-        vel.scl(deltaTime);
-        tryMove();
-        vel.scl(1.0f / deltaTime);
-
-        if (state == GianaState.SPAWN) {
-            if (stateTime > 0.4f) {
-                state = GianaState.IDLE;
-            }
-        }
 
         if (state == GianaState.DYING) {
-            if (stateTime > 0.4f) {
+            if (stateTime < 0.2f) {
+                pos.y += MIN_MOVE;
+                bounds.y += MIN_MOVE;
+            } else if (stateTime < 1f) {
+                pos.y -= MIN_MOVE;
+                bounds.y -= MIN_MOVE;
+            } else {
                 state = GianaState.DEAD;
             }
+        } else {
+
+            processKeys();
+
+            accel.y = -GRAVITY;
+            accel.scl(deltaTime);
+            vel.add(accel.x, accel.y);
+            if (accel.x == 0)
+                vel.x *= DAMP;
+            if (vel.x > MAX_VEL)
+                vel.x = MAX_VEL;
+            if (vel.x < -MAX_VEL)
+                vel.x = -MAX_VEL;
+            vel.scl(deltaTime);
+            tryMove();
+            vel.scl(1.0f / deltaTime);
+
+            if (state == GianaState.SPAWN) {
+                if (stateTime > 0.4f) {
+                    state = GianaState.IDLE;
+                }
+            }
+
         }
 
         stateTime += deltaTime;

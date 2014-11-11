@@ -39,14 +39,14 @@ public class MapRenderer {
 
     // TextureRegion dispenser;
     Animation spawn;
-    Animation dying;
-    TextureRegion spikes;
-    Animation rocket;
-    Animation rocketExplosion;
-    TextureRegion rocketPad;
+    TextureRegion dying;
+    // TextureRegion spikes;
+    // Animation rocket;
+    // Animation rocketExplosion;
+    // TextureRegion rocketPad;
     TextureRegion endDoor;
-    TextureRegion movingSpikesOld;
-    TextureRegion laser;
+    // TextureRegion movingSpikesOld;
+    // TextureRegion laser;
     FPSLogger fps = new FPSLogger();
     private Animation movingSpikesAnim;
 
@@ -82,8 +82,9 @@ public class MapRenderer {
                         int posY = height - y - 1;
                         if (map.match(map.tiles[x][y], Map.TILE))
                             cache.add(tile, posX, posY, 1, 1);
-                        if (map.match(map.tiles[x][y], Map.MOVING_SPIKES))
-                            cache.add(spikes, posX, posY, 1, 1);
+
+                        // if (map.match(map.tiles[x][y], Map.MOVING_SPIKES))
+                        // cache.add(spikes, posX, posY, 1, 1);
                     }
                 }
                 blocks[blockX][blockY] = cache.endCache();
@@ -93,8 +94,10 @@ public class MapRenderer {
     }
 
     private void createAnimations() {
-        this.tile = new TextureRegion(new Texture(Gdx.files.internal("data/sprites.png")), 150, 103, 24, 16);
-        Texture bobTexture = new Texture(Gdx.files.internal("data/bob.png"));
+        Texture sprites = new Texture(Gdx.files.internal("data/sprites.png"));
+        this.tile = new TextureRegion(sprites, 150, 103, 24, 16);
+        this.endDoor = new TextureRegion(sprites, 16, 196, 32, 32);
+
         Texture gianaTexture = new Texture(Gdx.files.internal("data/giana.png"));
         Texture diamondTexture = new Texture(Gdx.files.internal("data/diamond.png"));
         Texture treatboxTexture = new Texture(Gdx.files.internal("data/treatbox.png"));
@@ -131,11 +134,9 @@ public class MapRenderer {
         gianaRegion.setRegion(0, 29, 189, 28);
         TextureRegion[] gianaSmallLeft = gianaRegion.split(27, 28)[0];
 
-        TextureRegion[] split = new TextureRegion(bobTexture).split(20, 20)[0];
-        TextureRegion[] mirror = new TextureRegion(bobTexture).split(20, 20)[0];
-        for (TextureRegion region : mirror)
-            region.flip(true, false);
-        spikes = split[5];
+        gianaRegion.setRegion(0, 59, 27, 28);
+        dying = gianaRegion.split(27, 28)[0][0];
+        bobDead = new Animation(0.2f, dying);
 
         bobRight = new Animation(0.1f, gianaSmallRight[1], gianaSmallRight[2], gianaSmallRight[3], gianaSmallRight[4]);
         bobLeft = new Animation(0.1f, gianaSmallLeft[1], gianaSmallLeft[2], gianaSmallLeft[3], gianaSmallLeft[4]);
@@ -146,22 +147,7 @@ public class MapRenderer {
         bobIdleRight = new Animation(0.5f, gianaSmallRight[0]);
         bobIdleLeft = new Animation(0.5f, gianaSmallLeft[0]);
 
-        bobDead = new Animation(0.2f, split[0]);
-        split = new TextureRegion(bobTexture).split(20, 20)[1];
-
-        split = new TextureRegion(bobTexture).split(20, 20)[2];
-        spawn = new Animation(0.1f, split[4], split[3], split[2], split[1]);
-        dying = new Animation(0.1f, split[1], split[2], split[3], split[4]);
-
-        split = new TextureRegion(bobTexture).split(20, 20)[3];
-        rocket = new Animation(0.1f, split[0], split[1], split[2], split[3]);
-        rocketPad = split[4];
-        split = new TextureRegion(bobTexture).split(20, 20)[4];
-        rocketExplosion = new Animation(0.1f, split[0], split[1], split[2], split[3], split[4], split[4]);
-        split = new TextureRegion(bobTexture).split(20, 20)[5];
-        endDoor = split[2];
-        movingSpikesOld = split[0];
-        laser = split[1];
+        spawn = new Animation(0.1f, gianaSmallRight[0]);
     }
 
     float stateTime = 0;
@@ -169,11 +155,10 @@ public class MapRenderer {
 
     public void render(float deltaTime) {
 
-        cam.position.lerp(lerpTarget.set(map.giana.pos.x, 153, 0), 4f * deltaTime);
-
-        cam.update();
-
-        renderLaserBeams();
+        if (map.giana.pos.x > 7 && map.giana.pos.x < 137) {
+            cam.position.lerp(lerpTarget.set(map.giana.pos.x, 153, 0), 4f * deltaTime);
+            cam.update();
+        }
 
         cache.setProjectionMatrix(cam.combined);
         Gdx.gl.glDisable(GL20.GL_BLEND);
@@ -191,9 +176,8 @@ public class MapRenderer {
         batch.begin();
 
         if (map.endDoor != null)
-            batch.draw(endDoor, map.endDoor.bounds.x, map.endDoor.bounds.y, 1, 1);
-        renderLasers();
-        renderMovingSpikesOld();
+            batch.draw(endDoor, map.endDoor.bounds.x, map.endDoor.bounds.y, 2, 2);
+
         renderMovingSpikes();
         renderGroundMonsters();
 
@@ -201,11 +185,9 @@ public class MapRenderer {
         renderDiamonds();
         renderTreatBoxes();
 
-        renderRockets();
         batch.end();
-        renderLaserBeams();
 
-        fps.log();
+        // fps.log();
     }
 
     private void renderBob() {
@@ -234,24 +216,10 @@ public class MapRenderer {
             loop = false;
         }
         if (map.giana.state == GianaState.DYING) {
-            anim = dying;
-            loop = false;
+            batch.draw(dying, map.giana.pos.x, map.giana.pos.y, 1, 1);
+            return;
         }
         batch.draw(anim.getKeyFrame(map.giana.stateTime, loop), map.giana.pos.x, map.giana.pos.y, 1, 1);
-    }
-
-    private void renderRockets() {
-        for (int i = 0; i < map.rockets.size; i++) {
-            Rocket rocket = map.rockets.get(i);
-            if (rocket.state == Rocket.FLYING) {
-                TextureRegion frame = this.rocket.getKeyFrame(rocket.stateTime, true);
-                batch.draw(frame, rocket.pos.x, rocket.pos.y, 0.5f, 0.5f, 1, 1, 1, 1, rocket.vel.angle());
-            } else {
-                TextureRegion frame = this.rocketExplosion.getKeyFrame(rocket.stateTime, false);
-                batch.draw(frame, rocket.pos.x, rocket.pos.y, 1, 1);
-            }
-            batch.draw(rocketPad, rocket.startPos.x, rocket.startPos.y, 1, 1);
-        }
     }
 
     private void renderDiamonds() {
@@ -270,13 +238,6 @@ public class MapRenderer {
             } else {
                 batch.draw(usedTreatBox, box.pos.x, box.pos.y, 1, 1);
             }
-        }
-    }
-
-    private void renderMovingSpikesOld() {
-        for (int i = 0; i < map.movingSpikesOld.size; i++) {
-            Fish spikes = map.movingSpikesOld.get(i);
-            batch.draw(movingSpikesOld, spikes.pos.x, spikes.pos.y, 0.5f, 0.5f, 1, 1, 1, 1, spikes.angle);
         }
     }
 
@@ -306,28 +267,6 @@ public class MapRenderer {
             }
             batch.draw(anim.getKeyFrame(monster.stateTime, true), monster.pos.x, monster.pos.y, 1, 1);
         }
-    }
-
-    private void renderLasers() {
-        for (int i = 0; i < map.lasers.size; i++) {
-            Laser laser = map.lasers.get(i);
-            batch.draw(this.laser, laser.pos.x, laser.pos.y, 0.5f, 0.5f, 1, 1, 1, 1, laser.angle);
-        }
-    }
-
-    private void renderLaserBeams() {
-        cam.update(false);
-        renderer.begin(cam.combined, GL20.GL_LINES);
-        for (int i = 0; i < map.lasers.size; i++) {
-            Laser laser = map.lasers.get(i);
-            float sx = laser.startPoint.x, sy = laser.startPoint.y;
-            float ex = laser.cappedEndPoint.x, ey = laser.cappedEndPoint.y;
-            renderer.color(0, 1, 0, 1);
-            renderer.vertex(sx, sy, 0);
-            renderer.color(0, 1, 0, 1);
-            renderer.vertex(ex, ey, 0);
-        }
-        renderer.end();
     }
 
     public void dispose() {
