@@ -228,7 +228,8 @@ public class MapRenderer {
             batch.draw(dying, map.giana.pos.x, map.giana.pos.y, 1, 1);
             return;
         }
-        batch.draw(anim.getKeyFrame(map.giana.stateTime, loop), map.giana.pos.x, map.giana.pos.y, 1, 1);
+        if (map.giana.active)
+            batch.draw(anim.getKeyFrame(map.giana.stateTime, loop), map.giana.pos.x, map.giana.pos.y, 1, 1);
     }
 
     private void renderDiamonds() {
@@ -274,7 +275,9 @@ public class MapRenderer {
             default:
                 throw new IllegalStateException("ground monster type is not supported " + monster.type);
             }
-            batch.draw(anim.getKeyFrame(monster.stateTime, true), monster.pos.x, monster.pos.y, 1, 1);
+            if (monster.alive) {
+                batch.draw(anim.getKeyFrame(monster.stateTime, true), monster.pos.x, monster.pos.y, 1, 1);
+            }
         }
     }
 

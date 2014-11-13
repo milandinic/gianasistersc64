@@ -37,7 +37,11 @@ public class GameScreen extends GianaSistersScreen {
         controlRenderer.render();
 
         if (map.giana.bounds.overlaps(map.endDoor.bounds)) {
-            game.setScreen(new LevelOverScreen(game, level + 1));
+            if (level == 0) {
+                game.setScreen(new IntroScreen(game));
+            } else {
+                game.setScreen(new LevelOverScreen(game, level + 1));
+            }
         }
 
         if (Gdx.input.isKeyPressed(Keys.ESCAPE)) {

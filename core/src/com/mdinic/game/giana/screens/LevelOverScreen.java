@@ -14,7 +14,7 @@ public class LevelOverScreen extends GianaSistersScreen {
     float time = 0;
     int nextLevel;
 
-    static int LEVEL_COUNT = 2;
+    static int LEVEL_COUNT = 3;
 
     public LevelOverScreen(Game game, int nextLevel) {
         super(game);

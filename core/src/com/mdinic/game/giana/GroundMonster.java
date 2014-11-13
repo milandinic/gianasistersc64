@@ -14,12 +14,15 @@ public class GroundMonster {
         OWL, JELLY, LOBSTER
     };
 
+    boolean alive = true;
+
     GoundMonsterType type = GoundMonsterType.OWL;
 
     int state = FORWARD;
     float stateTime = 0;
     Map map;
     Rectangle bounds = new Rectangle();
+
     Vector2 vel = new Vector2();
     Vector2 pos = new Vector2();
     float angle = 0;
@@ -36,6 +39,7 @@ public class GroundMonster {
         bounds.x = x;
         bounds.y = y;
         bounds.width = bounds.height = 1;
+
         vel.set(-1, 0);
     }
 
@@ -85,12 +89,18 @@ public class GroundMonster {
         bounds.x = pos.x;
         bounds.y = pos.y;
 
-        if (map.giana.bounds.overlaps(bounds)) {
+        if (map.giana.killerBounds.overlaps(bounds)) {
+            if (map.giana.state != GianaState.DYING) {
+                alive = false;
+            }
+        }
+
+        if (alive && map.giana.bounds.overlaps(bounds)) {
             if (map.giana.state != GianaState.DYING) {
                 map.giana.state = GianaState.DYING;
                 map.giana.stateTime = 0;
             }
         }
-
     }
+
 }

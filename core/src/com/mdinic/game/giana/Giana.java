@@ -30,11 +30,15 @@ public class Giana {
     Vector2 vel = new Vector2();
     public Rectangle bounds = new Rectangle();
 
+    public Rectangle killerBounds = new Rectangle();
+
     GianaState state;
     float stateTime = 0;
     int dir = LEFT;
     Map map;
     boolean grounded = false;
+    boolean active = true;
+    boolean processKeys = true;
 
     enum GianaState {
         SPAWN, IDLE, DYING, DEAD, JUMP, RUN
@@ -52,6 +56,14 @@ public class Giana {
         bounds.y = pos.y;
         state = GianaState.SPAWN;
         stateTime = 0;
+        killerBounds.width = bounds.width;
+        killerBounds.height = 0.3f;
+        updateKillerBounds();
+    }
+
+    void updateKillerBounds() {
+        killerBounds.x = bounds.x - bounds.width;
+        killerBounds.y = bounds.y - 0.3f;
     }
 
     public void update(float deltaTime) {
@@ -95,7 +107,7 @@ public class Giana {
     }
 
     private void processKeys() {
-        if (state == GianaState.SPAWN || state == GianaState.DYING)
+        if (!processKeys || state == GianaState.SPAWN || state == GianaState.DYING)
             return;
 
         float x0 = (Gdx.input.getX(0) / (float) Gdx.graphics.getWidth()) * 480;
@@ -129,6 +141,14 @@ public class Giana {
                 state = GianaState.IDLE;
             accel.x = 0;
         }
+    }
+
+    public void runRight() {
+        vel.x = MAX_VEL;
+        state = GianaState.RUN;
+        dir = RIGHT;
+        accel.x = ACCELERATION * dir;
+        active = false;
     }
 
     Rectangle[] r = { new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle() };
@@ -165,6 +185,8 @@ public class Giana {
 
         pos.x = bounds.x - 0.2f;
         pos.y = bounds.y;
+
+        updateKillerBounds();
     }
 
     private void fetchCollidableRects() {
@@ -181,10 +203,26 @@ public class Giana {
         int p4y = (int) (bounds.y + bounds.height);
 
         int[][] tiles = map.tiles;
-        int tile1 = tiles[p1x][map.tiles[0].length - 1 - p1y]; // to the right
-        int tile2 = tiles[p2x][map.tiles[0].length - 1 - p2y];// to the left
-        int tile3 = tiles[p3x][map.tiles[0].length - 1 - p3y]; // up
-        int tile4 = tiles[p4x][map.tiles[0].length - 1 - p4y];// down
+        int tile1 = 0;
+        int tile2 = 0;
+        int tile3 = 0;
+        int tile4 = 0;
+
+        int y = map.tiles[0].length - 1 - p1y;
+        if (y > 0)
+            tile1 = tiles[p1x][y]; // to the right
+
+        y = map.tiles[0].length - 1 - p2y;
+        if (y > 0)
+            tile2 = tiles[p2x][y];// to the left
+
+        y = map.tiles[0].length - 1 - p3y;
+        if (y > 0)
+            tile3 = tiles[p3x][y]; // up
+
+        y = map.tiles[0].length - 1 - p4y;
+        if (y > 0)
+            tile4 = tiles[p4x][y];// down
 
         if (state != GianaState.DYING
                 && (map.isDeadly(tile1) || map.isDeadly(tile2) || map.isDeadly(tile3) || map.isDeadly(tile4))) {

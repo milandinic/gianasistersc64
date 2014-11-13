@@ -117,7 +117,6 @@ public class Map {
         for (GroundMonster monster : groundMonsters) {
             monster.update(deltaTime);
         }
-
     }
 
     public boolean isDeadly(int tileId) {
