@@ -45,7 +45,7 @@ public class GameScreen extends GianaSistersScreen {
         }
 
         if (Gdx.input.isKeyPressed(Keys.ESCAPE)) {
-            game.setScreen(new MainMenu(game));
+            game.setScreen(new IntroScreen(game));
         }
     }
 

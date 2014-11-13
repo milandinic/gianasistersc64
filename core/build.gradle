@@ -4,6 +4,7 @@ sourceCompatibility = 1.6
 
 dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxVersion"
+    compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
 }
 
 sourceSets.main.java.srcDirs = [ "src/" ]

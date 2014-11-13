@@ -4,14 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.SpriteCache;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.math.Vector3;
 import com.mdinic.game.giana.Giana.GianaState;
@@ -19,6 +23,7 @@ import com.mdinic.game.giana.Giana.GianaState;
 public class MapRenderer {
     Map map;
     OrthographicCamera cam;
+    OrthographicCamera scoreCam;
     SpriteCache cache;
     SpriteBatch batch = new SpriteBatch(5460);
     ImmediateModeRenderer20 renderer = new ImmediateModeRenderer20(false, true, 0);
@@ -53,11 +58,15 @@ public class MapRenderer {
     private Animation owlAnim;
     private Animation jellyAnim;
     private Animation lobsterAnim;
+    private BitmapFont font12;
 
     public MapRenderer(Map map) {
         this.map = map;
-        this.cam = new OrthographicCamera(16, 16);
+        this.cam = new OrthographicCamera(20, 16);
+        scoreCam = new OrthographicCamera();
+        this.scoreCam.setToOrtho(false);
         this.cam.position.set(map.giana.pos.x, map.giana.pos.y, 0);
+
         this.cache = new SpriteCache(this.map.tiles.length * this.map.tiles[0].length, false);
         this.blocks = new int[(int) Math.ceil(this.map.tiles.length / 24.0f)][(int) Math
                 .ceil(this.map.tiles[0].length / 16.0f)];
@@ -149,6 +158,13 @@ public class MapRenderer {
         bobIdleLeft = new Animation(0.5f, gianaSmallLeft[0]);
 
         spawn = new Animation(0.1f, gianaSmallRight[0]);
+
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/Giana.ttf"));
+        FreeTypeFontParameter parameter = new FreeTypeFontParameter();
+        parameter.size = 12;
+        font12 = generator.generateFont(parameter); // font size 12
+        font12.setColor(new Color(0xe0ef99));
+        generator.dispose(); // don't forget to dispose to avoid memory leaks!
     }
 
     float stateTime = 0;
@@ -157,9 +173,8 @@ public class MapRenderer {
     public void render(float deltaTime) {
 
         float camX = map.giana.pos.x;
-        if (camX < 7) {
-            camX = 7;
-
+        if (camX < 10) {
+            camX = 10;
         }
 
         if (camX > 137) {
@@ -169,14 +184,14 @@ public class MapRenderer {
         cam.position.lerp(lerpTarget.set(camX, 153, 0), 4f * deltaTime);
         cam.update();
 
+        scoreCam.update();
+
         cache.setProjectionMatrix(cam.combined);
         Gdx.gl.glDisable(GL20.GL_BLEND);
         cache.begin();
-        // int b = 0;
         for (int blockY = 0; blockY < 4; blockY++) {
             for (int blockX = 0; blockX < 6; blockX++) {
                 cache.draw(blocks[blockX][blockY]);
-                // b++;
             }
         }
         cache.end();
@@ -193,9 +208,22 @@ public class MapRenderer {
         renderBob();
         renderDiamonds();
         renderTreatBoxes();
-
         batch.end();
 
+        this.scoreCam.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
+        scoreCam.update();
+        batch.setProjectionMatrix(scoreCam.combined);
+
+        batch.begin();
+        //
+
+        String formatted = String.format("%06d         %02d       %02d         %02d      %02d", 123,
+                map.giana.diamondsCollected, 3, 1, 99);
+        font12.draw(batch, "GIANA      BONUS     LIVES     STAGE    TIME", 20, Gdx.graphics.getHeight() - 10);
+
+        font12.draw(batch, formatted, 20, Gdx.graphics.getHeight() - 22);
+
+        batch.end();
         // fps.log();
     }
 
