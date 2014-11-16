@@ -8,6 +8,10 @@ import com.mdinic.game.giana.Giana.GianaState;
 import com.mdinic.game.giana.GroundMonster.GoundMonsterType;
 
 public class Map {
+
+    static int MAP_HEIGHT = 16;
+    static int MAP_WIDTH = 16;
+
     static int EMPTY = 0;
     static int TILE = 0xffffff;
     static int START = 0xff0000;
@@ -15,15 +19,24 @@ public class Map {
 
     static int DIAMOND = 5570300;
     static int MOVING_SPIKES = 0x00ff00;
-    static int ROCKET = 0x0000ff;
+
     static int MOVING_SPIKES_OLD = 0xffff00;
-    static int LASER = 0x00ffff;
+
     static int TREAT_BOX = 0xff8a00;
     static int OWL = 0x7a2991;
     static int JELLY = 0x5a2b8f;
     static int LOBSTER = 0x5ad68f;
 
+    static int BIG_CLOUD = 0xfaffff;
+    static int SMALL_CLOUD = 0xfaf0ff;
+
     static int LEVEL_PIXELBUFFER = 20;
+
+    // pixel on 0,0 position
+    // background color
+    public float r; // 0.0-1.0
+    public float g; // 0.0-1.0
+    public float b; // 0.0-1.0
 
     int[][] tiles;
     public Giana giana;
@@ -32,6 +45,7 @@ public class Map {
     Array<TreatBox> treatBoxes = new Array<TreatBox>();
     Array<MovingSpikes> movingSpikes = new Array<MovingSpikes>();
     Array<GroundMonster> groundMonsters = new Array<GroundMonster>();
+    Array<SimpleImage> simpleImages = new Array<SimpleImage>();
 
     StartPosition startPosition;
     // row, column
@@ -44,11 +58,22 @@ public class Map {
 
     public void loadBinary(int level) {
         Pixmap pixmap = new Pixmap(Gdx.files.internal("data/levels.png"));
+
+        // background color
+        int pix = (pixmap.getPixel(0, level * LEVEL_PIXELBUFFER) >>> 8) & 0xffffff;
+        r = (pix & 0xff0000) >>> 16;
+        g = (pix & 0x00ff00) >>> 8;
+        b = (pix & 0x0000ff);
+
+        r /= 255f;
+        g /= 255f;
+        b /= 255f;
+
         tiles = new int[pixmap.getWidth()][pixmap.getHeight()];
-        for (int y = 0; y < 16; y++) {
+        for (int y = 0; y < MAP_HEIGHT; y++) {
             treatBoxesMap.put(new Integer(y), new ArrayMap<Integer, TreatBox>());
             for (int x = 0; x < 150; x++) {
-                int pix = (pixmap.getPixel(x, y + (level * LEVEL_PIXELBUFFER)) >>> 8) & 0xffffff;
+                pix = (pixmap.getPixel(x, y + (level * LEVEL_PIXELBUFFER)) >>> 8) & 0xffffff;
                 if (match(pix, START)) {
                     startPosition = new StartPosition(x, pixmap.getHeight() - 1 - y);
 
@@ -57,7 +82,6 @@ public class Map {
 
                 } else if (match(pix, DIAMOND)) {
                     diamonds.add(new Diamond(this, x, pixmap.getHeight() - 1 - y));
-
                 } else if (match(pix, OWL)) {
                     groundMonsters.add(new GroundMonster(this, x, pixmap.getHeight() - 1 - y, GoundMonsterType.OWL));
                 } else if (match(pix, JELLY)) {
@@ -66,6 +90,11 @@ public class Map {
                     // groundMonsters
                     // .add(new GroundMonster(this, x, pixmap.getHeight() - 1 -
                     // y, GoundMonsterType.LOBSTER));
+
+                } else if (match(pix, BIG_CLOUD)) {
+                    simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, SimpleImageType.BIG_CLOUD));
+                } else if (match(pix, SMALL_CLOUD)) {
+                    simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, SimpleImageType.SMALL_CLOUD));
                 } else if (match(pix, MOVING_SPIKES)) {
                     movingSpikes.add(new MovingSpikes(this, x, pixmap.getHeight() - 1 - y));
                 } else if (match(pix, TREAT_BOX)) {
@@ -73,16 +102,9 @@ public class Map {
                     treatBoxes.add(treatBox);
                     treatBoxesMap.get(y).put(x, treatBox);
                     tiles[x][y] = pix;
-                } else if (match(pix, ROCKET)) {
-                    // Rocket rocket = new Rocket(this, x, pixmap.getHeight() -
-                    // 1 - y);
-                    // rockets.add(rocket);
                 } else if (match(pix, MOVING_SPIKES_OLD)) {
                     // movingSpikesOld.add(new Fish(this, x, pixmap.getHeight()
                     // - 1 - y));
-                } else if (match(pix, LASER)) {
-                    // lasers.add(new Laser(this, x, pixmap.getHeight() - 1 -
-                    // y));
                 } else if (match(pix, END)) {
                     endDoor = new EndDoor(x, pixmap.getHeight() - 1 - y);
                 } else {

@@ -26,6 +26,7 @@ public class Giana {
     Rectangle nowayCollidableRect = new Rectangle(-1, -1, 0, 0);
 
     Vector2 pos = new Vector2();
+    float maxX;
     Vector2 accel = new Vector2();
     Vector2 vel = new Vector2();
     public Rectangle bounds = new Rectangle();
@@ -185,7 +186,9 @@ public class Giana {
 
         pos.x = bounds.x - 0.2f;
         pos.y = bounds.y;
-
+        if (maxX < pos.x) {
+            maxX = pos.x;
+        }
         updateKillerBounds();
     }
 
@@ -234,18 +237,31 @@ public class Giana {
             r[0].set(p1x, p1y, 1, 1);
         else
             r[0].set(nowayCollidableRect);
+
         if (tile2 == Map.TILE || tile2 == Map.TREAT_BOX)
             r[1].set(p2x, p2y, 1, 1);
         else
             r[1].set(nowayCollidableRect);
+
         if (tile3 == Map.TILE || tile3 == Map.TREAT_BOX)
             r[2].set(p3x, p3y, 1, 1);
         else
             r[2].set(nowayCollidableRect);
+
         if (tile4 == Map.TILE || tile4 == Map.TREAT_BOX)
             r[3].set(p4x, p4y, 1, 1);
         else
             r[3].set(nowayCollidableRect);
+
+        // prevent move to less then zero
+        if (pos.x < 0) {
+            r[1].set(p2x, p2y, 0, 1);
+        }
+
+        // prevent move in part the game that is passed
+        if (pos.x < maxX - ((Map.MAP_WIDTH / 2) + 2)) {
+            r[1].set(p2x, p2y, 0, 1);
+        }
 
         r[4].set(nowayCollidableRect);
 

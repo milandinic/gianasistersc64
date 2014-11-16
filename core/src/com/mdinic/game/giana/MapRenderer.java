@@ -59,6 +59,8 @@ public class MapRenderer {
     private Animation jellyAnim;
     private Animation lobsterAnim;
     private BitmapFont font12;
+    private TextureRegion bigCloudRegion;
+    private TextureRegion smallCloudRegion;
 
     public MapRenderer(Map map) {
         this.map = map;
@@ -106,6 +108,8 @@ public class MapRenderer {
         Texture sprites = new Texture(Gdx.files.internal("data/sprites.png"));
         this.tile = new TextureRegion(sprites, 150, 103, 24, 16);
         this.endDoor = new TextureRegion(sprites, 16, 196, 32, 32);
+        bigCloudRegion = new TextureRegion(sprites, 13, 10, 42, 17);
+        smallCloudRegion = new TextureRegion(sprites, 18, 46, 34, 17);
 
         Texture gianaTexture = new Texture(Gdx.files.internal("data/giana.png"));
         Texture diamondTexture = new Texture(Gdx.files.internal("data/diamond.png"));
@@ -172,7 +176,7 @@ public class MapRenderer {
 
     public void render(float deltaTime) {
 
-        float camX = map.giana.pos.x;
+        float camX = map.giana.maxX;
         if (camX < 10) {
             camX = 10;
         }
@@ -201,6 +205,8 @@ public class MapRenderer {
 
         if (map.endDoor != null)
             batch.draw(endDoor, map.endDoor.bounds.x, map.endDoor.bounds.y, 2, 2);
+
+        renderSimpleImages();
 
         renderMovingSpikes();
         renderGroundMonsters();
@@ -276,6 +282,26 @@ public class MapRenderer {
             } else {
                 batch.draw(usedTreatBox, box.pos.x, box.pos.y, 1, 1);
             }
+        }
+    }
+
+    private void renderSimpleImages() {
+        for (SimpleImage simpleImage : map.simpleImages) {
+            TextureRegion region;
+            switch (simpleImage.type) {
+            case BIG_CLOUD:
+                batch.draw(bigCloudRegion, simpleImage.bounds.x, simpleImage.bounds.y, simpleImage.bounds.width,
+                        simpleImage.bounds.height);
+                break;
+            case SMALL_CLOUD:
+                batch.draw(smallCloudRegion, simpleImage.bounds.x, simpleImage.bounds.y, simpleImage.bounds.width,
+                        simpleImage.bounds.height);
+                break;
+            default:
+
+                break;
+            }
+
         }
     }
 
