@@ -42,24 +42,18 @@ public class MapRenderer {
     Animation treatBoxAnim;
 
     TextureRegion usedTreatBox;
-
-    // TextureRegion dispenser;
     Animation spawn;
     TextureRegion dying;
-    // TextureRegion spikes;
-    // Animation rocket;
-    // Animation rocketExplosion;
-    // TextureRegion rocketPad;
     TextureRegion endDoor;
-    // TextureRegion movingSpikesOld;
-    // TextureRegion laser;
     FPSLogger fps = new FPSLogger();
     private Animation movingSpikesAnim;
 
     private Animation owlAnim;
     private Animation jellyAnim;
     private Animation lobsterAnim;
-    private BitmapFont font12;
+    private BitmapFont font;
+
+    int fontSize;
 
     java.util.Map<SimpleImageType, TextureRegion> simpleImageTextureRegions = new HashMap<SimpleImageType, TextureRegion>();
 
@@ -94,9 +88,6 @@ public class MapRenderer {
                         int posY = height - y - 1;
                         if (map.match(map.tiles[x][y], Map.TILE))
                             cache.add(tile, posX, posY, 1, 1);
-
-                        // if (map.match(map.tiles[x][y], Map.MOVING_SPIKES))
-                        // cache.add(spikes, posX, posY, 1, 1);
                     }
                 }
                 blocks[blockX][blockY] = cache.endCache();
@@ -171,9 +162,13 @@ public class MapRenderer {
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/Giana.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-        parameter.size = 12;
-        font12 = generator.generateFont(parameter); // font size 12
-        font12.setColor(new Color(0xe0ef99));
+        System.out.println(Gdx.graphics.getWidth());
+
+        fontSize = Gdx.graphics.getWidth() / 640 * 12;
+
+        parameter.size = fontSize;
+        font = generator.generateFont(parameter); // font size 12
+        font.setColor(new Color(0xe0ef99));
         generator.dispose(); // don't forget to dispose to avoid memory leaks!
     }
 
@@ -237,9 +232,9 @@ public class MapRenderer {
 
         String formatted = String.format("%06d         %02d       %02d         %02d      %02d", 123,
                 map.diamondsCollected, map.lives, map.level, map.time);
-        font12.draw(batch, "GIANA      BONUS     LIVES     STAGE    TIME", 20, Gdx.graphics.getHeight() - 10);
+        font.draw(batch, "GIANA      BONUS     LIVES     STAGE    TIME", 20, Gdx.graphics.getHeight() - fontSize);
 
-        font12.draw(batch, formatted, 20, Gdx.graphics.getHeight() - 22);
+        font.draw(batch, formatted, 20, Gdx.graphics.getHeight() - fontSize * 2.1f);
 
         batch.end();
     }
