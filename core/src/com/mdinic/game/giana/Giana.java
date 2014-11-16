@@ -260,6 +260,20 @@ public class Giana {
         else
             r[3].set(nowayCollidableRect);
 
+        // /
+        if (tile1 == Map.COLUMN)
+            r[0].set(p1x, p1y, 1, 1);
+
+        if (tile2 == Map.COLUMN)
+            r[1].set(p2x, p2y, 1, 1);
+
+        if (tile3 == Map.COLUMN)
+            r[2].set(p3x, p3y, 1, 1);
+
+        if (tile4 == Map.COLUMN)
+            r[3].set(p4x, p4y, 1, 1);
+
+        //
         // prevent move to less then zero
         if (pos.x < 0) {
             r[1].set(p2x, p2y, 0, 1);

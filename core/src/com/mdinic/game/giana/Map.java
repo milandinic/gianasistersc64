@@ -116,6 +116,11 @@ public class Map {
                     simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, SimpleImageType.WIDE_BUSH));
                 } else if (match(pix, COLUMN)) {
                     simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, SimpleImageType.COLUMN));
+                    for (int j = 0; j < SimpleImageType.COLUMN.height; j++) {
+                        for (int i = 0; i < SimpleImageType.COLUMN.width; i++) {
+                            tiles[x + i][y + j] = pix;
+                        }
+                    }
 
                 } else if (match(pix, MOVING_SPIKES)) {
                     movingSpikes.add(new MovingSpikes(this, x, pixmap.getHeight() - 1 - y));
@@ -130,7 +135,9 @@ public class Map {
                 } else if (match(pix, END)) {
                     endDoor = new EndDoor(x, pixmap.getHeight() - 1 - y);
                 } else {
-                    tiles[x][y] = pix;
+                    if (tiles[x][y] == 0) {
+                        tiles[x][y] = pix;
+                    }
                 }
             }
         }
