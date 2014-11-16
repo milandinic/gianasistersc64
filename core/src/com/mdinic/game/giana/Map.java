@@ -29,6 +29,9 @@ public class Map {
 
     static int BIG_CLOUD = 0xfaffff;
     static int SMALL_CLOUD = 0xfaf0ff;
+    static int MUSHROOM = 0xe56262;
+    static int ROUND_BUSH = 0x7be562;
+    static int WIDE_BUSH = 0x73b864;
 
     static int LEVEL_PIXELBUFFER = 20;
 
@@ -95,6 +98,12 @@ public class Map {
                     simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, SimpleImageType.BIG_CLOUD));
                 } else if (match(pix, SMALL_CLOUD)) {
                     simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, SimpleImageType.SMALL_CLOUD));
+                } else if (match(pix, MUSHROOM)) {
+                    simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, SimpleImageType.MUSHROOM));
+                } else if (match(pix, ROUND_BUSH)) {
+                    simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, SimpleImageType.ROUND_BUSH));
+                } else if (match(pix, WIDE_BUSH)) {
+                    simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, SimpleImageType.WIDE_BUSH));
                 } else if (match(pix, MOVING_SPIKES)) {
                     movingSpikes.add(new MovingSpikes(this, x, pixmap.getHeight() - 1 - y));
                 } else if (match(pix, TREAT_BOX)) {

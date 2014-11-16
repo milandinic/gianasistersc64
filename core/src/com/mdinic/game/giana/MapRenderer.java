@@ -1,6 +1,7 @@
 package com.mdinic.game.giana;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
@@ -59,8 +60,8 @@ public class MapRenderer {
     private Animation jellyAnim;
     private Animation lobsterAnim;
     private BitmapFont font12;
-    private TextureRegion bigCloudRegion;
-    private TextureRegion smallCloudRegion;
+
+    java.util.Map<SimpleImageType, TextureRegion> simpleImageTextureRegions = new HashMap<SimpleImageType, TextureRegion>();
 
     public MapRenderer(Map map) {
         this.map = map;
@@ -108,8 +109,12 @@ public class MapRenderer {
         Texture sprites = new Texture(Gdx.files.internal("data/sprites.png"));
         this.tile = new TextureRegion(sprites, 150, 103, 24, 16);
         this.endDoor = new TextureRegion(sprites, 16, 196, 32, 32);
-        bigCloudRegion = new TextureRegion(sprites, 13, 10, 42, 17);
-        smallCloudRegion = new TextureRegion(sprites, 18, 46, 34, 17);
+
+        simpleImageTextureRegions.put(SimpleImageType.BIG_CLOUD, new TextureRegion(sprites, 13, 10, 42, 17));
+        simpleImageTextureRegions.put(SimpleImageType.SMALL_CLOUD, new TextureRegion(sprites, 18, 46, 34, 17));
+        simpleImageTextureRegions.put(SimpleImageType.MUSHROOM, new TextureRegion(sprites, 69, 44, 32, 24));
+        simpleImageTextureRegions.put(SimpleImageType.ROUND_BUSH, new TextureRegion(sprites, 66, 7, 32, 22));
+        simpleImageTextureRegions.put(SimpleImageType.WIDE_BUSH, new TextureRegion(sprites, 20, 83, 80, 20));
 
         Texture gianaTexture = new Texture(Gdx.files.internal("data/giana.png"));
         Texture diamondTexture = new Texture(Gdx.files.internal("data/diamond.png"));
@@ -287,21 +292,11 @@ public class MapRenderer {
 
     private void renderSimpleImages() {
         for (SimpleImage simpleImage : map.simpleImages) {
-            TextureRegion region;
-            switch (simpleImage.type) {
-            case BIG_CLOUD:
-                batch.draw(bigCloudRegion, simpleImage.bounds.x, simpleImage.bounds.y, simpleImage.bounds.width,
+            TextureRegion region = simpleImageTextureRegions.get(simpleImage.type);
+            if (region != null) {
+                batch.draw(region, simpleImage.bounds.x, simpleImage.bounds.y, simpleImage.bounds.width,
                         simpleImage.bounds.height);
-                break;
-            case SMALL_CLOUD:
-                batch.draw(smallCloudRegion, simpleImage.bounds.x, simpleImage.bounds.y, simpleImage.bounds.width,
-                        simpleImage.bounds.height);
-                break;
-            default:
-
-                break;
             }
-
         }
     }
 
