@@ -21,8 +21,6 @@ public class Giana {
     static final float MAX_VEL = 6f;
     static final float DAMP = 0.90f;
 
-    int diamondsCollected;
-
     Rectangle nowayCollidableRect = new Rectangle(-1, -1, 0, 0);
 
     Vector2 pos = new Vector2();
@@ -34,7 +32,7 @@ public class Giana {
     public Rectangle killerBounds = new Rectangle();
 
     GianaState state;
-    float stateTime = 0;
+    public float stateTime = 0;
     int dir = LEFT;
     Map map;
     boolean grounded = false;
@@ -69,6 +67,13 @@ public class Giana {
 
     public void update(float deltaTime) {
 
+        if (map.time == 0) {
+            if (map.giana.state != GianaState.DYING) {
+                map.giana.state = GianaState.DYING;
+                map.giana.stateTime = 0;
+            }
+        }
+
         if (state == GianaState.DYING) {
             if (stateTime < 0.2f) {
                 pos.y += MIN_MOVE;
@@ -78,6 +83,8 @@ public class Giana {
                 bounds.y -= MIN_MOVE;
             } else {
                 state = GianaState.DEAD;
+                map.lives--;
+
             }
         } else {
 

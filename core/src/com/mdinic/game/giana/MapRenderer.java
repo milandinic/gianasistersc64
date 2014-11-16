@@ -115,6 +115,7 @@ public class MapRenderer {
         simpleImageTextureRegions.put(SimpleImageType.MUSHROOM, new TextureRegion(sprites, 69, 44, 32, 24));
         simpleImageTextureRegions.put(SimpleImageType.ROUND_BUSH, new TextureRegion(sprites, 66, 7, 32, 22));
         simpleImageTextureRegions.put(SimpleImageType.WIDE_BUSH, new TextureRegion(sprites, 20, 83, 80, 20));
+        simpleImageTextureRegions.put(SimpleImageType.COLUMN, new TextureRegion(sprites, 161, 259, 48, 25));
 
         Texture gianaTexture = new Texture(Gdx.files.internal("data/giana.png"));
         Texture diamondTexture = new Texture(Gdx.files.internal("data/diamond.png"));
@@ -186,8 +187,8 @@ public class MapRenderer {
             camX = 10;
         }
 
-        if (camX > 137) {
-            camX = 137;
+        if (camX > 135) {
+            camX = 135;
         }
 
         cam.position.lerp(lerpTarget.set(camX, 153, 0), 4f * deltaTime);
@@ -225,17 +226,22 @@ public class MapRenderer {
         scoreCam.update();
         batch.setProjectionMatrix(scoreCam.combined);
 
+        renderUpperText();
+
+        // fps.log();
+    }
+
+    private void renderUpperText() {
         batch.begin();
         //
 
         String formatted = String.format("%06d         %02d       %02d         %02d      %02d", 123,
-                map.giana.diamondsCollected, 3, 1, 99);
+                map.diamondsCollected, map.lives, map.level, map.time);
         font12.draw(batch, "GIANA      BONUS     LIVES     STAGE    TIME", 20, Gdx.graphics.getHeight() - 10);
 
         font12.draw(batch, formatted, 20, Gdx.graphics.getHeight() - 22);
 
         batch.end();
-        // fps.log();
     }
 
     private void renderBob() {

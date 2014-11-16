@@ -32,6 +32,7 @@ public class Map {
     static int MUSHROOM = 0xe56262;
     static int ROUND_BUSH = 0x7be562;
     static int WIDE_BUSH = 0x73b864;
+    static int COLUMN = 0xd0dc71;
 
     static int LEVEL_PIXELBUFFER = 20;
 
@@ -40,6 +41,13 @@ public class Map {
     public float r; // 0.0-1.0
     public float g; // 0.0-1.0
     public float b; // 0.0-1.0
+
+    public int lives = 3;
+    public int level;
+    public int time;
+    public int diamondsCollected;
+
+    public boolean demo;
 
     int[][] tiles;
     public Giana giana;
@@ -56,6 +64,8 @@ public class Map {
     public EndDoor endDoor;
 
     public Map(int level) {
+        time = 99;
+        this.level = level;
         loadBinary(level);
     }
 
@@ -104,6 +114,9 @@ public class Map {
                     simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, SimpleImageType.ROUND_BUSH));
                 } else if (match(pix, WIDE_BUSH)) {
                     simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, SimpleImageType.WIDE_BUSH));
+                } else if (match(pix, COLUMN)) {
+                    simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, SimpleImageType.COLUMN));
+
                 } else if (match(pix, MOVING_SPIKES)) {
                     movingSpikes.add(new MovingSpikes(this, x, pixmap.getHeight() - 1 - y));
                 } else if (match(pix, TREAT_BOX)) {
@@ -148,6 +161,7 @@ public class Map {
         for (GroundMonster monster : groundMonsters) {
             monster.update(deltaTime);
         }
+
     }
 
     public boolean isDeadly(int tileId) {

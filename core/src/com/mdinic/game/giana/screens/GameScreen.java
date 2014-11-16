@@ -31,9 +31,9 @@ public class GameScreen extends GianaSistersScreen {
     public void render(float delta) {
         delta = Math.min(0.06f, Gdx.graphics.getDeltaTime());
         map.update(delta);
+
+        map.time = 99 - (int) map.giana.stateTime;
         Gdx.gl.glClearColor(map.r, map.g, map.b, 1);
-        // Gdx.gl.glClearColor(0.1f, 0.1f, 0.1f, 1);
-        // Gdx.gl.glClearColor(0.5f, 0.43f, 0.9f, 1);//blue
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         renderer.render(delta);
         controlRenderer.render();
@@ -44,6 +44,10 @@ public class GameScreen extends GianaSistersScreen {
             } else {
                 game.setScreen(new LevelOverScreen(game, level + 1));
             }
+        }
+
+        if (map.lives == 0) {
+            game.setScreen(new GameOverScreen(game));
         }
 
         if (Gdx.input.isKeyPressed(Keys.ESCAPE)) {
