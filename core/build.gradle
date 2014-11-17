@@ -5,6 +5,8 @@ sourceCompatibility = 1.6
 dependencies {
     compile "com.badlogicgames.gdx:gdx:$gdxVersion"
     compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+    compile "com.parse.bolts:bolts-android:1.1.2"
+    compile fileTree(dir: "libs", include: "Parse-*.jar")
 }
 
 sourceSets.main.java.srcDirs = [ "src/" ]

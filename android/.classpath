@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="gen"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="src" path="/gianasistersc64-core"/>
+	<classpathentry kind="src" path="gen"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
-	<classpathentry exported="true" kind="con" path="org.springsource.ide.eclipse.gradle.classpathcontainer"/>
-	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>
+	<classpathentry exported="true" kind="src" path="/gianasistersc64-core"/>
+	<classpathentry exported="true" kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-android/1.0-SNAPSHOT/84bf42cfadeb55a3e369220329a1a035f1642030/gdx-backend-android-1.0-SNAPSHOT.jar" sourcepath="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-android/1.0-SNAPSHOT/17065dc4006b83a93b7380791dc084b8d797f29e/gdx-backend-android-1.0-SNAPSHOT-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-freetype/1.0-SNAPSHOT/ffddaf28baf256551e4b2e3ef1dca2b88d8518db/gdx-freetype-1.0-SNAPSHOT.jar" sourcepath="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-freetype/1.0-SNAPSHOT/1f1d06bff891064aac02073ae9ba0d4c02d1a1a5/gdx-freetype-1.0-SNAPSHOT-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.parse.bolts/bolts-android/1.1.2/91c20388c9a45f62b5ed8fe0502bb76ff6251fc7/bolts-android-1.1.2.jar" sourcepath="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.parse.bolts/bolts-android/1.1.2/aef813279b878e900b49165b1f6b0f91c7d50e5e/bolts-android-1.1.2-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.0-SNAPSHOT/e544ea790a29a33485f683895bfa6507d805e91d/gdx-1.0-SNAPSHOT.jar" sourcepath="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.0-SNAPSHOT/56dbe5a756ae1efd82f80dd92ed45d1adcc5d83f/gdx-1.0-SNAPSHOT-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="/home/mdinic/workspace/gianasistersc64/android/libs/Parse-1.7.1.jar"/>
 	<classpathentry kind="output" path="bin/classes"/>
 </classpath>

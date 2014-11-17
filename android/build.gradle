@@ -21,6 +21,8 @@ compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
 natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi"
 natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi-v7a"
 natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
+compile "com.parse.bolts:bolts-android:1.1.2"
+compile fileTree(dir: 'libs', include: 'Parse-*.jar')
 }
 // needed to add JNI shared libraries to APK when compiling on CLI
 tasks.withType(com.android.build.gradle.tasks.PackageApplication) { pkgTask ->
