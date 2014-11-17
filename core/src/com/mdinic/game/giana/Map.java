@@ -1,11 +1,16 @@
 package com.mdinic.game.giana;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.mdinic.game.giana.Giana.GianaState;
 import com.mdinic.game.giana.GroundMonster.GoundMonsterType;
+import com.mdinic.game.giana.TreatBox.TreatType;
 
 public class Map {
 
@@ -23,6 +28,8 @@ public class Map {
     static int MOVING_SPIKES_OLD = 0xffff00;
 
     static int TREAT_BOX = 0xff8a00;
+    static int TREAT_BOX_BALL = 0xffcb8d;
+
     static int OWL = 0x7a2991;
     static int JELLY = 0x5a2b8f;
     static int LOBSTER = 0x5ad68f;
@@ -35,6 +42,8 @@ public class Map {
     static int COLUMN = 0xd0dc71;
 
     static int LEVEL_PIXELBUFFER = 20;
+
+    List<Integer> colidableColors = new ArrayList<Integer>();
 
     // pixel on 0,0 position
     // background color
@@ -57,8 +66,9 @@ public class Map {
     Array<MovingSpikes> movingSpikes = new Array<MovingSpikes>();
     Array<GroundMonster> groundMonsters = new Array<GroundMonster>();
     Array<SimpleImage> simpleImages = new Array<SimpleImage>();
+    Array<Treat> treats = new Array<Treat>();
 
-    StartPosition startPosition;
+    Vector2 startPosition = new Vector2();
     // row, column
     ArrayMap<Integer, ArrayMap<Integer, TreatBox>> treatBoxesMap = new ArrayMap<Integer, ArrayMap<Integer, TreatBox>>();
     public EndDoor endDoor;
@@ -67,6 +77,15 @@ public class Map {
         time = 99;
         this.level = level;
         loadBinary(level);
+
+        colidableColors.add(TREAT_BOX);
+        colidableColors.add(TREAT_BOX_BALL);
+        colidableColors.add(TILE);
+        colidableColors.add(COLUMN);
+    }
+
+    public boolean isColidable(int value) {
+        return colidableColors.contains(value);
     }
 
     public void loadBinary(int level) {
@@ -88,9 +107,9 @@ public class Map {
             for (int x = 0; x < 150; x++) {
                 pix = (pixmap.getPixel(x, y + (level * LEVEL_PIXELBUFFER)) >>> 8) & 0xffffff;
                 if (match(pix, START)) {
-                    startPosition = new StartPosition(x, pixmap.getHeight() - 1 - y);
+                    startPosition.set(x, pixmap.getHeight() - 1 - y);
 
-                    giana = new Giana(this, startPosition.bounds.x, startPosition.bounds.y);
+                    giana = new Giana(this, startPosition.x, startPosition.y);
                     giana.state = GianaState.SPAWN;
 
                 } else if (match(pix, DIAMOND)) {
@@ -125,7 +144,12 @@ public class Map {
                 } else if (match(pix, MOVING_SPIKES)) {
                     movingSpikes.add(new MovingSpikes(this, x, pixmap.getHeight() - 1 - y));
                 } else if (match(pix, TREAT_BOX)) {
-                    TreatBox treatBox = new TreatBox(this, x, pixmap.getHeight() - 1 - y);
+                    TreatBox treatBox = new TreatBox(this, x, pixmap.getHeight() - 1 - y, TreatType.DIAMOND);
+                    treatBoxes.add(treatBox);
+                    treatBoxesMap.get(y).put(x, treatBox);
+                    tiles[x][y] = pix;
+                } else if (match(pix, TREAT_BOX_BALL)) {
+                    TreatBox treatBox = new TreatBox(this, x, pixmap.getHeight() - 1 - y, TreatType.BALL);
                     treatBoxes.add(treatBox);
                     treatBoxesMap.get(y).put(x, treatBox);
                     tiles[x][y] = pix;
@@ -154,7 +178,7 @@ public class Map {
     public void update(float deltaTime) {
         giana.update(deltaTime);
         if (giana.state == GianaState.DEAD)
-            giana = new Giana(this, startPosition.bounds.x, startPosition.bounds.y);
+            giana = new Giana(this, startPosition.x, startPosition.y);
 
         for (Diamond diamond : diamonds) {
             diamond.update(deltaTime);
@@ -167,6 +191,11 @@ public class Map {
         }
         for (GroundMonster monster : groundMonsters) {
             monster.update(deltaTime);
+        }
+
+        for (Treat treat : treats) {
+            if (treat.active)
+                treat.update(deltaTime);
         }
 
     }

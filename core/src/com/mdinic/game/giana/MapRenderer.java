@@ -1,6 +1,8 @@
 package com.mdinic.game.giana;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -56,6 +58,8 @@ public class MapRenderer {
     int fontSize;
 
     java.util.Map<SimpleImageType, TextureRegion> simpleImageTextureRegions = new HashMap<SimpleImageType, TextureRegion>();
+    private Animation treatBallRightAnim;
+    private Animation treatBallLeftAnim;
 
     public MapRenderer(Map map) {
         this.map = map;
@@ -139,6 +143,14 @@ public class MapRenderer {
         }
         treatBoxAnim = new Animation(0.2f, tbArray.toArray(new TextureRegion[10]));
 
+        TextureRegion treatBallRegion = new TextureRegion(gianaTexture, 0, 88, 175, 18);
+
+        TextureRegion[] treatBall = treatBallRegion.split(22, 18)[0];
+        treatBallRightAnim = new Animation(0.1f, treatBall);
+        List<TextureRegion> asList = Arrays.asList(treatBall.clone());
+        Collections.reverse(asList);
+        treatBallLeftAnim = new Animation(0.1f, asList.toArray(new TextureRegion[treatBall.length]));
+
         TextureRegion gianaRegion = new TextureRegion(gianaTexture);
         gianaRegion.setRegion(0, 0, 189, 28);
         TextureRegion[] gianaSmallRight = gianaRegion.split(27, 28)[0];
@@ -211,7 +223,7 @@ public class MapRenderer {
 
         renderMovingSpikes();
         renderGroundMonsters();
-
+        renderTreats();
         renderBob();
         renderDiamonds();
         renderTreatBoxes();
@@ -237,6 +249,17 @@ public class MapRenderer {
         font.draw(batch, formatted, 20, Gdx.graphics.getHeight() - fontSize * 2.1f);
 
         batch.end();
+    }
+
+    private void renderTreats() {
+        for (Treat treat : map.treats) {
+            if (treat.active) {
+                if (treat.dir == Treat.RIGHT)
+                    batch.draw(treatBallRightAnim.getKeyFrame(treat.stateTime, true), treat.pos.x, treat.pos.y, 1, 1);
+                else
+                    batch.draw(treatBallLeftAnim.getKeyFrame(treat.stateTime, true), treat.pos.x, treat.pos.y, 1, 1);
+            }
+        }
     }
 
     private void renderBob() {

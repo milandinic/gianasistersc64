@@ -159,7 +159,7 @@ public class Giana {
         active = false;
     }
 
-    Rectangle[] r = { new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle() };
+    Rectangle[] r = { new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle() };
 
     private void tryMove() {
         bounds.x += vel.x;
@@ -240,38 +240,25 @@ public class Giana {
             stateTime = 0;
         }
 
-        if (tile1 == Map.TILE || tile1 == Map.TREAT_BOX)
+        if (map.isColidable(tile1))
             r[0].set(p1x, p1y, 1, 1);
         else
             r[0].set(nowayCollidableRect);
 
-        if (tile2 == Map.TILE || tile2 == Map.TREAT_BOX)
+        if (map.isColidable(tile2))
             r[1].set(p2x, p2y, 1, 1);
         else
             r[1].set(nowayCollidableRect);
 
-        if (tile3 == Map.TILE || tile3 == Map.TREAT_BOX)
+        if (map.isColidable(tile3))
             r[2].set(p3x, p3y, 1, 1);
         else
             r[2].set(nowayCollidableRect);
 
-        if (tile4 == Map.TILE || tile4 == Map.TREAT_BOX)
+        if (map.isColidable(tile4))
             r[3].set(p4x, p4y, 1, 1);
         else
             r[3].set(nowayCollidableRect);
-
-        // /
-        if (tile1 == Map.COLUMN)
-            r[0].set(p1x, p1y, 1, 1);
-
-        if (tile2 == Map.COLUMN)
-            r[1].set(p2x, p2y, 1, 1);
-
-        if (tile3 == Map.COLUMN)
-            r[2].set(p3x, p3y, 1, 1);
-
-        if (tile4 == Map.COLUMN)
-            r[3].set(p4x, p4y, 1, 1);
 
         //
         // prevent move to less then zero
@@ -284,10 +271,20 @@ public class Giana {
             r[1].set(p2x, p2y, 0, 1);
         }
 
-        r[4].set(nowayCollidableRect);
+        if (tile3 == Map.TREAT_BOX) {
+            TreatBox box = map.treatBoxesMap.get(map.tiles[0].length - 1 - p3y).get(p3x);
+            if (box.active) {
+                box.active = false;
+            }
+        }
 
-        if (tile3 == Map.TREAT_BOX)
-            map.treatBoxesMap.get(map.tiles[0].length - 1 - p3y).get(p3x).active = false;
+        if (tile3 == Map.TREAT_BOX_BALL) {
+            TreatBox box = map.treatBoxesMap.get(map.tiles[0].length - 1 - p3y).get(p3x);
+            if (box.active) {
+                box.active = false;
+                map.treats.add(new Treat(map, box.pos.x, box.pos.y));
+            }
+        }
 
     }
 }

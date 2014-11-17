@@ -11,8 +11,15 @@ public class TreatBox {
     boolean active = true;
     Map map;
 
-    public TreatBox(Map map, float x, float y) {
+    enum TreatType {
+        DIAMOND, BALL
+    };
+
+    TreatType type = TreatType.DIAMOND;
+
+    public TreatBox(Map map, float x, float y, TreatType type) {
         super();
+        this.type = type;
         this.map = map;
         pos.x = x;
         pos.y = y;
