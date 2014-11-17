@@ -174,7 +174,6 @@ public class MapRenderer {
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/Giana.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-        System.out.println(Gdx.graphics.getWidth());
 
         fontSize = Gdx.graphics.getWidth() / 640 * 12;
 

@@ -69,10 +69,11 @@ public class GroundMonster {
         pos.add(vel.x * deltaTime, vel.y * deltaTime);
         boolean change = false;
         if (state == FORWARD) {
-            change = map.tiles[(int) pos.x + fx][map.tiles[0].length - 1 - (int) pos.y + fy] == Map.TILE;
+
+            change = map.isColidable(map.tiles[(int) pos.x + fx][map.tiles[0].length - 1 - (int) pos.y + fy]);
             change = change || map.tiles[(int) pos.x + fx][map.tiles[0].length - 1 - (int) pos.y + fy + 1] == 0;
         } else {
-            change = map.tiles[(int) pos.x + bx][map.tiles[0].length - 1 - (int) pos.y + by] == Map.TILE;
+            change = map.isColidable(map.tiles[(int) pos.x + bx][map.tiles[0].length - 1 - (int) pos.y + by]);
             change = change || map.tiles[(int) pos.x + bx + 1][map.tiles[0].length - 1 - (int) pos.y + by + 1] == 0;
         }
         if (change) {
