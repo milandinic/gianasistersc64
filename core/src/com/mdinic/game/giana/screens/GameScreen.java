@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
+import com.mdinic.game.giana.GianaSistersC64;
 import com.mdinic.game.giana.Map;
 import com.mdinic.game.giana.MapRenderer;
 import com.mdinic.game.giana.OnscreenControlRenderer;
@@ -59,5 +60,9 @@ public class GameScreen extends GianaSistersScreen {
         Gdx.app.debug("GianaSisters", "dispose game screen");
         renderer.dispose();
         controlRenderer.dispose();
+    }
+
+    public GianaSistersC64 getGame() {
+        return (GianaSistersC64) game;
     }
 }

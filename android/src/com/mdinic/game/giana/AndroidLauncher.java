@@ -11,12 +11,15 @@ public class AndroidLauncher extends AndroidApplication {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        Parse.initialize(this, "AKmNv40ZmUudVezreRT6NpGOBmH6D4gSOCtdnHOe", "kBM5rL0mW3zHD6ifZl9mTU5aqHPqd3Ye33k6P3CP");
+
+        GianaSistersC64 gianaSistersC64 = new GianaSistersC64();
+        gianaSistersC64.setHighScoreService(new HighScoreServiceDroid());
+
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
         config.useAccelerometer = false;
         config.useCompass = false;
         config.useWakelock = true;
-        initialize(new GianaSistersC64(), config);
-
-        Parse.initialize(this, "AKmNv40ZmUudVezreRT6NpGOBmH6D4gSOCtdnHOe", "kBM5rL0mW3zHD6ifZl9mTU5aqHPqd3Ye33k6P3CP");
+        initialize(gianaSistersC64, config);
     }
 }
