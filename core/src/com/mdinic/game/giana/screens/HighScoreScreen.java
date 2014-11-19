@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -12,10 +13,9 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
-import com.mdinic.game.giana.service.HighScoreListener;
 import com.mdinic.game.giana.service.Score;
 
-public class HighScoreScreen extends GianaSistersScreen implements HighScoreListener {
+public class HighScoreScreen extends GianaSistersScreen {
 
     SpriteBatch batch;
 
@@ -23,9 +23,9 @@ public class HighScoreScreen extends GianaSistersScreen implements HighScoreList
     private int fontSize;
     OrthographicCamera scoreCam;
 
-    List<Score> scores = new ArrayList<Score>();
+    private float time = 0;
 
-    Object object = new Object();
+    List<Score> scores = new ArrayList<Score>();
 
     public HighScoreScreen(Game game) {
         super(game);
@@ -49,11 +49,12 @@ public class HighScoreScreen extends GianaSistersScreen implements HighScoreList
         font = generator.generateFont(parameter);
         font.setColor(new Color(0xFFFFFF));
 
-        getGame().getHighScoreService().getHighScores(this);
+        getGame().getHighScoreService().fetchHighScores();
     }
 
     @Override
     public void render(float delta) {
+        time += delta;
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         this.scoreCam.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
@@ -62,14 +63,22 @@ public class HighScoreScreen extends GianaSistersScreen implements HighScoreList
         batch.begin();
         batch.setProjectionMatrix(scoreCam.combined);
 
-        synchronized (object) {
-            for (int i = 0; i < scores.size(); i++) {
-                Score score = scores.get(i);
-                String formatted = String.format("%07d %s", score.getScore(), score.getName());
-                font.draw(batch, formatted, Gdx.graphics.getWidth() / 3, Gdx.graphics.getHeight() - fontSize * 5
-                        - fontSize * 2 * i);
+        if (getGame().getHighScoreService().haveScoreUpdate()) {
+            scores = getGame().getHighScoreService().getScoreUpdate();
+        }
 
-            }
+        for (int i = 0; i < scores.size(); i++) {
+            Score score = scores.get(i);
+            String formatted = String.format("%07d %s", score.getScore(), score.getName());
+            font.draw(batch, formatted, Gdx.graphics.getWidth() / 3, Gdx.graphics.getHeight() - fontSize * 5 - fontSize
+                    * 2 * i);
+
+        }
+
+        if (time > 1 && (Gdx.input.isKeyPressed(Keys.ANY_KEY) || Gdx.input.justTouched()))
+            game.setScreen(new GameScreen(game, 1));
+        else if (time >= 5) {
+            game.setScreen(new IntroScreen(game));
         }
 
         batch.end();
@@ -81,10 +90,4 @@ public class HighScoreScreen extends GianaSistersScreen implements HighScoreList
         batch.dispose();
     }
 
-    @Override
-    public void receiveHighScore(List<Score> scores) {
-        synchronized (object) {
-            this.scores = scores;
-        }
-    }
 }
