@@ -241,7 +241,7 @@ public class MapRenderer {
         batch.begin();
         //
 
-        String formatted = String.format("%06d         %02d       %02d         %02d      %02d", 123,
+        String formatted = String.format("%06d         %02d       %02d         %02d      %02d", map.score,
                 map.diamondsCollected, map.lives, map.level, map.time);
         font.draw(batch, "GIANA      BONUS     LIVES     STAGE    TIME", 20, Gdx.graphics.getHeight() - fontSize);
 

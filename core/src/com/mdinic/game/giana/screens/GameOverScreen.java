@@ -7,14 +7,21 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.mdinic.game.giana.Map;
+import com.mdinic.game.giana.service.Score;
 
 public class GameOverScreen extends GianaSistersScreen {
     TextureRegion intro;
     SpriteBatch batch;
     float time = 0;
 
-    public GameOverScreen(Game game) {
+    Map oldMap;
+
+    public GameOverScreen(Game game, Map oldMap) {
         super(game);
+        this.oldMap = oldMap;
+
+        getGame().getHighScoreService().saveHighScore(new Score("me", oldMap.score));
     }
 
     @Override

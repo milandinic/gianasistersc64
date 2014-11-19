@@ -7,18 +7,19 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.mdinic.game.giana.Map;
 
 public class LevelOverScreen extends GianaSistersScreen {
     TextureRegion intro;
     SpriteBatch batch;
     float time = 0;
-    int nextLevel;
+    Map oldMap;
 
-    static int LEVEL_COUNT = 3;
+    static int LEVEL_COUNT = 4;
 
-    public LevelOverScreen(Game game, int nextLevel) {
+    public LevelOverScreen(Game game, Map oldMap) {
         super(game);
-        this.nextLevel = nextLevel;
+        this.oldMap = oldMap;
     }
 
     @Override
@@ -38,10 +39,11 @@ public class LevelOverScreen extends GianaSistersScreen {
         time += delta;
         if (time > 1) {
             if (Gdx.input.isKeyPressed(Keys.ANY_KEY) || Gdx.input.justTouched()) {
-                if (nextLevel == LEVEL_COUNT) {
-                    game.setScreen(new GameOverScreen(game));
+                if (oldMap.level + 1 == LEVEL_COUNT) {
+                    game.setScreen(new GameOverScreen(game, oldMap));
                 } else {
-                    game.setScreen(new GameScreen(game, nextLevel));
+                    game.setScreen(new GameScreen(game, oldMap.level + 1, oldMap.lives, oldMap.diamondsCollected,
+                            oldMap.score));
                 }
             }
         }

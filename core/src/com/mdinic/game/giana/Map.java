@@ -52,9 +52,10 @@ public class Map {
     public float b; // 0.0-1.0
 
     public int lives = 3;
+    public int diamondsCollected;
     public int level;
     public int time;
-    public int diamondsCollected;
+    public int score;
 
     public boolean demo;
 

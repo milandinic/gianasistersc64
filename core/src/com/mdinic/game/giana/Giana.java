@@ -275,6 +275,7 @@ public class Giana {
             TreatBox box = map.treatBoxesMap.get(map.tiles[0].length - 1 - p3y).get(p3x);
             if (box.active) {
                 box.active = false;
+                map.score++;
             }
         }
 
