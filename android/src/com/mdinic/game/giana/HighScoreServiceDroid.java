@@ -16,6 +16,8 @@ public class HighScoreServiceDroid implements HighScoreService {
 
     final Object object = new Object();
 
+    private String username;
+
     @Override
     public void fetchHighScores() {
 
@@ -65,6 +67,16 @@ public class HighScoreServiceDroid implements HighScoreService {
             scores.clear();
         }
         return result;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public void setUsername(String username) {
+        this.username = username;
     }
 
 }

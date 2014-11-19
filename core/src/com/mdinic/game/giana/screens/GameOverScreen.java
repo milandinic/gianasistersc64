@@ -21,7 +21,8 @@ public class GameOverScreen extends GianaSistersScreen {
         super(game);
         this.oldMap = oldMap;
 
-        getGame().getHighScoreService().saveHighScore(new Score("me", oldMap.score));
+        getGame().getHighScoreService().saveHighScore(
+                new Score(getGame().getHighScoreService().getUsername(), oldMap.score));
     }
 
     @Override

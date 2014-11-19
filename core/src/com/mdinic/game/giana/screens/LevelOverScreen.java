@@ -42,8 +42,9 @@ public class LevelOverScreen extends GianaSistersScreen {
                 if (oldMap.level + 1 == LEVEL_COUNT) {
                     game.setScreen(new GameOverScreen(game, oldMap));
                 } else {
+                    int add = oldMap.time * 10;
                     game.setScreen(new GameScreen(game, oldMap.level + 1, oldMap.lives, oldMap.diamondsCollected,
-                            oldMap.score));
+                            oldMap.score + add));
                 }
             }
         }

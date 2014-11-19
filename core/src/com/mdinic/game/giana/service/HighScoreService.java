@@ -11,4 +11,8 @@ public interface HighScoreService {
     void fetchHighScores();
 
     void saveHighScore(Score score);
+
+    String getUsername();
+
+    void setUsername(String username);
 }

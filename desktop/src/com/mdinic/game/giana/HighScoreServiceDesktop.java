@@ -63,4 +63,13 @@ public class HighScoreServiceDesktop implements HighScoreService {
         return result;
     }
 
+    @Override
+    public String getUsername() {
+        return "Mile";
+    }
+
+    @Override
+    public void setUsername(String username) {
+        // this.username = username;
+    }
 }
