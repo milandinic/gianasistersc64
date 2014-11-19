@@ -2,13 +2,18 @@ package com.mdinic.game.giana.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
+import com.mdinic.game.giana.GianaSistersC64;
 
 public abstract class GianaSistersScreen implements Screen {
-    Game game;
+
+    protected final Game game;
 
     public GianaSistersScreen(Game game) {
         this.game = game;
+    }
 
+    public GianaSistersC64 getGame() {
+        return (GianaSistersC64) game;
     }
 
     @Override

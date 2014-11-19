@@ -1,7 +1,7 @@
 package com.mdinic.game.giana;
 
 import com.badlogic.gdx.Game;
-import com.mdinic.game.giana.screens.GameScreen;
+import com.mdinic.game.giana.screens.HighScoreScreen;
 import com.mdinic.game.giana.service.HighScoreService;
 
 public class GianaSistersC64 extends Game {
@@ -10,7 +10,8 @@ public class GianaSistersC64 extends Game {
 
     @Override
     public void create() {
-        setScreen(new GameScreen(this, 1));
+        // setScreen(new GameScreen(this, 1));
+        setScreen(new HighScoreScreen(this));
     }
 
     public HighScoreService getHighScoreService() {

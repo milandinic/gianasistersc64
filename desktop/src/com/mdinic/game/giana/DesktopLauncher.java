@@ -6,6 +6,8 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 public class DesktopLauncher {
     public static void main(String[] arg) {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-        new LwjglApplication(new GianaSistersC64(), config);
+        GianaSistersC64 gianaSistersC64 = new GianaSistersC64();
+        gianaSistersC64.setHighScoreService(new HighScoreServiceDesktop());
+        new LwjglApplication(gianaSistersC64, config);
     }
 }
