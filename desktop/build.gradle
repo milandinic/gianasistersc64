@@ -8,8 +8,6 @@ project.ext.assetsDir = new File("../android/assets");
 
 dependencies {
 compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
-compile "com.parse.bolts:bolts-android:1.1.2"
-compile fileTree(dir: "libs", include: "*.jar")
 }
 
 
