@@ -4,14 +4,12 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.mdinic.game.giana.Map;
 import com.mdinic.game.giana.service.Score;
 
 public class GameOverScreen extends GianaSistersScreen {
-    TextureRegion intro;
+
     SpriteBatch batch;
     float time = 0;
 
@@ -27,7 +25,7 @@ public class GameOverScreen extends GianaSistersScreen {
 
     @Override
     public void show() {
-        intro = new TextureRegion(new Texture(Gdx.files.internal("data/gameover.png")), 0, 0, 480, 320);
+
         batch = new SpriteBatch();
         batch.getProjectionMatrix().setToOrtho2D(0, 0, 480, 320);
     }
@@ -36,7 +34,7 @@ public class GameOverScreen extends GianaSistersScreen {
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         batch.begin();
-        batch.draw(intro, 0, 0);
+        // batch.draw(intro, 0, 0);
         batch.end();
 
         time += delta;
@@ -51,6 +49,6 @@ public class GameOverScreen extends GianaSistersScreen {
     public void hide() {
         Gdx.app.debug("GianaSisters", "dispose intro");
         batch.dispose();
-        intro.getTexture().dispose();
+        // intro.getTexture().dispose();
     }
 }

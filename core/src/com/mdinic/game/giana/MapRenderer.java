@@ -22,8 +22,10 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFont
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.math.Vector3;
 import com.mdinic.game.giana.Giana.GianaState;
+import com.mdinic.game.giana.screens.GameScreen;
 
 public class MapRenderer {
+
     Map map;
     OrthographicCamera cam;
     OrthographicCamera scoreCam;
@@ -175,11 +177,11 @@ public class MapRenderer {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/Giana.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 
-        fontSize = (Gdx.graphics.getWidth() / 640) * 12;
+        fontSize = (Gdx.graphics.getWidth() / GameScreen.SCREEN_WIDTH) * 12;
 
         parameter.size = fontSize;
         font = generator.generateFont(parameter); // font size 12
-        font.setColor(new Color(0xe0ef99));
+        font.setColor(new Color(0.87f, 0.95f, 0.47f, 1));
         generator.dispose(); // don't forget to dispose to avoid memory leaks!
     }
 

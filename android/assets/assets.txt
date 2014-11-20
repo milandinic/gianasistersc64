@@ -1,6 +1,5 @@
 i:data/bob.png
 i:data/controls.png
-i:data/gameover.png
 i:data/intro.png
 i:data/levels.png
 i:data/screen1.png

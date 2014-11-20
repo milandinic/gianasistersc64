@@ -27,7 +27,7 @@ public class IntroScreen extends GameScreen {
         map.giana.runRight();
 
         if (Gdx.input.isKeyPressed(Keys.ANY_KEY) || Gdx.input.justTouched()) {
-            game.setScreen(new GameScreen(game, 1));
+            game.setScreen(new LevelStartingScreen(game, map));
         }
     }
 

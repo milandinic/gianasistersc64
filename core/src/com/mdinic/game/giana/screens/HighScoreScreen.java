@@ -21,7 +21,7 @@ public class HighScoreScreen extends GianaSistersScreen {
 
     private BitmapFont whileFont;
     private int fontSize;
-    OrthographicCamera scoreCam;
+    OrthographicCamera cam;
 
     private float time = 0;
 
@@ -36,15 +36,15 @@ public class HighScoreScreen extends GianaSistersScreen {
     @Override
     public void show() {
         batch = new SpriteBatch();
-        batch.getProjectionMatrix().setToOrtho2D(0, 0, 480, 320);
+        batch.getProjectionMatrix().setToOrtho2D(0, 0, SCREEN_WIDTH, 320);
 
-        scoreCam = new OrthographicCamera();
-        this.scoreCam.setToOrtho(false);
+        cam = new OrthographicCamera();
+        this.cam.setToOrtho(false);
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/Giana.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 
-        fontSize = Gdx.graphics.getWidth() / 640 * 12; // font size 12
+        fontSize = Gdx.graphics.getWidth() / GameScreen.SCREEN_WIDTH * 12;
 
         parameter.size = fontSize;
         whileFont = generator.generateFont(parameter);
@@ -62,11 +62,11 @@ public class HighScoreScreen extends GianaSistersScreen {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        this.scoreCam.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
-        scoreCam.update();
+        this.cam.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
+        cam.update();
 
         batch.begin();
-        batch.setProjectionMatrix(scoreCam.combined);
+        batch.setProjectionMatrix(cam.combined);
 
         if (getGame().getHighScoreService().haveScoreUpdate()) {
             scores = getGame().getHighScoreService().getScoreUpdate();

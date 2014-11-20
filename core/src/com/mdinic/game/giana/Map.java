@@ -90,6 +90,7 @@ public class Map {
         if (diamondsCollected >= 100) {
             diamondsCollected -= 100;
             lives++;
+            score += 25;
         }
     }
 

@@ -8,6 +8,9 @@ public abstract class GianaSistersScreen implements Screen {
 
     protected final Game game;
 
+    public static final int SCREEN_WIDTH = 480;
+    public static final int LEVEL_COUNT = 4;
+
     public GianaSistersScreen(Game game) {
         this.game = game;
     }
