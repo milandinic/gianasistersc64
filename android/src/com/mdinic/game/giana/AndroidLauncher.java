@@ -17,6 +17,7 @@ public class AndroidLauncher extends AndroidApplication {
 
         GianaSistersC64 gianaSistersC64 = new GianaSistersC64();
         gianaSistersC64.setHighScoreService(new HighScoreServiceDroid());
+        gianaSistersC64.getHighScoreService().setUsername(getUsername());
 
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
         config.useAccelerometer = false;
@@ -29,27 +30,28 @@ public class AndroidLauncher extends AndroidApplication {
 
         final AccountManager manager = AccountManager.get(this);
 
-        Account account = getAccount(manager);
-        if (account == null) {
-            return "";
-        } else {
-            String email = account.name;
-            String[] parts = email.split("@");
-            if (parts.length > 0 && parts[0] != null)
-                return parts[0];
-            else
-                return "";
+        String account = getAccount(manager);
+        if (account != null) {
+            String[] split = account.split("@");
+            return split[0];
         }
+        return null;
     }
 
-    private static Account getAccount(AccountManager accountManager) {
+    private static String getAccount(AccountManager accountManager) {
         Account[] accounts = accountManager.getAccountsByType("com.google");
-        Account account;
-        if (accounts.length > 0) {
-            account = accounts[0];
-        } else {
-            account = null;
+        // first look for gmail
+        for (Account account : accounts) {
+            if (account.name.endsWith("gmail.com")) {
+                return account.name;
+            }
         }
-        return account;
+        // take any
+        if (accounts.length > 0) {
+            return accounts[0].name;
+        }
+        // no accounts found
+        return null;
+
     }
 }

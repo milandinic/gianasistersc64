@@ -55,6 +55,7 @@ public class HighScoreScreen extends GianaSistersScreen {
     @Override
     public void render(float delta) {
         time += delta;
+        Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         this.scoreCam.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
@@ -67,17 +68,20 @@ public class HighScoreScreen extends GianaSistersScreen {
             scores = getGame().getHighScoreService().getScoreUpdate();
         }
 
+        font.draw(batch, "HALL OF FAME", Gdx.graphics.getWidth() / 3, Gdx.graphics.getHeight() - fontSize * 5
+                - fontSize);
+
         for (int i = 0; i < scores.size(); i++) {
             Score score = scores.get(i);
             String formatted = String.format("%07d %s", score.getScore(), score.getName());
-            font.draw(batch, formatted, Gdx.graphics.getWidth() / 3, Gdx.graphics.getHeight() - fontSize * 5 - fontSize
+            font.draw(batch, formatted, Gdx.graphics.getWidth() / 3, Gdx.graphics.getHeight() - fontSize * 9 - fontSize
                     * 2 * i);
 
         }
 
         if (time > 1 && (Gdx.input.isKeyPressed(Keys.ANY_KEY) || Gdx.input.justTouched()))
             game.setScreen(new GameScreen(game, 1));
-        else if (time >= 5) {
+        else if (time >= 10) {
             game.setScreen(new IntroScreen(game));
         }
 

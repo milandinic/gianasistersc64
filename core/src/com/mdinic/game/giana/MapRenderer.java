@@ -175,7 +175,7 @@ public class MapRenderer {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/Giana.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 
-        fontSize = Gdx.graphics.getWidth() / 640 * 12;
+        fontSize = (Gdx.graphics.getWidth() / 640) * 12;
 
         parameter.size = fontSize;
         font = generator.generateFont(parameter); // font size 12
@@ -232,7 +232,8 @@ public class MapRenderer {
         scoreCam.update();
         batch.setProjectionMatrix(scoreCam.combined);
 
-        renderUpperText();
+        if (!map.demo)
+            renderUpperText();
 
         // fps.log();
     }
