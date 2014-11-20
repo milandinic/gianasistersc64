@@ -232,8 +232,9 @@ public class MapRenderer {
         scoreCam.update();
         batch.setProjectionMatrix(scoreCam.combined);
 
-        if (!map.demo)
+        if (!map.demo) {
             renderUpperText();
+        }
 
         // fps.log();
     }

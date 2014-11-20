@@ -10,6 +10,7 @@ public class IntroScreen extends GameScreen {
 
     public IntroScreen(Game game) {
         super(game, 0);
+        map.demo = true;
     }
 
     @Override

@@ -27,7 +27,7 @@ public class Diamond {
 
             if (map.giana.bounds.overlaps(bounds)) {
                 active = false;
-                map.diamondsCollected++;
+                map.collectDiamound();
             }
         }
     }

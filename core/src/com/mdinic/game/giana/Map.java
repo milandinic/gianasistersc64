@@ -57,7 +57,7 @@ public class Map {
     public int time;
     public int score;
 
-    public boolean demo;
+    public boolean demo = false;
 
     int[][] tiles;
     public Giana giana;
@@ -83,6 +83,14 @@ public class Map {
         colidableColors.add(TREAT_BOX_BALL);
         colidableColors.add(TILE);
         colidableColors.add(COLUMN);
+    }
+
+    public void collectDiamound() {
+        diamondsCollected++;
+        if (diamondsCollected >= 100) {
+            diamondsCollected -= 100;
+            lives++;
+        }
     }
 
     public boolean isColidable(int value) {

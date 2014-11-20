@@ -13,7 +13,7 @@ import com.parse.ParseQuery;
 public class HighScoreServiceDroid implements HighScoreService {
 
     private static final String SCORE = "score";
-
+    private static final String LEVEL = "level";
     private static final String USERNAME = "username";
 
     List<Score> scores = new ArrayList<Score>();
@@ -39,7 +39,8 @@ public class HighScoreServiceDroid implements HighScoreService {
                 if (e == null) {
                     List<Score> newScores = new ArrayList<Score>();
                     for (ParseObject parseObject : scoreList) {
-                        newScores.add(new Score(parseObject.getString(USERNAME), parseObject.getInt(SCORE)));
+                        newScores.add(new Score(parseObject.getString(USERNAME), parseObject.getInt(SCORE), parseObject
+                                .getInt(LEVEL)));
                     }
                     synchronized (object) {
                         scores = newScores;
@@ -51,10 +52,12 @@ public class HighScoreServiceDroid implements HighScoreService {
 
     @Override
     public void saveHighScore(Score score) {
-        ParseObject testObject = new ParseObject("GameScore");
-        testObject.put(USERNAME, score.getName());
-        testObject.put(SCORE, score.getScore());
-        testObject.saveInBackground();
+        ParseObject object = new ParseObject("GameScore");
+        object.put(USERNAME, score.getName());
+        object.put(SCORE, score.getScore());
+        object.put(LEVEL, score.getLevel());
+        object.put("date", score.getDate().getTime());
+        object.saveInBackground();
     }
 
     @Override

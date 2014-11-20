@@ -13,17 +13,17 @@ public class HighScoreServiceDesktop implements HighScoreService {
     List<Score> scores = new ArrayList<Score>();
 
     public HighScoreServiceDesktop() {
-        scores.add(new Score("user", 123));
-        scores.add(new Score("Giana", 1260));
-        scores.add(new Score("Maria", 1630));
-        scores.add(new Score("Milan", 1530));
-        scores.add(new Score("Sanela", 1130));
-        scores.add(new Score("Anna", 1220));
-        scores.add(new Score("Pera", 1210));
+        scores.add(new Score("user", 123, 1));
+        scores.add(new Score("Giana", 1260, 1));
+        scores.add(new Score("Maria", 1630, 1));
+        scores.add(new Score("Milan", 1530, 1));
+        scores.add(new Score("Sanela", 1130, 1));
+        scores.add(new Score("Anna", 1220, 1));
+        scores.add(new Score("Pera", 1210, 1));
 
-        scores.add(new Score("Vera", 2210));
-        scores.add(new Score("root", 4210));
-        scores.add(new Score("Mile", 1910));
+        scores.add(new Score("Vera", 2210, 1));
+        scores.add(new Score("root", 4210, 1));
+        scores.add(new Score("Mile", 1910, 1));
 
         Collections.sort(scores, new Comparator<Score>() {
 

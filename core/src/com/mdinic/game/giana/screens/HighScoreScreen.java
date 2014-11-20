@@ -19,13 +19,15 @@ public class HighScoreScreen extends GianaSistersScreen {
 
     SpriteBatch batch;
 
-    private BitmapFont font;
+    private BitmapFont whileFont;
     private int fontSize;
     OrthographicCamera scoreCam;
 
     private float time = 0;
 
     List<Score> scores = new ArrayList<Score>();
+
+    private BitmapFont redFont;
 
     public HighScoreScreen(Game game) {
         super(game);
@@ -42,12 +44,14 @@ public class HighScoreScreen extends GianaSistersScreen {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/Giana.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 
-        System.out.println(Gdx.graphics.getWidth());
         fontSize = Gdx.graphics.getWidth() / 640 * 12; // font size 12
 
         parameter.size = fontSize;
-        font = generator.generateFont(parameter);
-        font.setColor(new Color(0xFFFFFF));
+        whileFont = generator.generateFont(parameter);
+        whileFont.setColor(new Color(1, 1, 1, 1));
+
+        redFont = generator.generateFont(parameter);
+        redFont.setColor(new Color(0.66f, 0.21f, 0.14f, 1));
 
         getGame().getHighScoreService().fetchHighScores();
     }
@@ -68,14 +72,17 @@ public class HighScoreScreen extends GianaSistersScreen {
             scores = getGame().getHighScoreService().getScoreUpdate();
         }
 
-        font.draw(batch, "HALL OF FAME", Gdx.graphics.getWidth() / 3, Gdx.graphics.getHeight() - fontSize * 5
-                - fontSize);
+        whileFont.draw(batch, "ALL TIME GREATEST              STAGE", Gdx.graphics.getWidth() / 4,
+                Gdx.graphics.getHeight() - fontSize * 5 - fontSize);
 
         for (int i = 0; i < scores.size(); i++) {
             Score score = scores.get(i);
-            String formatted = String.format("%07d %s", score.getScore(), score.getName());
-            font.draw(batch, formatted, Gdx.graphics.getWidth() / 3, Gdx.graphics.getHeight() - fontSize * 9 - fontSize
-                    * 2 * i);
+
+            String name = String.format("%-22s", score.getName());
+            String f = String.format("%02d. %07d %s %02d", i + 1, score.getScore(), name.substring(0, 22),
+                    score.getLevel());
+            redFont.draw(batch, f, Gdx.graphics.getWidth() / 4, Gdx.graphics.getHeight() - fontSize * 9 - fontSize * 2
+                    * i);
 
         }
 
