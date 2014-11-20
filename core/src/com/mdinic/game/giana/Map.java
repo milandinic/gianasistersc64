@@ -87,10 +87,11 @@ public class Map {
 
     public void collectDiamound() {
         diamondsCollected++;
+        score += 25;
         if (diamondsCollected >= 100) {
             diamondsCollected -= 100;
             lives++;
-            score += 25;
+
         }
     }
 
