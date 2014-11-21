@@ -109,6 +109,12 @@ public class Giana {
                 }
             }
 
+            if (map.tiles[0].length - bounds.y >= MapRenderer.SCENE_HEIGHT - 1) {
+                map.giana.stateTime = 0;
+                state = GianaState.DYING;
+                return;
+            }
+
         }
 
         stateTime += deltaTime;
@@ -288,4 +294,5 @@ public class Giana {
         }
 
     }
+
 }

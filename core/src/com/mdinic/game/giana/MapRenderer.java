@@ -26,6 +26,7 @@ import com.mdinic.game.giana.screens.GameScreen;
 
 public class MapRenderer {
 
+    public static final int SCENE_HEIGHT = 16;
     Map map;
     OrthographicCamera cam;
     OrthographicCamera scoreCam;
@@ -65,7 +66,7 @@ public class MapRenderer {
 
     public MapRenderer(Map map) {
         this.map = map;
-        this.cam = new OrthographicCamera(20, 16);
+        this.cam = new OrthographicCamera(20, SCENE_HEIGHT);
         scoreCam = new OrthographicCamera();
         this.scoreCam.setToOrtho(false);
         this.cam.position.set(map.giana.pos.x, map.giana.pos.y, 0);
@@ -199,7 +200,7 @@ public class MapRenderer {
             camX = 135;
         }
 
-        cam.position.lerp(lerpTarget.set(camX, 153, 0), 4f * deltaTime);
+        cam.position.lerp(lerpTarget.set(camX, map.tiles[0].length - SCENE_HEIGHT / 2 + 1, 0), 4f * deltaTime);
         cam.update();
 
         scoreCam.update();
