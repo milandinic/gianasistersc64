@@ -34,13 +34,6 @@ public class Map {
     static int JELLY = 0x5a2b8f;
     static int LOBSTER = 0x5ad68f;
 
-    static int BIG_CLOUD = 0xfaffff;
-    static int SMALL_CLOUD = 0xfaf0ff;
-    static int MUSHROOM = 0xe56262;
-    static int ROUND_BUSH = 0x7be562;
-    static int WIDE_BUSH = 0x73b864;
-    static int COLUMN = 0xd0dc71;
-
     static int LEVEL_PIXELBUFFER = 20;
 
     List<Integer> colidableColors = new ArrayList<Integer>();
@@ -82,7 +75,7 @@ public class Map {
         colidableColors.add(TREAT_BOX);
         colidableColors.add(TREAT_BOX_BALL);
         colidableColors.add(TILE);
-        colidableColors.add(COLUMN);
+
     }
 
     public void collectDiamound() {
@@ -96,7 +89,7 @@ public class Map {
     }
 
     public boolean isColidable(int value) {
-        return colidableColors.contains(value);
+        return colidableColors.contains(value) || SimpleImageType.containsColor(value) != null;
     }
 
     public void loadBinary(int level) {
@@ -133,25 +126,16 @@ public class Map {
                     // groundMonsters
                     // .add(new GroundMonster(this, x, pixmap.getHeight() - 1 -
                     // y, GoundMonsterType.LOBSTER));
-
-                } else if (match(pix, BIG_CLOUD)) {
-                    simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, SimpleImageType.BIG_CLOUD));
-                } else if (match(pix, SMALL_CLOUD)) {
-                    simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, SimpleImageType.SMALL_CLOUD));
-                } else if (match(pix, MUSHROOM)) {
-                    simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, SimpleImageType.MUSHROOM));
-                } else if (match(pix, ROUND_BUSH)) {
-                    simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, SimpleImageType.ROUND_BUSH));
-                } else if (match(pix, WIDE_BUSH)) {
-                    simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, SimpleImageType.WIDE_BUSH));
-                } else if (match(pix, COLUMN)) {
-                    simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, SimpleImageType.COLUMN));
-                    for (int j = 0; j < SimpleImageType.COLUMN.height; j++) {
-                        for (int i = 0; i < SimpleImageType.COLUMN.width; i++) {
-                            tiles[x + i][y + j] = pix;
+                } else if (SimpleImageType.containsColor(pix) != null) {
+                    SimpleImageType imageType = SimpleImageType.containsColor(pix);
+                    simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, imageType));
+                    if (imageType.colidable) {
+                        for (int j = 0; j < SimpleImageType.COLUMN.height; j++) {
+                            for (int i = 0; i < SimpleImageType.COLUMN.width; i++) {
+                                tiles[x + i][y + j] = pix;
+                            }
                         }
                     }
-
                 } else if (match(pix, MOVING_SPIKES)) {
                     movingSpikes.add(new MovingSpikes(this, x, pixmap.getHeight() - 1 - y));
                 } else if (match(pix, TREAT_BOX)) {
