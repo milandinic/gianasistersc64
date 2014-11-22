@@ -22,6 +22,9 @@ public class Fish {
     int bx = 0;
     int by = 0;
 
+    boolean active = true;
+    float stateTime = 0;
+
     public Fish(Map map, float x, float y) {
         this.map = map;
         pos.x = x;
@@ -51,6 +54,7 @@ public class Fish {
     }
 
     public void update(float deltaTime) {
+        stateTime += deltaTime;
         pos.add(vel.x * deltaTime, vel.y * deltaTime);
         boolean change = false;
         if (state == FORWARD) {

@@ -10,10 +10,6 @@ public class GroundMonster {
     static final float FORWARD_VEL = 1;
     static final float BACKWARD_VEL = 1;
 
-    enum GoundMonsterType {
-        OWL, JELLY, LOBSTER
-    };
-
     boolean alive = true;
 
     GoundMonsterType type = GoundMonsterType.OWL;

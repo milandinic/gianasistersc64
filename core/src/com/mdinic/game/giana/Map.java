@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
 import com.mdinic.game.giana.Giana.GianaState;
-import com.mdinic.game.giana.GroundMonster.GoundMonsterType;
 import com.mdinic.game.giana.TreatBox.TreatType;
 
 public class Map {
@@ -29,10 +28,6 @@ public class Map {
 
     static int TREAT_BOX = 0xff8a00;
     static int TREAT_BOX_BALL = 0xffcb8d;
-
-    static int OWL = 0x7a2991;
-    static int JELLY = 0x5a2b8f;
-    static int LOBSTER = 0x5ad68f;
 
     static int LEVEL_PIXELBUFFER = 20;
 
@@ -61,6 +56,7 @@ public class Map {
     Array<GroundMonster> groundMonsters = new Array<GroundMonster>();
     Array<SimpleImage> simpleImages = new Array<SimpleImage>();
     Array<Treat> treats = new Array<Treat>();
+    Array<Fish> fishes = new Array<Fish>();
 
     Vector2 startPosition = new Vector2();
     // row, column
@@ -118,14 +114,10 @@ public class Map {
 
                 } else if (match(pix, DIAMOND)) {
                     diamonds.add(new Diamond(this, x, pixmap.getHeight() - 1 - y));
-                } else if (match(pix, OWL)) {
-                    groundMonsters.add(new GroundMonster(this, x, pixmap.getHeight() - 1 - y, GoundMonsterType.OWL));
-                } else if (match(pix, JELLY)) {
-                    groundMonsters.add(new GroundMonster(this, x, pixmap.getHeight() - 1 - y, GoundMonsterType.JELLY));
-                } else if (match(pix, LOBSTER)) {
-                    // groundMonsters
-                    // .add(new GroundMonster(this, x, pixmap.getHeight() - 1 -
-                    // y, GoundMonsterType.LOBSTER));
+                } else if (GoundMonsterType.containsColor(pix) != null) {
+                    groundMonsters.add(new GroundMonster(this, x, pixmap.getHeight() - 1 - y, GoundMonsterType
+                            .containsColor(pix)));
+
                 } else if (SimpleImageType.containsColor(pix) != null) {
                     SimpleImageType imageType = SimpleImageType.containsColor(pix);
                     simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, imageType));
@@ -162,6 +154,7 @@ public class Map {
         }
 
         for (GroundMonster monster : groundMonsters) {
+            System.out.println(monster.type);
             monster.init();
         }
     }
@@ -191,6 +184,11 @@ public class Map {
         for (Treat treat : treats) {
             if (treat.active)
                 treat.update(deltaTime);
+        }
+
+        for (Fish fish : fishes) {
+            if (fish.active)
+                fish.update(deltaTime);
         }
 
     }

@@ -53,9 +53,8 @@ public class MapRenderer {
     FPSLogger fps = new FPSLogger();
     private Animation movingSpikesAnim;
 
-    private Animation owlAnim;
-    private Animation jellyAnim;
-    private Animation lobsterAnim;
+    java.util.Map<GoundMonsterType, Animation[]> groundMonsterAnimations = new HashMap<GoundMonsterType, Animation[]>();
+
     private BitmapFont font;
 
     int fontSize;
@@ -63,6 +62,7 @@ public class MapRenderer {
     java.util.Map<SimpleImageType, TextureRegion> simpleImageTextureRegions = new HashMap<SimpleImageType, TextureRegion>();
     private Animation treatBallRightAnim;
     private Animation treatBallLeftAnim;
+    private Animation piranhaAnim;
 
     public MapRenderer(Map map) {
         this.map = map;
@@ -104,6 +104,7 @@ public class MapRenderer {
     }
 
     private void createAnimations() {
+
         Texture sprites = new Texture(Gdx.files.internal("data/sprites.png"));
         this.tile = new TextureRegion(sprites, 150, 103, 24, 16);
         this.endDoor = new TextureRegion(sprites, 16, 196, 32, 32);
@@ -124,14 +125,35 @@ public class MapRenderer {
         Texture groundMonstersTexture = new Texture(Gdx.files.internal("data/groundmonsters.png"));
         Texture lobsterTexture = new Texture(Gdx.files.internal("data/lobster.png"));
 
+        TextureRegion[] piranhaRegion = new TextureRegion(new Texture(Gdx.files.internal("data/piranha.png"))).split(
+                20, 20)[0];
+
+        piranhaAnim = new Animation(0.2f, piranhaRegion);
+
+        TextureRegion[] wormRegion = new TextureRegion(new Texture(Gdx.files.internal("data/worm.png"))).split(25, 21)[0];
+
+        Animation wormAnimLeft = new Animation(0.1f, wormRegion);
+        Animation wormAnimRight = new Animation(0.1f, wormRegion[6], wormRegion[5], wormRegion[4], wormRegion[3],
+                wormRegion[2], wormRegion[1], wormRegion[0]);
+        groundMonsterAnimations.put(GoundMonsterType.WORM, new Animation[] { wormAnimLeft, wormAnimRight });
+
         TextureRegion groundMonstersRegion = new TextureRegion(groundMonstersTexture);
         groundMonstersRegion.setRegion(0, 0, 240, 20);
 
-        owlAnim = new Animation(0.2f, groundMonstersRegion.split(24, 20)[0]);
-        groundMonstersRegion.setRegion(240, 0, 240, 20);
-        jellyAnim = new Animation(0.2f, groundMonstersRegion.split(24, 20)[0]);
+        groundMonsterAnimations.put(GoundMonsterType.OWL,
+                new Animation[] { new Animation(0.2f, groundMonstersRegion.split(24, 20)[0]) });
 
-        lobsterAnim = new Animation(0.2f, new TextureRegion(lobsterTexture).split(24, 20)[0]);
+        groundMonstersRegion.setRegion(240, 0, 240, 20);
+
+        groundMonsterAnimations.put(GoundMonsterType.JELLY,
+                new Animation[] { new Animation(0.2f, groundMonstersRegion.split(24, 20)[0]) });
+
+        TextureRegion[] lobsterTextureRegion = new TextureRegion(lobsterTexture).split(24, 20)[0];
+        Animation lobsterAnimRight = new Animation(0.2f, lobsterTextureRegion);
+        Animation lobsterAnimLeft = new Animation(0.2f, lobsterTextureRegion[9], lobsterTextureRegion[8],
+                lobsterTextureRegion[7], lobsterTextureRegion[6], lobsterTextureRegion[5], lobsterTextureRegion[4],
+                lobsterTextureRegion[3], lobsterTextureRegion[2], lobsterTextureRegion[1], lobsterTextureRegion[0]);
+        groundMonsterAnimations.put(GoundMonsterType.LOBSTER, new Animation[] { lobsterAnimRight, lobsterAnimLeft });
 
         movingSpikesAnim = new Animation(0.3f, new TextureRegion(movingSpikesTexture).split(48, 16)[0]);
 
@@ -226,6 +248,7 @@ public class MapRenderer {
 
         renderMovingSpikes();
         renderGroundMonsters();
+        renderPiranhas();
         renderTreats();
         renderBob();
         renderDiamonds();
@@ -339,23 +362,25 @@ public class MapRenderer {
     private void renderGroundMonsters() {
         for (int i = 0; i < map.groundMonsters.size; i++) {
             GroundMonster monster = map.groundMonsters.get(i);
-            Animation anim = null;
-            switch (monster.type) {
-            case JELLY:
-                anim = jellyAnim;
-                break;
-            case LOBSTER:
-                anim = lobsterAnim;
-                break;
-            case OWL:
-                anim = owlAnim;
-                break;
-            default:
+            Animation[] animations = groundMonsterAnimations.get(monster.type);
+            if (animations.length == 0) {
                 throw new IllegalStateException("ground monster type is not supported " + monster.type);
+            } else {
+                if (monster.alive) {
+                    int index = 0;
+                    if (monster.type.needsMirror && monster.state == GroundMonster.BACKWARD) {
+                        index = 1;
+                    }
+                    batch.draw(animations[index].getKeyFrame(monster.stateTime, true), monster.pos.x, monster.pos.y, 1,
+                            1);
+                }
             }
-            if (monster.alive) {
-                batch.draw(anim.getKeyFrame(monster.stateTime, true), monster.pos.x, monster.pos.y, 1, 1);
-            }
+        }
+    }
+
+    private void renderPiranhas() {
+        for (Fish fish : map.fishes) {
+            batch.draw(piranhaAnim.getKeyFrame(fish.stateTime, true), fish.pos.x, fish.pos.y, 1, 1);
         }
     }
 
