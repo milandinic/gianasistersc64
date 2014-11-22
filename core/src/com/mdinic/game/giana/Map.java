@@ -154,7 +154,6 @@ public class Map {
         }
 
         for (GroundMonster monster : groundMonsters) {
-            System.out.println(monster.type);
             monster.init();
         }
     }

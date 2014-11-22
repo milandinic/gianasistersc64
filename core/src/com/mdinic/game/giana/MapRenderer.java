@@ -149,10 +149,12 @@ public class MapRenderer {
                 new Animation[] { new Animation(0.2f, groundMonstersRegion.split(24, 20)[0]) });
 
         TextureRegion[] lobsterTextureRegion = new TextureRegion(lobsterTexture).split(24, 20)[0];
+        TextureRegion[] lobsterTextureRegionToFlip = new TextureRegion(lobsterTexture).split(24, 20)[0];
+        for (TextureRegion textureRegion : lobsterTextureRegionToFlip) {
+            textureRegion.flip(true, false);
+        }
         Animation lobsterAnimRight = new Animation(0.2f, lobsterTextureRegion);
-        Animation lobsterAnimLeft = new Animation(0.2f, lobsterTextureRegion[9], lobsterTextureRegion[8],
-                lobsterTextureRegion[7], lobsterTextureRegion[6], lobsterTextureRegion[5], lobsterTextureRegion[4],
-                lobsterTextureRegion[3], lobsterTextureRegion[2], lobsterTextureRegion[1], lobsterTextureRegion[0]);
+        Animation lobsterAnimLeft = new Animation(0.2f, lobsterTextureRegionToFlip);
         groundMonsterAnimations.put(GoundMonsterType.LOBSTER, new Animation[] { lobsterAnimRight, lobsterAnimLeft });
 
         movingSpikesAnim = new Animation(0.3f, new TextureRegion(movingSpikesTexture).split(48, 16)[0]);
@@ -219,8 +221,8 @@ public class MapRenderer {
             camX = 10;
         }
 
-        if (camX > 135) {
-            camX = 135;
+        if (camX > 134) {
+            camX = 134;
         }
 
         cam.position.lerp(lerpTarget.set(camX, map.tiles[0].length - SCENE_HEIGHT / 2 + 1, 0), 4f * deltaTime);

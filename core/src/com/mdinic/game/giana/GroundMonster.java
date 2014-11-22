@@ -87,7 +87,7 @@ public class GroundMonster {
         bounds.y = pos.y;
 
         if (map.giana.killerBounds.overlaps(bounds)) {
-            if (map.giana.state != GianaState.DYING && alive) {
+            if (map.giana.state != GianaState.DYING && alive && type.canBeKilled) {
                 alive = false;
                 map.score += 50;
             }
