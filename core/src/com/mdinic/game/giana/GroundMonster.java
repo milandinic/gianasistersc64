@@ -63,13 +63,14 @@ public class GroundMonster {
         stateTime += deltaTime;
         pos.add(vel.x * deltaTime, vel.y * deltaTime);
         boolean change = false;
+        int y = map.tiles[0].length - 1 - (int) pos.y;
         if (state == FORWARD) {
 
-            change = map.isColidable(map.tiles[(int) pos.x + fx][map.tiles[0].length - 1 - (int) pos.y + fy]);
-            change = change || map.tiles[(int) pos.x + fx][map.tiles[0].length - 1 - (int) pos.y + fy + 1] == 0;
+            change = map.isColidable(map.tiles[(int) Math.floor(pos.x) + fx][y + fy]);
+            change = change || map.tiles[(int) pos.x + fx][y + fy + 1] == 0;
         } else {
-            change = map.isColidable(map.tiles[(int) pos.x + bx][map.tiles[0].length - 1 - (int) pos.y + by]);
-            change = change || map.tiles[(int) pos.x + bx + 1][map.tiles[0].length - 1 - (int) pos.y + by + 1] == 0;
+            change = map.isColidable(map.tiles[(int) Math.ceil(pos.x) + bx][y + by]);
+            change = change || map.tiles[(int) pos.x + bx + 1][y + by + 1] == 0;
         }
         if (change) {
             pos.x -= vel.x * deltaTime;
