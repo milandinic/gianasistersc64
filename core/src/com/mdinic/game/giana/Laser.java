@@ -2,7 +2,6 @@ package com.mdinic.game.giana;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.mdinic.game.giana.Giana.GianaState;
 
 public class Laser {
     static final int FORWARD = 1;

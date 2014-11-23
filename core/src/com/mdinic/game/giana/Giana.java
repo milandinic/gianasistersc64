@@ -7,12 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Giana {
     private static final float MIN_MOVE = 0.1f;
-    static final int IDLE = 0;
-    static final int RUN = 1;
-    static final int JUMP = 2;
-    static final int SPAWN = 3;
-    static final int DYING = 4;
-    static final int DEAD = 5;
+
     static final int LEFT = -1;
     static final int RIGHT = 1;
     static final float ACCELERATION = 20f;
@@ -31,19 +26,13 @@ public class Giana {
 
     public Rectangle killerBounds = new Rectangle();
 
-    GianaState state;
+    public GianaState state;
     public float stateTime = 0;
     int dir = LEFT;
     Map map;
     boolean grounded = false;
     boolean active = true;
     boolean processKeys = true;
-
-    enum GianaState {
-        SPAWN, IDLE, DYING, DEAD, JUMP, RUN
-    }
-
-    // boolean dying
 
     public Giana(Map map, float x, float y) {
         this.map = map;

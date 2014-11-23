@@ -21,7 +21,6 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.math.Vector3;
-import com.mdinic.game.giana.Giana.GianaState;
 import com.mdinic.game.giana.screens.GameScreen;
 
 public class MapRenderer {
@@ -129,6 +128,17 @@ public class MapRenderer {
                 20, 20)[0];
 
         piranhaAnim = new Animation(0.2f, piranhaRegion);
+
+        TextureRegion[] eyeRegionLeft = new TextureRegion(new Texture(Gdx.files.internal("data/eye.png")))
+                .split(24, 17)[0];
+        TextureRegion[] eyeRegionRight = new TextureRegion(new Texture(Gdx.files.internal("data/eye.png"))).split(24,
+                17)[0];
+        for (TextureRegion textureRegion : eyeRegionRight) {
+            textureRegion.flip(true, false);
+        }
+        Animation eyeAnimLeft = new Animation(0.3f, eyeRegionLeft);
+        Animation eyeAnimRight = new Animation(0.4f, eyeRegionRight);
+        groundMonsterAnimations.put(GoundMonsterType.EYE, new Animation[] { eyeAnimLeft, eyeAnimRight });
 
         TextureRegion[] wormRegion = new TextureRegion(new Texture(Gdx.files.internal("data/worm.png"))).split(25, 21)[0];
 

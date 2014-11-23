@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
+import com.mdinic.game.giana.GianaState;
 import com.mdinic.game.giana.Map;
 import com.mdinic.game.giana.MapRenderer;
 import com.mdinic.game.giana.OnscreenControlRenderer;
@@ -36,6 +37,12 @@ public class GameScreen extends GianaSistersScreen {
     public void render(float delta) {
         delta = Math.min(0.06f, Gdx.graphics.getDeltaTime());
         map.update(delta);
+
+        if (map.giana.state == GianaState.DEAD) {
+            map.level--;
+            game.setScreen(new LevelStartingScreen(game, map));
+            return;
+        }
 
         map.time = 99 - (int) map.giana.stateTime;
         Gdx.gl.glClearColor(map.r, map.g, map.b, 1);

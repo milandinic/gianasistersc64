@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ArrayMap;
-import com.mdinic.game.giana.Giana.GianaState;
 import com.mdinic.game.giana.TreatBox.TreatType;
 
 public class Map {
@@ -23,8 +22,6 @@ public class Map {
 
     static int DIAMOND = 5570300;
     static int MOVING_SPIKES = 0x00ff00;
-
-    static int MOVING_SPIKES_OLD = 0xffff00;
 
     static int TREAT_BOX = 0xff8a00;
     static int TREAT_BOX_BALL = 0xffcb8d;
@@ -140,9 +137,6 @@ public class Map {
                     treatBoxes.add(treatBox);
                     treatBoxesMap.get(y).put(x, treatBox);
                     tiles[x][y] = pix;
-                } else if (match(pix, MOVING_SPIKES_OLD)) {
-                    // movingSpikesOld.add(new Fish(this, x, pixmap.getHeight()
-                    // - 1 - y));
                 } else if (match(pix, END)) {
                     endDoor = new EndDoor(x, pixmap.getHeight() - 1 - y);
                 } else {
@@ -165,7 +159,7 @@ public class Map {
     public void update(float deltaTime) {
         giana.update(deltaTime);
         if (giana.state == GianaState.DEAD)
-            giana = new Giana(this, startPosition.x, startPosition.y);
+            return;
 
         for (Diamond diamond : diamonds) {
             diamond.update(deltaTime);

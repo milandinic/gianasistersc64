@@ -2,7 +2,8 @@ package com.mdinic.game.giana;
 
 public enum GoundMonsterType {
 
-    OWL(0x7a2991, false, true), JELLY(0x5a2b8f, false, true), LOBSTER(0x5ad68f, true, true), WORM(0xb5b737, true, false);
+    OWL(0x7a2991, false, true), JELLY(0x5a2b8f, false, true), LOBSTER(0x5ad68f, true, true), WORM(0xb5b737, true, false), EYE(
+            0xffb662, true, true);
 
     boolean needsMirror;
     int mapColor;
