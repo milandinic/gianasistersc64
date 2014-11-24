@@ -11,4 +11,8 @@ public interface HighScoreService {
     void fetchHighScores();
 
     void saveHighScore(Score score);
+
+    void setIneternetConnectionChecker(InternetConnectionChecker checker);
+
+    boolean internetAvailable();
 }

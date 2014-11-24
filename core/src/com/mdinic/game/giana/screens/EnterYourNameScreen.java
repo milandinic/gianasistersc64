@@ -8,9 +8,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
-import com.badlogic.gdx.scenes.scene2d.Event;
-import com.badlogic.gdx.scenes.scene2d.EventListener;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
@@ -22,7 +19,7 @@ import com.mdinic.game.giana.service.Score;
 
 public class EnterYourNameScreen extends GianaSistersScreen {
 
-    private static final String TYPE_YOUR_NAME = "Unknown hero";
+    private static final String TYPE_YOUR_NAME = "Click to type name";
     private int fontSize;
     private BitmapFont yellowFont;
 
@@ -57,26 +54,25 @@ public class EnterYourNameScreen extends GianaSistersScreen {
         final TextField nameText = new TextField(TYPE_YOUR_NAME, style);
         nameText.setMaxLength(22);
         nameText.selectAll();
-        nameText.addListener(new EventListener() {
 
+        nameText.setOnscreenKeyboard(new TextField.OnscreenKeyboard() {
             @Override
-            public boolean handle(Event event) {
-
-                if (event instanceof InputEvent) {
-                    if (((InputEvent) event).getKeyCode() == Input.Keys.ENTER) {
-                        if (!nameText.getText().equalsIgnoreCase(TYPE_YOUR_NAME)) {
-                            Score score = new Score(nameText.getText(), oldMap.score, oldMap.level);
+            public void show(boolean visible) {
+                Gdx.input.getTextInput(new Input.TextInputListener() {
+                    @Override
+                    public void input(String text) {
+                        if (!text.isEmpty()) {
+                            Score score = new Score(text, oldMap.score, oldMap.level);
                             getGame().getHighScoreService().saveHighScore(score);
-                            game.setScreen(new HighScoreScreen(game));
                         }
-
-                        return true;
+                        game.setScreen(new HighScoreScreen(game));
                     }
-                    if (((InputEvent) event).getKeyCode() == Input.Keys.ESCAPE) {
+
+                    @Override
+                    public void canceled() {
                         game.setScreen(new IntroScreen(game));
                     }
-                }
-                return false;
+                }, "", "");
             }
         });
 
@@ -86,15 +82,15 @@ public class EnterYourNameScreen extends GianaSistersScreen {
         LabelStyle labelStyle = new LabelStyle();
         labelStyle.font = yellowFont;
         labelStyle.fontColor = fontColor;
-        table.add(new Label(String.format("YOUR SCORE %07d", oldMap.score), labelStyle)).width(290).height(45);
-        table.add(nameText).width(290).height(45);
+        table.add(new Label(String.format("YOUR SCORE %07d", oldMap.score), labelStyle))
+                .width(Gdx.graphics.getWidth() / 2).height(fontSize * 2);
+        table.row();
 
+        table.add(nameText).width(Gdx.graphics.getWidth() / 2).height(fontSize * 2);
         stage.setKeyboardFocus(nameText);
-        table.setPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+        table.setPosition(Gdx.graphics.getWidth() / 3, Gdx.graphics.getHeight() / 2);
 
         Gdx.input.setInputProcessor(stage);
-        Gdx.input.setOnscreenKeyboardVisible(true);
-
         generator.dispose();
     }
 

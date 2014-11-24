@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.mdinic.game.giana.service.HighScoreService;
+import com.mdinic.game.giana.service.InternetConnectionChecker;
 import com.mdinic.game.giana.service.Score;
 import com.parse.FindCallback;
 import com.parse.ParseException;
@@ -20,42 +21,49 @@ public class HighScoreServiceDroid implements HighScoreService {
 
     final Object object = new Object();
 
+    InternetConnectionChecker checker = null;
+
     @Override
     public void fetchHighScores() {
+        if (internetAvailable()) {
+            ParseQuery<ParseObject> query = ParseQuery.getQuery("GameScore");
+            query.setLimit(10);
+            query.addDescendingOrder(SCORE);
 
-        ParseQuery<ParseObject> query = ParseQuery.getQuery("GameScore");
-        query.setLimit(10);
-        query.addDescendingOrder(SCORE);
+            synchronized (object) {
+                scores.clear();
+            }
 
-        synchronized (object) {
-            scores.clear();
-        }
-
-        query.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> scoreList, ParseException e) {
-                if (e == null) {
-                    List<Score> newScores = new ArrayList<Score>();
-                    for (ParseObject parseObject : scoreList) {
-                        newScores.add(new Score(parseObject.getString(USERNAME), parseObject.getInt(SCORE), parseObject
-                                .getInt(LEVEL)));
-                    }
-                    synchronized (object) {
-                        scores = newScores;
+            query.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> scoreList, ParseException e) {
+                    if (e == null) {
+                        List<Score> newScores = new ArrayList<Score>();
+                        for (ParseObject parseObject : scoreList) {
+                            newScores.add(new Score(parseObject.getString(USERNAME), parseObject.getInt(SCORE),
+                                    parseObject.getInt(LEVEL)));
+                        }
+                        synchronized (object) {
+                            scores = newScores;
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     @Override
     public void saveHighScore(Score score) {
-        ParseObject object = new ParseObject("GameScore");
-        object.put(USERNAME, score.getName());
-        object.put(SCORE, score.getScore());
-        object.put(LEVEL, score.getLevel());
-        object.put("date", score.getDate().getTime());
-        object.saveInBackground();
+        if (internetAvailable()) {
+            ParseObject object = new ParseObject("GameScore");
+            object.put(USERNAME, score.getName());
+            object.put(SCORE, score.getScore());
+            object.put(LEVEL, score.getLevel());
+            object.put("date", score.getDate().getTime());
+            object.saveInBackground();
+        } else {
+            // TODO save locally
+        }
     }
 
     @Override
@@ -73,5 +81,16 @@ public class HighScoreServiceDroid implements HighScoreService {
             scores.clear();
         }
         return result;
+    }
+
+    @Override
+    public boolean internetAvailable() {
+        return checker != null && checker.isAvailableConnection();
+    }
+
+    @Override
+    public void setIneternetConnectionChecker(InternetConnectionChecker checker) {
+
+        this.checker = checker;
     }
 }

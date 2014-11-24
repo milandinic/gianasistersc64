@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.mdinic.game.giana.service.HighScoreService;
+import com.mdinic.game.giana.service.InternetConnectionChecker;
 import com.mdinic.game.giana.service.Score;
 
 public class HighScoreServiceDesktop implements HighScoreService {
@@ -61,5 +62,15 @@ public class HighScoreServiceDesktop implements HighScoreService {
         scores.clear();
 
         return result;
+    }
+
+    @Override
+    public void setIneternetConnectionChecker(InternetConnectionChecker checker) {
+
+    }
+
+    @Override
+    public boolean internetAvailable() {
+        return true;
     }
 }
