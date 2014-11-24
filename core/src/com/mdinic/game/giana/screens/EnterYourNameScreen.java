@@ -62,7 +62,7 @@ public class EnterYourNameScreen extends GianaSistersScreen {
                     @Override
                     public void input(String text) {
                         if (!text.isEmpty()) {
-                            Score score = new Score(text, oldMap.score, oldMap.level);
+                            Score score = new Score(text, oldMap.score, oldMap.level + 1);
                             getGame().getHighScoreService().saveHighScore(score);
                         }
                         game.setScreen(new HighScoreScreen(game));

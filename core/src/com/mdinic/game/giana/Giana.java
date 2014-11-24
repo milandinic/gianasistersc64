@@ -45,12 +45,12 @@ public class Giana {
         state = GianaState.SPAWN;
         stateTime = 0;
         killerBounds.width = bounds.width;
-        killerBounds.height = 0.3f;
+        killerBounds.height = 0.2f;
         updateKillerBounds();
     }
 
     void updateKillerBounds() {
-        killerBounds.x = bounds.x - bounds.width;
+        killerBounds.x = bounds.x;
         killerBounds.y = bounds.y - 0.3f;
     }
 

@@ -331,8 +331,9 @@ public class MapRenderer {
             batch.draw(dying, map.giana.pos.x, map.giana.pos.y, 1, 1);
             return;
         }
-        if (map.giana.active)
+        if (map.giana.active) {
             batch.draw(anim.getKeyFrame(map.giana.stateTime, loop), map.giana.pos.x, map.giana.pos.y, 1, 1);
+        }
     }
 
     private void renderDiamonds() {
