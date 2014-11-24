@@ -20,8 +20,6 @@ public class LevelStartingScreen extends GianaSistersScreen {
     private final Map oldMap;
     private OrthographicCamera cam;
 
-    static int LEVEL_COUNT = 4;
-
     public LevelStartingScreen(Game game, Map oldMap) {
         super(game);
         this.oldMap = oldMap;
@@ -47,6 +45,8 @@ public class LevelStartingScreen extends GianaSistersScreen {
 
         this.cam.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
         cam.update();
+
+        generator.dispose();
     }
 
     @Override

@@ -68,7 +68,6 @@ public class Map {
         colidableColors.add(TREAT_BOX);
         colidableColors.add(TREAT_BOX_BALL);
         colidableColors.add(TILE);
-
     }
 
     public void collectDiamound() {
@@ -77,7 +76,6 @@ public class Map {
         if (diamondsCollected >= 100) {
             diamondsCollected -= 100;
             lives++;
-
         }
     }
 

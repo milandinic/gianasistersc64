@@ -40,7 +40,12 @@ public class GameScreen extends GianaSistersScreen {
 
         if (map.giana.state == GianaState.DEAD) {
             map.level--;
-            game.setScreen(new LevelStartingScreen(game, map));
+            if (map.lives == 0) {
+                game.setScreen(new EnterYourNameScreen(game, map));
+            } else {
+                game.setScreen(new LevelStartingScreen(game, map));
+            }
+
             return;
         }
 
@@ -48,23 +53,23 @@ public class GameScreen extends GianaSistersScreen {
         Gdx.gl.glClearColor(map.r, map.g, map.b, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         renderer.render(delta);
-        controlRenderer.render();
+        if (map.level > 0)
+            controlRenderer.render();
 
         if (map.giana.bounds.overlaps(map.endDoor.bounds)) {
             if (map.level == 0) {
                 game.setScreen(new HighScoreScreen(game));
+            } else if (map.level + 1 == LEVEL_COUNT) {
+                game.setScreen(new GameCompletedScreen(game, map));
             } else {
                 game.setScreen(new LevelOverScreen(game, map));
             }
         }
 
-        if (map.lives == 0) {
-            game.setScreen(new GameOverScreen(game, map));
-        }
-
         if (Gdx.input.isKeyPressed(Keys.ESCAPE)) {
             game.setScreen(new IntroScreen(game));
         }
+
     }
 
     @Override

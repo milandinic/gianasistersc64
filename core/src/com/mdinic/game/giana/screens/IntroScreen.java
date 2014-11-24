@@ -35,6 +35,7 @@ public class IntroScreen extends GameScreen {
     public void hide() {
         super.hide();
         music.stop();
+        music.dispose();
     }
 
 }

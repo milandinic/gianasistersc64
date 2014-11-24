@@ -54,6 +54,8 @@ public class HighScoreScreen extends GianaSistersScreen {
         redFont.setColor(new Color(0.66f, 0.21f, 0.14f, 1));
 
         getGame().getHighScoreService().fetchHighScores();
+
+        generator.dispose();
     }
 
     @Override
@@ -86,10 +88,9 @@ public class HighScoreScreen extends GianaSistersScreen {
 
         }
 
-        if (time > 1 && (Gdx.input.isKeyPressed(Keys.ANY_KEY) || Gdx.input.justTouched()))
-            game.setScreen(new GameScreen(game, 1));
-        else if (time >= 10) {
+        if (time > 1 && (Gdx.input.isKeyPressed(Keys.ANY_KEY) || Gdx.input.justTouched())) {
             game.setScreen(new IntroScreen(game));
+            return;
         }
 
         batch.end();
@@ -99,6 +100,7 @@ public class HighScoreScreen extends GianaSistersScreen {
     public void hide() {
         Gdx.app.debug("HighScoreScreen", "dispose intro");
         batch.dispose();
+        whileFont.dispose();
+        redFont.dispose();
     }
-
 }

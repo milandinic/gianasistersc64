@@ -11,16 +11,18 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.mdinic.game.giana.Map;
 
-public class LevelOverScreen extends GianaSistersScreen {
+public class GameCompletedScreen extends GianaSistersScreen {
 
     private int fontSize;
     private BitmapFont yellowFont;
     private float time = 0;
     private SpriteBatch batch;
-    private final Map oldMap;
     private OrthographicCamera cam;
+    private final Map oldMap;
 
-    public LevelOverScreen(Game game, Map oldMap) {
+    static int LEVEL_COUNT = 4;
+
+    public GameCompletedScreen(Game game, Map oldMap) {
         super(game);
         this.oldMap = oldMap;
     }
@@ -42,47 +44,38 @@ public class LevelOverScreen extends GianaSistersScreen {
         parameter.size = fontSize;
         yellowFont = generator.generateFont(parameter);
         yellowFont.setColor(new Color(0.87f, 0.95f, 0.47f, 1));
-        generator.dispose();
-
-    }
-
-    @Override
-    public void render(float delta) {
-
-        Gdx.gl.glClearColor(0, 0, 0, 1);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         this.cam.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
         cam.update();
 
+        generator.dispose();
+    }
+
+    @Override
+    public void render(float delta) {
+        time += delta;
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
         batch.begin();
         batch.setProjectionMatrix(cam.combined);
 
-        int x = Gdx.graphics.getWidth() / 4;
-        yellowFont.draw(batch, "TIME    BONUS   SCORE", x, Gdx.graphics.getHeight() - fontSize * 6);
-
-        if (oldMap.time > 0) {
-            oldMap.score += 10;
-            oldMap.time--;
-        } else {
-            time += delta;
-        }
-
-        String update = String.format(" %02d   x  10      %06d", oldMap.time, oldMap.score);
-
-        yellowFont.draw(batch, update, x, Gdx.graphics.getHeight() - fontSize * 9);
+        int x = Gdx.graphics.getWidth() / 2 - fontSize * 4;
+        yellowFont.draw(batch, "    GIANA GET UP", x, Gdx.graphics.getHeight() / 2 + fontSize * 8);
+        yellowFont.draw(batch, "THE SUN HAS FRIGHTENED", x, Gdx.graphics.getHeight() / 2 + fontSize * 6);
+        yellowFont.draw(batch, "    OFF THE NIGHT", x, Gdx.graphics.getHeight() / 2 + fontSize * 4);
 
         batch.end();
 
-        if (time > 2) {
-            game.setScreen(new LevelStartingScreen(game, oldMap));
+        if (time > 5) {
+            game.setScreen(new EnterYourNameScreen(game, oldMap));
         }
     }
 
     @Override
     public void hide() {
-        Gdx.app.debug("GianaSisters", "dispose intro");
         batch.dispose();
         yellowFont.dispose();
+
     }
 }
