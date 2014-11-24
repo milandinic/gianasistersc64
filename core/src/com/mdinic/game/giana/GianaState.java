@@ -1,5 +1,5 @@
 package com.mdinic.game.giana;
 
 public enum GianaState {
-    SPAWN, IDLE, DYING, DEAD, JUMP, RUN
+    SPAWN, IDLE, DYING, DEAD, JUMP, RUN, GROW
 }

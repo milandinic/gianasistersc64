@@ -156,6 +156,8 @@ public class Giana {
 
     Rectangle[] r = { new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle() };
 
+    public boolean big = false;
+
     private void tryMove() {
         bounds.x += vel.x;
         fetchCollidableRects();
@@ -271,6 +273,7 @@ public class Giana {
             if (box.active) {
                 box.active = false;
                 map.score += 25;
+                map.diamondsCollected++;
             }
         }
 

@@ -32,6 +32,11 @@ public class TreatBox {
     public void update(float deltaTime) {
         if (active) {
             stateTime += deltaTime;
+
+            if (map.giana.bounds.contains(bounds)) {
+                active = false;
+                map.giana.big = true;
+            }
         }
     }
 

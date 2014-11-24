@@ -34,19 +34,28 @@ public class MapRenderer {
     ImmediateModeRenderer20 renderer = new ImmediateModeRenderer20(false, true, 0);
     int[][] blocks;
     TextureRegion tile;
-    Animation bobLeft;
-    Animation bobRight;
-    Animation bobJumpLeft;
-    Animation bobJumpRight;
-    Animation bobIdleLeft;
-    Animation bobIdleRight;
-    Animation bobDead;
-    Animation zap;
+
+    Animation gianaLeft;
+    Animation gianaRight;
+    Animation gianaJumpLeft;
+    Animation gianaJumpRight;
+    Animation gianaIdleLeft;
+    Animation gianaIdleRight;
+
+    Animation gianaBigLeft;
+    Animation gianaBigRight;
+    Animation gianaBigJumpLeft;
+    Animation gianaBigJumpRight;
+    Animation gianaBigIdleLeft;
+    Animation gianaBigIdleRight;
+
+    Animation gianaDead;
+
     Animation diamondAnim;
     Animation treatBoxAnim;
 
     TextureRegion usedTreatBox;
-    Animation spawn;
+    TextureRegion spawn;
     TextureRegion dying;
     TextureRegion endDoor;
     FPSLogger fps = new FPSLogger();
@@ -197,18 +206,18 @@ public class MapRenderer {
 
         gianaRegion.setRegion(0, 59, 27, 28);
         dying = gianaRegion.split(27, 28)[0][0];
-        bobDead = new Animation(0.2f, dying);
+        gianaDead = new Animation(0.2f, dying);
 
-        bobRight = new Animation(0.1f, gianaSmallRight[1], gianaSmallRight[2], gianaSmallRight[3], gianaSmallRight[4]);
-        bobLeft = new Animation(0.1f, gianaSmallLeft[1], gianaSmallLeft[2], gianaSmallLeft[3], gianaSmallLeft[4]);
+        gianaRight = new Animation(0.1f, gianaSmallRight[1], gianaSmallRight[2], gianaSmallRight[3], gianaSmallRight[4]);
+        gianaLeft = new Animation(0.1f, gianaSmallLeft[1], gianaSmallLeft[2], gianaSmallLeft[3], gianaSmallLeft[4]);
 
-        bobJumpRight = new Animation(0.1f, gianaSmallRight[5]);
-        bobJumpLeft = new Animation(0.1f, gianaSmallLeft[5]);
+        gianaJumpRight = new Animation(0.1f, gianaSmallRight[5]);
+        gianaJumpLeft = new Animation(0.1f, gianaSmallLeft[5]);
 
-        bobIdleRight = new Animation(0.5f, gianaSmallRight[0]);
-        bobIdleLeft = new Animation(0.5f, gianaSmallLeft[0]);
+        gianaIdleRight = new Animation(0.5f, gianaSmallRight[0]);
+        gianaIdleLeft = new Animation(0.5f, gianaSmallLeft[0]);
 
-        spawn = new Animation(0.1f, gianaSmallRight[0]);
+        spawn = gianaSmallRight[0];
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/Giana.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
@@ -262,7 +271,7 @@ public class MapRenderer {
         renderGroundMonsters();
         renderPiranhas();
         renderTreats();
-        renderBob();
+        renderGiana();
         renderDiamonds();
         renderTreatBoxes();
         batch.end();
@@ -302,30 +311,53 @@ public class MapRenderer {
         }
     }
 
-    private void renderBob() {
+    private void renderGiana() {
         Animation anim = null;
         boolean loop = true;
-        if (map.giana.state == GianaState.RUN) {
-            if (map.giana.dir == Giana.LEFT)
-                anim = bobLeft;
-            else
-                anim = bobRight;
+
+        if (map.giana.big) {
+            if (map.giana.state == GianaState.RUN) {
+                if (map.giana.dir == Giana.LEFT)
+                    anim = gianaBigLeft;
+                else
+                    anim = gianaBigRight;
+            }
+            if (map.giana.state == GianaState.IDLE) {
+                if (map.giana.dir == Giana.LEFT)
+                    anim = gianaBigIdleLeft;
+                else
+                    anim = gianaBigIdleRight;
+            }
+            if (map.giana.state == GianaState.JUMP) {
+                if (map.giana.dir == Giana.LEFT)
+                    anim = gianaBigJumpLeft;
+                else
+                    anim = gianaBigJumpRight;
+            }
+        } else {
+            if (map.giana.state == GianaState.RUN) {
+                if (map.giana.dir == Giana.LEFT)
+                    anim = gianaLeft;
+                else
+                    anim = gianaRight;
+            }
+            if (map.giana.state == GianaState.IDLE) {
+                if (map.giana.dir == Giana.LEFT)
+                    anim = gianaIdleLeft;
+                else
+                    anim = gianaIdleRight;
+            }
+            if (map.giana.state == GianaState.JUMP) {
+                if (map.giana.dir == Giana.LEFT)
+                    anim = gianaJumpLeft;
+                else
+                    anim = gianaJumpRight;
+            }
         }
-        if (map.giana.state == GianaState.IDLE) {
-            if (map.giana.dir == Giana.LEFT)
-                anim = bobIdleLeft;
-            else
-                anim = bobIdleRight;
-        }
-        if (map.giana.state == GianaState.JUMP) {
-            if (map.giana.dir == Giana.LEFT)
-                anim = bobJumpLeft;
-            else
-                anim = bobJumpRight;
-        }
+
         if (map.giana.state == GianaState.SPAWN) {
-            anim = spawn;
-            loop = false;
+            batch.draw(spawn, map.giana.pos.x, map.giana.pos.y, 1, 1);
+            return;
         }
         if (map.giana.state == GianaState.DYING) {
             batch.draw(dying, map.giana.pos.x, map.giana.pos.y, 1, 1);
