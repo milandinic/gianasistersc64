@@ -34,6 +34,10 @@ public class Giana {
     boolean active = true;
     boolean processKeys = true;
 
+    Rectangle[] r = { new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle() };
+
+    public boolean big = false;
+
     public Giana(Map map, float x, float y) {
         this.map = map;
         pos.x = x;
@@ -153,10 +157,6 @@ public class Giana {
         accel.x = ACCELERATION * dir;
         active = false;
     }
-
-    Rectangle[] r = { new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle() };
-
-    public boolean big = false;
 
     private void tryMove() {
         bounds.x += vel.x;

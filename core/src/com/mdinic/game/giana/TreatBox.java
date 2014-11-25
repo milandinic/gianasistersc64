@@ -35,7 +35,6 @@ public class TreatBox {
 
             if (map.giana.bounds.contains(bounds)) {
                 active = false;
-                map.giana.big = true;
             }
         }
     }

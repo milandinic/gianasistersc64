@@ -49,11 +49,12 @@ public class Treat {
 
         if (state == TreatState.SPAWN) {
             if (startPos.y + 1 > pos.y) {
-                pos.y += MIN_MOVE;
                 bounds.y += MIN_MOVE;
+                pos.y = bounds.y;
             } else {
-                pos.y = startPos.y + 1;
                 bounds.y = startPos.y + 1;
+                pos.y = bounds.y;
+
                 state = TreatState.RUNNING;
             }
         } else {
@@ -68,6 +69,11 @@ public class Treat {
             vel.scl(1.0f / deltaTime);
         }
         stateTime += deltaTime;
+
+        if (map.giana.bounds.overlaps(bounds)) {
+            active = false;
+            map.giana.big = true;
+        }
 
     }
 

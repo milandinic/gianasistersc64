@@ -198,6 +198,21 @@ public class MapRenderer {
         Collections.reverse(asList);
         treatBallLeftAnim = new Animation(0.1f, asList.toArray(new TextureRegion[treatBall.length]));
 
+        TextureRegion gianaBigRegion = new TextureRegion(gianaTexture);
+        gianaBigRegion.setRegion(0, 125, 189, 28);
+        TextureRegion[] gianaBRight = gianaBigRegion.split(27, 28)[0];
+        gianaBigRegion.setRegion(0, 154, 189, 28);
+        TextureRegion[] gianaBLeft = gianaBigRegion.split(27, 28)[0];
+
+        gianaBigRight = new Animation(0.1f, gianaBRight[1], gianaBRight[2], gianaBRight[3], gianaBRight[4]);
+        gianaBigLeft = new Animation(0.1f, gianaBLeft[1], gianaBLeft[2], gianaBLeft[3], gianaBLeft[4]);
+
+        gianaBigJumpRight = new Animation(0.1f, gianaBRight[5]);
+        gianaBigJumpLeft = new Animation(0.1f, gianaBLeft[5]);
+
+        gianaBigIdleRight = new Animation(0.5f, gianaBRight[0]);
+        gianaBigIdleLeft = new Animation(0.5f, gianaBLeft[0]);
+
         TextureRegion gianaRegion = new TextureRegion(gianaTexture);
         gianaRegion.setRegion(0, 0, 189, 28);
         TextureRegion[] gianaSmallRight = gianaRegion.split(27, 28)[0];
