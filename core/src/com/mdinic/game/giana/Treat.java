@@ -72,9 +72,11 @@ public class Treat {
 
         if (map.giana.bounds.overlaps(bounds)) {
             active = false;
+            map.score += 100;
             map.giana.big = true;
             map.giana.state = GianaState.GROW;
             map.giana.stateTime = 0;
+
         }
 
     }

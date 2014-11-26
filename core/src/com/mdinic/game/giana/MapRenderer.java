@@ -52,6 +52,8 @@ public class MapRenderer {
     Animation gianaDead;
     Animation gianaGrow;
 
+    Animation smallDiamondAnim;
+
     Animation diamondAnim;
     Animation treatBoxAnim;
 
@@ -125,6 +127,9 @@ public class MapRenderer {
         simpleImageTextureRegions.put(SimpleImageType.WIDE_BUSH, new TextureRegion(sprites, 20, 83, 80, 20));
         simpleImageTextureRegions.put(SimpleImageType.COLUMN, new TextureRegion(sprites, 161, 259, 48, 25));
         simpleImageTextureRegions.put(SimpleImageType.FLOATING_COLUMN_UP, new TextureRegion(sprites, 164, 160, 48, 16));
+
+        smallDiamondAnim = new Animation(0.1f, new TextureRegion(new Texture(
+                Gdx.files.internal("data/smalldiamond.png"))).split(8, 8)[0]);
 
         Texture gianaTexture = new Texture(Gdx.files.internal("data/giana.png"));
         Texture diamondTexture = new Texture(Gdx.files.internal("data/diamond.png"));
@@ -293,7 +298,9 @@ public class MapRenderer {
         renderTreats();
         renderGiana();
         renderDiamonds();
+        renderTreatBoxeSmallDiamonds();
         renderTreatBoxes();
+
         batch.end();
 
         this.scoreCam.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
@@ -397,6 +404,15 @@ public class MapRenderer {
             if (currentDiamond.active) {
                 batch.draw(diamondAnim.getKeyFrame(currentDiamond.stateTime, true), currentDiamond.pos.x,
                         currentDiamond.pos.y, 0.8f, 0.8f);
+            }
+        }
+    }
+
+    private void renderTreatBoxeSmallDiamonds() {
+        for (SmallDiamoind smallDiamoind : map.treatSmallDiamoinds) {
+            if (smallDiamoind.active) {
+                batch.draw(smallDiamondAnim.getKeyFrame(smallDiamoind.stateTime, true), smallDiamoind.pos.x,
+                        smallDiamoind.pos.y, 0.4f, 0.4f);
             }
         }
     }

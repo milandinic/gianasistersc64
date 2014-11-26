@@ -67,7 +67,8 @@ public class LevelStartingScreen extends GianaSistersScreen {
         batch.end();
 
         if (time > 2) {
-            game.setScreen(new GameScreen(game, oldMap.level + 1, oldMap.lives, oldMap.diamondsCollected, oldMap.score));
+            oldMap.level++;
+            game.setScreen(new GameScreen(game, oldMap));
         }
     }
 

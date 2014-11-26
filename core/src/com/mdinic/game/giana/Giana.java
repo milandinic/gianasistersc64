@@ -280,6 +280,7 @@ public class Giana {
                 box.active = false;
                 map.score += 25;
                 map.diamondsCollected++;
+                map.treatSmallDiamoinds.add(new SmallDiamoind(map, box.pos.x, box.pos.y));
             }
         }
 

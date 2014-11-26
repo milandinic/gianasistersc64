@@ -53,12 +53,23 @@ public class Map {
     Array<GroundMonster> groundMonsters = new Array<GroundMonster>();
     Array<SimpleImage> simpleImages = new Array<SimpleImage>();
     Array<Treat> treats = new Array<Treat>();
+    Array<SmallDiamoind> treatSmallDiamoinds = new Array<SmallDiamoind>();
+
     Array<Fish> fishes = new Array<Fish>();
 
     Vector2 startPosition = new Vector2();
     // row, column
     ArrayMap<Integer, ArrayMap<Integer, TreatBox>> treatBoxesMap = new ArrayMap<Integer, ArrayMap<Integer, TreatBox>>();
     public EndDoor endDoor;
+
+    public Map(Map oldMap) {
+        this(oldMap.level);
+
+        this.lives = oldMap.lives;
+        this.diamondsCollected = oldMap.diamondsCollected;
+        this.score = oldMap.score;
+        this.giana.big = oldMap.giana.big;
+    }
 
     public Map(int level) {
         time = 99;
@@ -164,6 +175,9 @@ public class Map {
         }
         for (TreatBox box : treatBoxes) {
             box.update(deltaTime);
+        }
+        for (SmallDiamoind diamond : treatSmallDiamoinds) {
+            diamond.update(deltaTime);
         }
         for (MovingSpikes mSpike : movingSpikes) {
             mSpike.update(deltaTime);

@@ -19,12 +19,9 @@ public class GameScreen extends GianaSistersScreen {
         map = new Map(level);
     }
 
-    public GameScreen(Game game, int level, int lives, int diamonds, int score) {
+    public GameScreen(Game game, Map oldMap) {
         super(game);
-        map = new Map(level);
-        map.lives = lives;
-        map.diamondsCollected = diamonds;
-        map.score = score;
+        map = new Map(oldMap);
     }
 
     @Override
