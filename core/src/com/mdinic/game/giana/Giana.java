@@ -59,11 +59,18 @@ public class Giana {
     }
 
     public void update(float deltaTime) {
+        stateTime += deltaTime;
 
         if (map.time == 0) {
             if (map.giana.state != GianaState.DYING) {
                 map.giana.state = GianaState.DYING;
                 map.giana.stateTime = 0;
+            }
+        }
+
+        if (state == GianaState.GROW) {
+            if (stateTime < 0.5f) {
+                return;
             }
         }
 
@@ -110,7 +117,6 @@ public class Giana {
 
         }
 
-        stateTime += deltaTime;
     }
 
     private void processKeys() {

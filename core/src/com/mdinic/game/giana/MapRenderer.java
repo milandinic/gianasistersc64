@@ -50,6 +50,7 @@ public class MapRenderer {
     Animation gianaBigIdleRight;
 
     Animation gianaDead;
+    Animation gianaGrow;
 
     Animation diamondAnim;
     Animation treatBoxAnim;
@@ -221,6 +222,10 @@ public class MapRenderer {
 
         gianaRegion.setRegion(0, 59, 27, 28);
         dying = gianaRegion.split(27, 28)[0][0];
+
+        gianaRegion.setRegion(27, 59, 27 * 3, 28);
+        gianaGrow = new Animation(0.1f, gianaRegion.split(27, 28)[0]);
+
         gianaDead = new Animation(0.2f, dying);
 
         gianaRight = new Animation(0.1f, gianaSmallRight[1], gianaSmallRight[2], gianaSmallRight[3], gianaSmallRight[4]);
@@ -368,6 +373,10 @@ public class MapRenderer {
                 else
                     anim = gianaJumpRight;
             }
+        }
+
+        if (map.giana.state == GianaState.GROW) {
+            anim = gianaGrow;
         }
 
         if (map.giana.state == GianaState.SPAWN) {
