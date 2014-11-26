@@ -25,6 +25,7 @@ public class Giana {
     public Rectangle bounds = new Rectangle();
 
     public Rectangle killerBounds = new Rectangle();
+    public Rectangle headHitBounds = new Rectangle();
 
     public GianaState state;
     public float stateTime = 0;
@@ -50,12 +51,19 @@ public class Giana {
         stateTime = 0;
         killerBounds.width = bounds.width;
         killerBounds.height = 0.2f;
+
+        headHitBounds.width = bounds.width - 0.2f;
+        headHitBounds.height = 0.2f;
+
         updateKillerBounds();
     }
 
     void updateKillerBounds() {
         killerBounds.x = bounds.x;
         killerBounds.y = bounds.y - 0.3f;
+
+        headHitBounds.x = bounds.x + 0.1f;
+        headHitBounds.y = bounds.y + bounds.height;
     }
 
     public void update(float deltaTime) {
@@ -272,24 +280,6 @@ public class Giana {
         // prevent move in part the game that is passed
         if (pos.x < maxX - ((Map.MAP_WIDTH / 2) + 2)) {
             r[1].set(p2x, p2y, 0, 1);
-        }
-
-        if (tile3 == Map.TREAT_BOX) {
-            TreatBox box = map.treatBoxesMap.get(map.tiles[0].length - 1 - p3y).get(p3x);
-            if (box.active) {
-                box.active = false;
-                map.score += 25;
-                map.diamondsCollected++;
-                map.treatSmallDiamoinds.add(new SmallDiamoind(map, box.pos.x, box.pos.y));
-            }
-        }
-
-        if (tile3 == Map.TREAT_BOX_BALL) {
-            TreatBox box = map.treatBoxesMap.get(map.tiles[0].length - 1 - p3y).get(p3x);
-            if (box.active) {
-                box.active = false;
-                map.treats.add(new Treat(map, box.pos.x, box.pos.y));
-            }
         }
 
     }

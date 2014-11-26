@@ -30,7 +30,28 @@ public class TreatBox {
     }
 
     public void update(float deltaTime) {
-        stateTime += deltaTime;
+        if (active) {
+            stateTime += deltaTime;
+
+            switch (type) {
+            case DIAMOND:
+                if (map.giana.headHitBounds.overlaps(bounds)) {
+                    active = false;
+                    map.score += 25;
+                    map.diamondsCollected++;
+                    map.treatSmallDiamoinds.add(new SmallDiamoind(map, pos.x, pos.y));
+                }
+                break;
+            case BALL:
+                if (map.giana.headHitBounds.overlaps(bounds)) {
+                    active = false;
+                    map.treats.add(new Treat(map, pos.x, pos.y));
+                }
+                break;
+            default:
+                break;
+            }
+        }
     }
 
 }

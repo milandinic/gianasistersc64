@@ -9,7 +9,6 @@ import java.util.List;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -33,7 +32,7 @@ public class MapRenderer {
     SpriteBatch batch = new SpriteBatch(5460);
     ImmediateModeRenderer20 renderer = new ImmediateModeRenderer20(false, true, 0);
     int[][] blocks;
-    TextureRegion tile;
+    TextureRegion tileTexture;
 
     Animation gianaLeft;
     Animation gianaRight;
@@ -87,37 +86,21 @@ public class MapRenderer {
                 .ceil(this.map.tiles[0].length / 16.0f)];
 
         createAnimations();
-        createBlocks();
     }
 
-    private void createBlocks() {
-        int width = map.tiles.length;
-        int height = map.tiles[0].length;
-        for (int blockY = 0; blockY < blocks[0].length; blockY++) {
-            for (int blockX = 0; blockX < blocks.length; blockX++) {
-                cache.beginCache();
-                for (int y = blockY * 16; y < blockY * 16 + 16; y++) {
-                    for (int x = blockX * 24; x < blockX * 24 + 24; x++) {
-                        if (x > width)
-                            continue;
-                        if (y > height)
-                            continue;
-                        int posX = x;
-                        int posY = height - y - 1;
-                        if (map.match(map.tiles[x][y], Map.TILE))
-                            cache.add(tile, posX, posY, 1, 1);
-                    }
-                }
-                blocks[blockX][blockY] = cache.endCache();
-            }
+    private void drawBlocks() {
+
+        for (Tile tile : map.tileArray) {
+            if (tile.active)
+                batch.draw(tileTexture, tile.pos.x, tile.pos.y, 1, 1);
         }
-        Gdx.app.debug("GianaSisters", "blocks created");
+
     }
 
     private void createAnimations() {
 
         Texture sprites = new Texture(Gdx.files.internal("data/sprites.png"));
-        this.tile = new TextureRegion(sprites, 150, 103, 24, 16);
+        this.tileTexture = new TextureRegion(sprites, 150, 103, 24, 16);
         this.endDoor = new TextureRegion(sprites, 16, 196, 32, 32);
 
         simpleImageTextureRegions.put(SimpleImageType.BIG_CLOUD, new TextureRegion(sprites, 13, 10, 42, 17));
@@ -274,18 +257,11 @@ public class MapRenderer {
 
         scoreCam.update();
 
-        cache.setProjectionMatrix(cam.combined);
-        Gdx.gl.glDisable(GL20.GL_BLEND);
-        cache.begin();
-        for (int blockY = 0; blockY < 4; blockY++) {
-            for (int blockX = 0; blockX < 6; blockX++) {
-                cache.draw(blocks[blockX][blockY]);
-            }
-        }
-        cache.end();
         stateTime += deltaTime;
         batch.setProjectionMatrix(cam.combined);
         batch.begin();
+
+        drawBlocks();
 
         if (map.endDoor != null)
             batch.draw(endDoor, map.endDoor.bounds.x, map.endDoor.bounds.y, 2, 2);
@@ -397,6 +373,7 @@ public class MapRenderer {
         if (map.giana.active) {
             batch.draw(anim.getKeyFrame(map.giana.stateTime, loop), map.giana.pos.x, map.giana.pos.y, 1, 1);
         }
+
     }
 
     private void renderDiamonds() {
@@ -472,6 +449,6 @@ public class MapRenderer {
     public void dispose() {
         cache.dispose();
         batch.dispose();
-        tile.getTexture().dispose();
+        tileTexture.getTexture().dispose();
     }
 }

@@ -7,7 +7,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ArrayMap;
 import com.mdinic.game.giana.TreatBox.TreatType;
 
 public class Map {
@@ -54,12 +53,11 @@ public class Map {
     Array<SimpleImage> simpleImages = new Array<SimpleImage>();
     Array<Treat> treats = new Array<Treat>();
     Array<SmallDiamoind> treatSmallDiamoinds = new Array<SmallDiamoind>();
+    Array<Tile> tileArray = new Array<Tile>();
 
     Array<Fish> fishes = new Array<Fish>();
 
     Vector2 startPosition = new Vector2();
-    // row, column
-    ArrayMap<Integer, ArrayMap<Integer, TreatBox>> treatBoxesMap = new ArrayMap<Integer, ArrayMap<Integer, TreatBox>>();
     public EndDoor endDoor;
 
     public Map(Map oldMap) {
@@ -109,7 +107,7 @@ public class Map {
 
         tiles = new int[pixmap.getWidth()][pixmap.getHeight()];
         for (int y = 0; y < MAP_HEIGHT; y++) {
-            treatBoxesMap.put(new Integer(y), new ArrayMap<Integer, TreatBox>());
+
             for (int x = 0; x < 150; x++) {
                 pix = (pixmap.getPixel(x, y + (level * LEVEL_PIXELBUFFER)) >>> 8) & 0xffffff;
                 if (match(pix, START)) {
@@ -137,20 +135,18 @@ public class Map {
                 } else if (match(pix, MOVING_SPIKES)) {
                     movingSpikes.add(new MovingSpikes(this, x, pixmap.getHeight() - 1 - y));
                 } else if (match(pix, TREAT_BOX)) {
-                    TreatBox treatBox = new TreatBox(this, x, pixmap.getHeight() - 1 - y, TreatType.DIAMOND);
-                    treatBoxes.add(treatBox);
-                    treatBoxesMap.get(y).put(x, treatBox);
+                    treatBoxes.add(new TreatBox(this, x, pixmap.getHeight() - 1 - y, TreatType.DIAMOND));
                     tiles[x][y] = pix;
                 } else if (match(pix, TREAT_BOX_BALL)) {
-                    TreatBox treatBox = new TreatBox(this, x, pixmap.getHeight() - 1 - y, TreatType.BALL);
-                    treatBoxes.add(treatBox);
-                    treatBoxesMap.get(y).put(x, treatBox);
+                    treatBoxes.add(new TreatBox(this, x, pixmap.getHeight() - 1 - y, TreatType.BALL));
                     tiles[x][y] = pix;
                 } else if (match(pix, END)) {
                     endDoor = new EndDoor(x, pixmap.getHeight() - 1 - y);
                 } else {
                     if (tiles[x][y] == 0) {
                         tiles[x][y] = pix;
+                        if (match(pix, TILE))
+                            tileArray.add(new Tile(this, x, pixmap.getHeight() - 1 - y));
                     }
                 }
             }
@@ -194,6 +190,10 @@ public class Map {
         for (Fish fish : fishes) {
             if (fish.active)
                 fish.update(deltaTime);
+        }
+
+        for (Tile tile : tileArray) {
+            tile.update(deltaTime);
         }
 
     }

@@ -141,7 +141,7 @@ public class Treat {
         }
 
         int y = map.tiles[0].length - 1 - p1y;
-        if (y > 0)
+        if (y > 0 && map.tiles[0].length > y)
             tile1 = tiles[p1x][y]; // to the right
         else {
             active = false;
