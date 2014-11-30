@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -60,8 +61,12 @@ public class Map {
     Vector2 startPosition = new Vector2();
     public EndDoor endDoor;
 
+    Sound diamondSound;
+
     public Map(Map oldMap) {
         this(oldMap.level);
+
+        diamondSound = Gdx.audio.newSound(Gdx.files.internal("data/sfx/diamond-collect.mp3"));
 
         this.lives = oldMap.lives;
         this.diamondsCollected = oldMap.diamondsCollected;

@@ -19,6 +19,7 @@ public class Diamond {
         bounds.x = x;
         bounds.y = y;
         bounds.width = bounds.height = 1;
+
     }
 
     public void update(float deltaTime) {
@@ -26,6 +27,7 @@ public class Diamond {
             stateTime += deltaTime;
 
             if (map.giana.bounds.overlaps(bounds)) {
+                map.diamondSound.play();
                 active = false;
                 map.collectDiamound();
             }

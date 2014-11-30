@@ -2,6 +2,7 @@ package com.mdinic.game.giana.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -19,6 +20,7 @@ public class LevelStartingScreen extends GianaSistersScreen {
     private SpriteBatch batch;
     private final Map oldMap;
     private OrthographicCamera cam;
+    private Sound sound;
 
     public LevelStartingScreen(Game game, Map oldMap) {
         super(game);
@@ -27,6 +29,7 @@ public class LevelStartingScreen extends GianaSistersScreen {
 
     @Override
     public void show() {
+        sound = Gdx.audio.newSound(Gdx.files.internal("data/sfx/startLevel.mp3"));
 
         batch = new SpriteBatch();
         batch.getProjectionMatrix().setToOrtho2D(0, 0, 480, 320);
@@ -46,6 +49,7 @@ public class LevelStartingScreen extends GianaSistersScreen {
         this.cam.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
         cam.update();
 
+        sound.play();
         generator.dispose();
     }
 
@@ -66,14 +70,16 @@ public class LevelStartingScreen extends GianaSistersScreen {
 
         batch.end();
 
-        if (time > 2) {
+        if (time > 4) {
             oldMap.level++;
+            sound.stop();
             game.setScreen(new GameScreen(game, oldMap));
         }
     }
 
     @Override
     public void hide() {
+        sound.dispose();
         batch.dispose();
     }
 }
