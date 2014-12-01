@@ -73,6 +73,8 @@ public class MapRenderer {
     private Animation treatBallRightAnim;
     private Animation treatBallLeftAnim;
     private Animation piranhaAnim;
+    private Animation waspRightAnim;
+    private Animation waspLeftAnim;
 
     public MapRenderer(Map map) {
         this.map = map;
@@ -121,6 +123,16 @@ public class MapRenderer {
 
         Texture groundMonstersTexture = new Texture(Gdx.files.internal("data/groundmonsters.png"));
         Texture lobsterTexture = new Texture(Gdx.files.internal("data/lobster.png"));
+        waspRightAnim = new Animation(0.3f, new TextureRegion(new Texture(Gdx.files.internal("data/wasp.png"))).split(
+                24, 20)[0]);
+
+        TextureRegion[] waspRegionLeft = new TextureRegion(new Texture(Gdx.files.internal("data/wasp.png"))).split(24,
+                20)[0];
+        for (TextureRegion textureRegion : waspRegionLeft) {
+            textureRegion.flip(true, false);
+        }
+
+        waspLeftAnim = new Animation(0.3f, waspRegionLeft);
 
         TextureRegion[] piranhaRegion = new TextureRegion(new Texture(Gdx.files.internal("data/piranha.png"))).split(
                 20, 20)[0];
@@ -271,6 +283,7 @@ public class MapRenderer {
         renderMovingSpikes();
         renderGroundMonsters();
         renderPiranhas();
+        renderBees();
         renderTreats();
         renderGiana();
         renderDiamonds();
@@ -443,6 +456,16 @@ public class MapRenderer {
     private void renderPiranhas() {
         for (Fish fish : map.fishes) {
             batch.draw(piranhaAnim.getKeyFrame(fish.stateTime, true), fish.pos.x, fish.pos.y, 1, 1);
+        }
+    }
+
+    private void renderBees() {
+        for (Bee bee : map.bees) {
+            if (bee.state == Bee.FORWARD)
+                batch.draw(waspRightAnim.getKeyFrame(bee.stateTime, true), bee.pos.x, bee.pos.y, 1, 1);
+            else
+                batch.draw(waspLeftAnim.getKeyFrame(bee.stateTime, true), bee.pos.x, bee.pos.y, 1, 1);
+
         }
     }
 

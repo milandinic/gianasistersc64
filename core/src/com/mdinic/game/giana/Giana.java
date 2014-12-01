@@ -71,7 +71,6 @@ public class Giana {
 
     public void update(float deltaTime) {
         stateTime += deltaTime;
-
         if (map.time == 0) {
             if (map.giana.state != GianaState.DYING) {
                 map.giana.state = GianaState.DYING;

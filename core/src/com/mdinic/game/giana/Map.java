@@ -26,6 +26,8 @@ public class Map {
     static int TREAT_BOX = 0xff8a00;
     static int TREAT_BOX_BALL = 0xffcb8d;
 
+    static int BEE = 0xd2a285;
+
     static int LEVEL_PIXELBUFFER = 20;
 
     List<Integer> colidableColors = new ArrayList<Integer>();
@@ -56,6 +58,7 @@ public class Map {
     Array<SmallDiamoind> treatSmallDiamoinds = new Array<SmallDiamoind>();
     Array<Tile> tileArray = new Array<Tile>();
 
+    Array<Bee> bees = new Array<Bee>();
     Array<Fish> fishes = new Array<Fish>();
 
     Vector2 startPosition = new Vector2();
@@ -71,7 +74,7 @@ public class Map {
         this.lives = oldMap.lives;
         this.diamondsCollected = oldMap.diamondsCollected;
         this.score = oldMap.score;
-        this.giana.big = oldMap.giana.big;
+        // this.giana.big = oldMap.giana.big;
     }
 
     public Map(int level) {
@@ -123,6 +126,8 @@ public class Map {
 
                 } else if (match(pix, DIAMOND)) {
                     diamonds.add(new Diamond(this, x, pixmap.getHeight() - 1 - y));
+                } else if (match(pix, BEE)) {
+                    bees.add(new Bee(this, x, pixmap.getHeight() - 1 - y));
                 } else if (GoundMonsterType.containsColor(pix) != null) {
                     groundMonsters.add(new GroundMonster(this, x, pixmap.getHeight() - 1 - y, GoundMonsterType
                             .containsColor(pix)));
@@ -185,6 +190,10 @@ public class Map {
         }
         for (GroundMonster monster : groundMonsters) {
             monster.update(deltaTime);
+        }
+
+        for (Bee bee : bees) {
+            bee.update(deltaTime);
         }
 
         for (Treat treat : treats) {

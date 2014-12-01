@@ -31,7 +31,7 @@ public class Tile {
             stateTime += deltaTime;
             switch (state) {
             case NORMAL:
-                if (map.giana.headHitBounds.overlaps(bounds) && map.giana.big) {
+                if (map.giana.headHitBounds.overlaps(bounds) && map.giana.big && map.giana.state == GianaState.JUMP) {
                     state = State.EXPLODING;
                     stateTime = 0;
                 }
