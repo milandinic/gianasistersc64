@@ -46,7 +46,9 @@ public class GameScreen extends GianaSistersScreen {
             return;
         }
 
-        map.time = 99 - (int) map.giana.stateTime;
+        if (map.giana.state != GianaState.DYING) {
+            map.time = 99 - (int) map.giana.stateTime;
+        }
         Gdx.gl.glClearColor(map.r, map.g, map.b, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         renderer.render(delta);

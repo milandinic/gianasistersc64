@@ -46,7 +46,7 @@ public class Giana {
         this.map = map;
         pos.x = x;
         pos.y = y;
-        bounds.width = 0.6f;
+        bounds.width = 0.7f; // 0.6f;
         bounds.height = 0.8f;
         bounds.x = pos.x + 0.2f;
         bounds.y = pos.y;
@@ -184,10 +184,11 @@ public class Giana {
         for (int i = 0; i < r.length; i++) {
             Rectangle rect = r[i];
             if (bounds.overlaps(rect)) {
-                if (vel.x < 0)
+                if (vel.x < 0) {
                     bounds.x = rect.x + rect.width + 0.01f;
-                else
+                } else {
                     bounds.x = rect.x - bounds.width - 0.01f;
+                }
                 vel.x = 0;
             }
         }
@@ -277,17 +278,14 @@ public class Giana {
         else
             r[3].set(nowayCollidableRect);
 
-        //
-        // prevent move to less then zero
         if (pos.x < 0) {
+            // prevent move to less then zero
             r[1].set(p2x, p2y, 0, 1);
-        }
-
-        // prevent move in part the game that is passed
-        if (pos.x < maxX - ((Map.MAP_WIDTH / 2) + 2)) {
-            r[1].set(p2x, p2y, 0, 1);
+        } else if (pos.x < maxX - ((Map.MAP_WIDTH / 2) + 2)) {
+            // prevent move in part the game that is passed
+            r[1].set(p2x, p2y, 0, 0.3f);
+            bounds.x += 0.01f;
         }
 
     }
-
 }

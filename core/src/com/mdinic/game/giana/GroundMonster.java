@@ -69,7 +69,7 @@ public class GroundMonster {
             change = map.isColidable(map.tiles[(int) Math.floor(pos.x) + fx][y + fy]);
             change = change || map.tiles[(int) pos.x + fx][y + fy + 1] == 0;
         } else {
-            change = map.isColidable(map.tiles[(int) Math.floor(pos.x) + bx][y + by]);
+            change = map.isColidable(map.tiles[(int) Math.ceil(pos.x) + bx][y + by]);
             change = change || map.tiles[(int) pos.x + bx + 1][y + by + 1] == 0;
         }
         if (change) {
