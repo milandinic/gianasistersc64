@@ -90,6 +90,7 @@ public class GroundMonster {
             if (map.giana.state != GianaState.DYING && alive && type.canBeKilled) {
                 alive = false;
                 map.score += 50;
+                MapResource.getInstance().getGianaKillSfx().play();
             }
         }
 

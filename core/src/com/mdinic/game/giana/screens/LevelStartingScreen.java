@@ -2,7 +2,6 @@ package com.mdinic.game.giana.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -11,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.mdinic.game.giana.Map;
+import com.mdinic.game.giana.MapResource;
 
 public class LevelStartingScreen extends GianaSistersScreen {
 
@@ -20,12 +20,10 @@ public class LevelStartingScreen extends GianaSistersScreen {
     private SpriteBatch batch;
     private final Map oldMap;
     private OrthographicCamera cam;
-    private final Sound sound;
 
     public LevelStartingScreen(Game game, Map oldMap) {
         super(game);
         this.oldMap = oldMap;
-        sound = Gdx.audio.newSound(Gdx.files.internal("data/sfx/startLevel.mp3"));
     }
 
     @Override
@@ -49,7 +47,7 @@ public class LevelStartingScreen extends GianaSistersScreen {
         this.cam.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
         cam.update();
 
-        sound.play();
+        MapResource.getInstance().getStartLevelSfx().play();
         generator.dispose();
     }
 
@@ -72,14 +70,13 @@ public class LevelStartingScreen extends GianaSistersScreen {
 
         if (time > 4) {
             oldMap.level++;
-            sound.stop();
+            MapResource.getInstance().getStartLevelSfx().stop();
             game.setScreen(new GameScreen(game, oldMap));
         }
     }
 
     @Override
     public void hide() {
-        sound.dispose();
         batch.dispose();
     }
 }

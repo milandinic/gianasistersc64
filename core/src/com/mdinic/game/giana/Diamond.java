@@ -27,7 +27,7 @@ public class Diamond {
             stateTime += deltaTime;
 
             if (map.giana.bounds.overlaps(bounds)) {
-                map.diamondSound.play();
+                MapResource.getInstance().getDiamondSfx().play();
                 active = false;
                 map.collectDiamound();
             }

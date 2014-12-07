@@ -36,6 +36,7 @@ public class TreatBox {
             switch (type) {
             case DIAMOND:
                 if (map.giana.headHitBounds.overlaps(bounds)) {
+                    MapResource.getInstance().getTreatBoxCoinSfx().play();
                     active = false;
                     map.score += 25;
                     map.diamondsCollected++;
@@ -53,5 +54,4 @@ public class TreatBox {
             }
         }
     }
-
 }

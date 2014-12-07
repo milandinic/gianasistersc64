@@ -33,6 +33,7 @@ public class Tile {
             case NORMAL:
                 if (map.giana.headHitBounds.overlaps(bounds) && map.giana.big && map.giana.state == GianaState.JUMP) {
                     state = State.EXPLODING;
+                    MapResource.getInstance().getBrickDestroySfx().play();
                     stateTime = 0;
                 }
                 break;

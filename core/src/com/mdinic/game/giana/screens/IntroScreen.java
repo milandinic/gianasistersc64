@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.audio.Music;
+import com.mdinic.game.giana.MapResource;
 
 public class IntroScreen extends GameScreen {
     Music music;
@@ -18,6 +19,7 @@ public class IntroScreen extends GameScreen {
         super.show();
         music = Gdx.audio.newMusic(Gdx.files.internal("data/intro.mp3"));
         music.play();
+        MapResource.getInstance();
     }
 
     @Override

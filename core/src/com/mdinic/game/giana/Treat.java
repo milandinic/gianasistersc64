@@ -76,7 +76,7 @@ public class Treat {
             map.giana.big = true;
             map.giana.state = GianaState.GROW;
             map.giana.stateTime = 0;
-
+            MapResource.getInstance().getPowerUpSfx().play();
         }
 
     }

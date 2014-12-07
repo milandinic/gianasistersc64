@@ -2,7 +2,6 @@ package com.mdinic.game.giana;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -40,7 +39,7 @@ public class Giana {
 
     public boolean big = false;
 
-    private Sound sound;
+    private boolean playDead = true;
 
     public Giana(Map map, float x, float y) {
         this.map = map;
@@ -85,13 +84,20 @@ public class Giana {
         }
 
         if (state == GianaState.DYING) {
+
             if (stateTime < 0.2f) {
+                if (playDead) {
+                    playDead = false;
+                    MapResource.getInstance().getGianaDyingSfx().play();
+
+                }
                 pos.y += MIN_MOVE;
                 bounds.y += MIN_MOVE;
             } else if (stateTime < 1f) {
                 pos.y -= MIN_MOVE;
                 bounds.y -= MIN_MOVE;
             } else {
+                playDead = true;
                 state = GianaState.DEAD;
                 map.lives--;
 
@@ -144,10 +150,8 @@ public class Giana {
                 || (Gdx.input.isTouched(1) && x1 > 416 && x1 < 480 && y0 < 64);
 
         if ((Gdx.input.isKeyPressed(Keys.W) || jumpButton) && state != GianaState.JUMP) {
-            if (sound != null)
-                sound.stop();
-            sound = Gdx.audio.newSound(Gdx.files.internal("data/sfx/jump.mp3"));
-            sound.play();
+            MapResource.getInstance().getGianaJumpSfx().stop();
+            MapResource.getInstance().getGianaJumpSfx().play();
             state = GianaState.JUMP;
             vel.y = JUMP_VELOCITY;
             grounded = false;

@@ -2,7 +2,6 @@ package com.mdinic.game.giana.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -11,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.mdinic.game.giana.Map;
+import com.mdinic.game.giana.MapResource;
 
 public class LevelOverScreen extends GianaSistersScreen {
 
@@ -20,7 +20,6 @@ public class LevelOverScreen extends GianaSistersScreen {
     private SpriteBatch batch;
     private final Map oldMap;
     private OrthographicCamera cam;
-    private Sound sound;
 
     public LevelOverScreen(Game game, Map oldMap) {
         super(game);
@@ -29,7 +28,6 @@ public class LevelOverScreen extends GianaSistersScreen {
 
     @Override
     public void show() {
-        sound = Gdx.audio.newSound(Gdx.files.internal("data/sfx/endLevel-bonus.mp3"));
 
         batch = new SpriteBatch();
         batch.getProjectionMatrix().setToOrtho2D(0, 0, 480, 320);
@@ -46,7 +44,7 @@ public class LevelOverScreen extends GianaSistersScreen {
         yellowFont = generator.generateFont(parameter);
         yellowFont.setColor(new Color(0.87f, 0.95f, 0.47f, 1));
         generator.dispose();
-        sound.play();
+        MapResource.getInstance().getEndLevelSfx().play();
     }
 
     @Override
@@ -78,7 +76,7 @@ public class LevelOverScreen extends GianaSistersScreen {
         batch.end();
 
         if (time > 3) {
-            sound.stop();
+            MapResource.getInstance().getEndLevelSfx().stop();
             game.setScreen(new LevelStartingScreen(game, oldMap));
         }
     }
@@ -88,6 +86,5 @@ public class LevelOverScreen extends GianaSistersScreen {
         Gdx.app.debug("GianaSisters", "dispose intro");
         batch.dispose();
         yellowFont.dispose();
-        sound.dispose();
     }
 }
