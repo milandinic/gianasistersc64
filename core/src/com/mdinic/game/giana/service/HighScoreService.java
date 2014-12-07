@@ -12,7 +12,16 @@ public interface HighScoreService {
 
     void saveHighScore(Score score);
 
-    void setIneternetConnectionChecker(InternetConnectionChecker checker);
-
     boolean internetAvailable();
+
+    boolean goodForHighScores(int score);
+
+    // offline
+    // List<Score> getOfflineScores();
+    //
+    // void persistOfflineScores(List<Score> scores);
+    //
+    // void saveMyScore(Score score);
+
+    Score getMyBest();
 }

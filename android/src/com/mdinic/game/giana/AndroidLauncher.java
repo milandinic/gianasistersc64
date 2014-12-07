@@ -18,8 +18,7 @@ public class AndroidLauncher extends AndroidApplication implements InternetConne
         Parse.initialize(this, "AKmNv40ZmUudVezreRT6NpGOBmH6D4gSOCtdnHOe", "kBM5rL0mW3zHD6ifZl9mTU5aqHPqd3Ye33k6P3CP");
 
         GianaSistersC64 gianaSistersC64 = new GianaSistersC64();
-        HighScoreServiceDroid highScoreServiceDroid = new HighScoreServiceDroid();
-        highScoreServiceDroid.setIneternetConnectionChecker(this);
+        HighScoreServiceDroid highScoreServiceDroid = new HighScoreServiceDroid(this, this);
         gianaSistersC64.setHighScoreService(highScoreServiceDroid);
 
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();

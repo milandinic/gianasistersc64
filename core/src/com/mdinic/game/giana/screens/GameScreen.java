@@ -38,7 +38,10 @@ public class GameScreen extends GianaSistersScreen {
         if (map.giana.state == GianaState.DEAD) {
             map.level--;
             if (map.lives == 0) {
-                game.setScreen(new EnterYourNameScreen(game, map));
+                if (getGame().getHighScoreService().goodForHighScores(map.score))
+                    game.setScreen(new EnterYourNameScreen(game, map));
+                else
+                    game.setScreen(new HighScoreScreen(game));
             } else {
                 game.setScreen(new LevelStartingScreen(game, map));
             }

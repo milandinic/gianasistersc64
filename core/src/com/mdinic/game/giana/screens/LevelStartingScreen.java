@@ -20,16 +20,16 @@ public class LevelStartingScreen extends GianaSistersScreen {
     private SpriteBatch batch;
     private final Map oldMap;
     private OrthographicCamera cam;
-    private Sound sound;
+    private final Sound sound;
 
     public LevelStartingScreen(Game game, Map oldMap) {
         super(game);
         this.oldMap = oldMap;
+        sound = Gdx.audio.newSound(Gdx.files.internal("data/sfx/startLevel.mp3"));
     }
 
     @Override
     public void show() {
-        sound = Gdx.audio.newSound(Gdx.files.internal("data/sfx/startLevel.mp3"));
 
         batch = new SpriteBatch();
         batch.getProjectionMatrix().setToOrtho2D(0, 0, 480, 320);

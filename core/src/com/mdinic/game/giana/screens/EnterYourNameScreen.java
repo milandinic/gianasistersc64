@@ -51,7 +51,18 @@ public class EnterYourNameScreen extends GianaSistersScreen {
         TextFieldStyle style = new TextFieldStyle();
         style.font = yellowFont;
         style.fontColor = fontColor;
-        final TextField nameText = new TextField(TYPE_YOUR_NAME, style);
+
+        TextField goBack = new TextField("Skip to high scores", style);
+
+        final TextField nameText;
+
+        Score score = getGame().getHighScoreService().getMyBest();
+        if (score != null && score.getName() != null && !score.getName().isEmpty()
+                && score.getName().compareTo(TYPE_YOUR_NAME) != 0) {
+            nameText = new TextField(score.getName(), style);
+        } else {
+            nameText = new TextField(TYPE_YOUR_NAME, style);
+        }
         nameText.setMaxLength(22);
         nameText.selectAll();
 
@@ -72,7 +83,14 @@ public class EnterYourNameScreen extends GianaSistersScreen {
                     public void canceled() {
                         game.setScreen(new IntroScreen(game));
                     }
-                }, "", "");
+                }, "", nameText.getText());
+            }
+        });
+
+        goBack.setOnscreenKeyboard(new TextField.OnscreenKeyboard() {
+            @Override
+            public void show(boolean visible) {
+                game.setScreen(new HighScoreScreen(game));
             }
         });
 
@@ -86,7 +104,13 @@ public class EnterYourNameScreen extends GianaSistersScreen {
                 .width(Gdx.graphics.getWidth() / 2).height(fontSize * 2);
         table.row();
 
-        table.add(nameText).width(Gdx.graphics.getWidth() / 2).height(fontSize * 2);
+        table.add(nameText).width((Gdx.graphics.getWidth() / 2) - yellowFont.getSpaceWidth()).height(fontSize * 2);
+
+        table.row();
+        table.row();
+        table.row();
+        table.add(goBack).width((Gdx.graphics.getWidth() / 2) - yellowFont.getSpaceWidth()).height(fontSize * 2);
+
         stage.setKeyboardFocus(nameText);
         table.setPosition(Gdx.graphics.getWidth() / 3, Gdx.graphics.getHeight() / 2);
 
