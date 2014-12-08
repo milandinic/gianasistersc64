@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="hello">Hello World, GianaSisters!</string>
-    <string name="app_name">Giana sisters C64</string>
+<resources>   
+    <string name="app_name">Giana Byte</string>
 </resources>

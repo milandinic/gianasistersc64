@@ -8,7 +8,6 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -60,8 +59,10 @@ public class MapRenderer {
     TextureRegion spawn;
     TextureRegion dying;
     TextureRegion endDoor;
-    FPSLogger fps = new FPSLogger();
-    private Animation movingSpikesAnim;
+
+    Animation movingSpikesAnim;
+
+    // FPSLogger fps = new FPSLogger();
 
     java.util.Map<GoundMonsterType, Animation[]> groundMonsterAnimations = new HashMap<GoundMonsterType, Animation[]>();
 
