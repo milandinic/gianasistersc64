@@ -8,6 +8,7 @@ public class DesktopLauncher {
         LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
         GianaSistersC64 gianaSistersC64 = new GianaSistersC64();
         gianaSistersC64.setHighScoreService(new HighScoreServiceDesktop());
+        gianaSistersC64.setSettingsService(new SettingsServiceDesktop());
         new LwjglApplication(gianaSistersC64, config);
     }
 }

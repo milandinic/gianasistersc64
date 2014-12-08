@@ -10,7 +10,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.mdinic.game.giana.Map;
-import com.mdinic.game.giana.MapResource;
+import com.mdinic.game.giana.Sounds;
+import com.mdinic.game.giana.Sounds.Sfx;
 
 public class LevelStartingScreen extends GianaSistersScreen {
 
@@ -47,7 +48,7 @@ public class LevelStartingScreen extends GianaSistersScreen {
         this.cam.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
         cam.update();
 
-        MapResource.getInstance().getStartLevelSfx().play();
+        Sounds.getInstance().play(Sfx.START_LEVEL);
         generator.dispose();
     }
 
@@ -70,7 +71,6 @@ public class LevelStartingScreen extends GianaSistersScreen {
 
         if (time > 4) {
             oldMap.level++;
-            MapResource.getInstance().getStartLevelSfx().stop();
             game.setScreen(new GameScreen(game, oldMap));
         }
     }

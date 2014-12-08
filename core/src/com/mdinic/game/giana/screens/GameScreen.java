@@ -27,7 +27,7 @@ public class GameScreen extends GianaSistersScreen {
     @Override
     public void show() {
         renderer = new MapRenderer(map);
-        controlRenderer = new OnscreenControlRenderer(map);
+        controlRenderer = new OnscreenControlRenderer(map, this);
     }
 
     @Override

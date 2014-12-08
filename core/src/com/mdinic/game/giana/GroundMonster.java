@@ -2,6 +2,7 @@ package com.mdinic.game.giana;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mdinic.game.giana.Sounds.Sfx;
 
 public class GroundMonster {
     static final int FORWARD = 1;
@@ -90,7 +91,7 @@ public class GroundMonster {
             if (map.giana.state != GianaState.DYING && alive && type.canBeKilled) {
                 alive = false;
                 map.score += 50;
-                MapResource.getInstance().getGianaKillSfx().play();
+                Sounds.getInstance().play(Sfx.KILL);
             }
         }
 

@@ -2,6 +2,7 @@ package com.mdinic.game.giana;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mdinic.game.giana.Sounds.Sfx;
 
 public class Diamond {
 
@@ -27,7 +28,7 @@ public class Diamond {
             stateTime += deltaTime;
 
             if (map.giana.bounds.overlaps(bounds)) {
-                MapResource.getInstance().getDiamondSfx().play();
+                Sounds.getInstance().play(Sfx.DIAMOND);
                 active = false;
                 map.collectDiamound();
             }

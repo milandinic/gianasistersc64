@@ -3,11 +3,10 @@ package com.mdinic.game.giana.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.audio.Music;
-import com.mdinic.game.giana.MapResource;
+import com.mdinic.game.giana.Sounds;
+import com.mdinic.game.giana.Sounds.Sfx;
 
 public class IntroScreen extends GameScreen {
-    Music music;
 
     public IntroScreen(Game game) {
         super(game, 0);
@@ -17,9 +16,8 @@ public class IntroScreen extends GameScreen {
     @Override
     public void show() {
         super.show();
-        music = Gdx.audio.newMusic(Gdx.files.internal("data/intro.mp3"));
-        music.play();
-        MapResource.getInstance();
+        Sounds.getInstance().setMute(!getGame().getSettingsService().isSoundEnabled());
+        Sounds.getInstance().play(Sfx.INTRO);
     }
 
     @Override
@@ -35,9 +33,8 @@ public class IntroScreen extends GameScreen {
 
     @Override
     public void hide() {
+        Sounds.getInstance().stop(Sfx.INTRO);
         super.hide();
-        music.stop();
-        music.dispose();
     }
 
 }

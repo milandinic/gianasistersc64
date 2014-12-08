@@ -2,6 +2,7 @@ package com.mdinic.game.giana;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mdinic.game.giana.Sounds.Sfx;
 
 public class Treat {
     private static final float MIN_MOVE = 0.1f;
@@ -76,7 +77,7 @@ public class Treat {
             map.giana.big = true;
             map.giana.state = GianaState.GROW;
             map.giana.stateTime = 0;
-            MapResource.getInstance().getPowerUpSfx().play();
+            Sounds.getInstance().play(Sfx.POWERUP);
         }
 
     }

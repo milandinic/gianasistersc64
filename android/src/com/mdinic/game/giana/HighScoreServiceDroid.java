@@ -30,7 +30,7 @@ public class HighScoreServiceDroid implements HighScoreService {
 
     private List<Score> scores = new ArrayList<Score>();
 
-    Activity activity;
+    private final Activity activity;
 
     final Object object = new Object();
 

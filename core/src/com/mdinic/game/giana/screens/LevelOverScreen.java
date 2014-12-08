@@ -10,7 +10,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.mdinic.game.giana.Map;
-import com.mdinic.game.giana.MapResource;
+import com.mdinic.game.giana.Sounds;
+import com.mdinic.game.giana.Sounds.Sfx;
 
 public class LevelOverScreen extends GianaSistersScreen {
 
@@ -44,7 +45,7 @@ public class LevelOverScreen extends GianaSistersScreen {
         yellowFont = generator.generateFont(parameter);
         yellowFont.setColor(new Color(0.87f, 0.95f, 0.47f, 1));
         generator.dispose();
-        MapResource.getInstance().getEndLevelSfx().play();
+        Sounds.getInstance().play(Sfx.END_LEVEL);
     }
 
     @Override
@@ -76,7 +77,6 @@ public class LevelOverScreen extends GianaSistersScreen {
         batch.end();
 
         if (time > 3) {
-            MapResource.getInstance().getEndLevelSfx().stop();
             game.setScreen(new LevelStartingScreen(game, oldMap));
         }
     }

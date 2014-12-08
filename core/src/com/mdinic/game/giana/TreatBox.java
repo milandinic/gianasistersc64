@@ -2,6 +2,7 @@ package com.mdinic.game.giana;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mdinic.game.giana.Sounds.Sfx;
 
 public class TreatBox {
 
@@ -36,7 +37,7 @@ public class TreatBox {
             switch (type) {
             case DIAMOND:
                 if (map.giana.headHitBounds.overlaps(bounds)) {
-                    MapResource.getInstance().getTreatBoxCoinSfx().play();
+                    Sounds.getInstance().play(Sfx.TREAT_BOX_COIN);
                     active = false;
                     map.score += 25;
                     map.diamondsCollected++;

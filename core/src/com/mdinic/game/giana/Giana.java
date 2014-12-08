@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mdinic.game.giana.Sounds.Sfx;
 
 public class Giana {
     private static final float MIN_MOVE = 0.1f;
@@ -88,8 +89,7 @@ public class Giana {
             if (stateTime < 0.2f) {
                 if (playDead) {
                     playDead = false;
-                    MapResource.getInstance().getGianaDyingSfx().play();
-
+                    Sounds.getInstance().play(Sfx.DYING);
                 }
                 pos.y += MIN_MOVE;
                 bounds.y += MIN_MOVE;
@@ -150,8 +150,7 @@ public class Giana {
                 || (Gdx.input.isTouched(1) && x1 > 416 && x1 < 480 && y0 < 64);
 
         if ((Gdx.input.isKeyPressed(Keys.W) || jumpButton) && state != GianaState.JUMP) {
-            MapResource.getInstance().getGianaJumpSfx().stop();
-            MapResource.getInstance().getGianaJumpSfx().play();
+            Sounds.getInstance().play(Sfx.JUMP);
             state = GianaState.JUMP;
             vel.y = JUMP_VELOCITY;
             grounded = false;

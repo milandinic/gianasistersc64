@@ -2,6 +2,7 @@ package com.mdinic.game.giana;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mdinic.game.giana.Sounds.Sfx;
 
 public class Tile {
 
@@ -33,7 +34,7 @@ public class Tile {
             case NORMAL:
                 if (map.giana.headHitBounds.overlaps(bounds) && map.giana.big && map.giana.state == GianaState.JUMP) {
                     state = State.EXPLODING;
-                    MapResource.getInstance().getBrickDestroySfx().play();
+                    Sounds.getInstance().play(Sfx.BRICK_DESTROY);
                     stateTime = 0;
                 }
                 break;
