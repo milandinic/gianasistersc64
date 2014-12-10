@@ -5,28 +5,26 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField.TextFieldStyle;
 import com.mdinic.game.giana.Map;
 import com.mdinic.game.giana.service.Score;
 
 public class EnterYourNameScreen extends GianaSistersScreen {
-
-    private static final String TYPE_YOUR_NAME = "Click to type name";
-    private int fontSize;
     private BitmapFont yellowFont;
 
     private final Map oldMap;
 
-    private Stage stage;
-    private Color fontColor;
+    SpriteBatch batch;
+
+    TextureRegion left;
+    TextureRegion right;
+
+    private boolean processKeys = true;
 
     public EnterYourNameScreen(Game game, Map oldMap) {
         super(game);
@@ -35,99 +33,82 @@ public class EnterYourNameScreen extends GianaSistersScreen {
 
     @Override
     public void show() {
+
+        Texture texture = new Texture(Gdx.files.internal("data/scoresprites.png"));
+        TextureRegion[] buttons = TextureRegion.split(texture, 64, 64)[0];
+        right = buttons[0];
+        left = buttons[1];
+
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/Giana.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 
-        fontSize = Gdx.graphics.getWidth() / SCREEN_WIDTH * 12; // font size 12
-
-        parameter.size = fontSize;
+        parameter.size = 12;
         yellowFont = generator.generateFont(parameter);
 
-        fontColor = new Color(0.87f, 0.95f, 0.47f, 1);
-        yellowFont.setColor(fontColor);
-
-        stage = new Stage();
-
-        TextFieldStyle style = new TextFieldStyle();
-        style.font = yellowFont;
-        style.fontColor = fontColor;
-
-        TextField goBack = new TextField("Skip to high scores", style);
-
-        final TextField nameText;
-
-        Score score = getGame().getHighScoreService().getMyBest();
-        if (score != null && score.getName() != null && !score.getName().isEmpty()
-                && score.getName().compareTo(TYPE_YOUR_NAME) != 0) {
-            nameText = new TextField(score.getName(), style);
-        } else {
-            nameText = new TextField(TYPE_YOUR_NAME, style);
-        }
-        nameText.setMaxLength(22);
-        nameText.selectAll();
-
-        nameText.setOnscreenKeyboard(new TextField.OnscreenKeyboard() {
-            @Override
-            public void show(boolean visible) {
-                Gdx.input.getTextInput(new Input.TextInputListener() {
-                    @Override
-                    public void input(String text) {
-                        if (!text.isEmpty()) {
-                            Score score = new Score(text, oldMap.score, oldMap.level + 1);
-                            getGame().getHighScoreService().saveHighScore(score);
-                        }
-                        game.setScreen(new HighScoreScreen(game));
-                    }
-
-                    @Override
-                    public void canceled() {
-                        game.setScreen(new IntroScreen(game));
-                    }
-                }, "", nameText.getText());
-            }
-        });
-
-        goBack.setOnscreenKeyboard(new TextField.OnscreenKeyboard() {
-            @Override
-            public void show(boolean visible) {
-                game.setScreen(new HighScoreScreen(game));
-            }
-        });
-
-        Table table = new Table();
-        stage.addActor(table);
-
-        LabelStyle labelStyle = new LabelStyle();
-        labelStyle.font = yellowFont;
-        labelStyle.fontColor = fontColor;
-        table.add(new Label(String.format("YOUR SCORE %07d", oldMap.score), labelStyle))
-                .width(Gdx.graphics.getWidth() / 2).height(fontSize * 2);
-        table.row();
-
-        table.add(nameText).width((Gdx.graphics.getWidth() / 2) - yellowFont.getSpaceWidth()).height(fontSize * 2);
-
-        table.row();
-        table.row();
-        table.row();
-        table.add(goBack).width((Gdx.graphics.getWidth() / 2) - yellowFont.getSpaceWidth()).height(fontSize * 2);
-
-        stage.setKeyboardFocus(nameText);
-        table.setPosition(Gdx.graphics.getWidth() / 3, Gdx.graphics.getHeight() / 2);
-
-        Gdx.input.setInputProcessor(stage);
+        yellowFont.setColor(new Color(0.87f, 0.95f, 0.47f, 1));
         generator.dispose();
+
+        batch = new SpriteBatch();
+        batch.getProjectionMatrix().setToOrtho2D(0, 0, 480, 320);
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.draw();
+
+        batch.begin();
+
+        batch.draw(left, 0, 0);
+
+        yellowFont.draw(batch, "    CONGRATULATION!", 100, 220);
+        yellowFont.draw(batch, "YOU CAN TYPE YOUR NAME", 100, 200);
+        yellowFont.draw(batch, "  IN THE HALL OF FAME", 100, 180);
+        yellowFont.draw(batch, String.format("   YOUR SCORE %07d", oldMap.score), 100, 140);
+
+        batch.draw(right, 480 - 64, 0);
+        batch.end();
+
+        processKeys();
+    }
+
+    private void processKeys() {
+        float x0 = (Gdx.input.getX(0) / (float) Gdx.graphics.getWidth()) * 480;
+        float x1 = (Gdx.input.getX(1) / (float) Gdx.graphics.getWidth()) * 480;
+        float y0 = 320 - (Gdx.input.getY(0) / (float) Gdx.graphics.getHeight()) * 320;
+
+        boolean leftButton = (Gdx.input.isTouched(0) && x0 < 70) || (Gdx.input.isTouched(1) && x1 < 70);
+
+        boolean rightButton = (Gdx.input.isTouched(0) && x0 > 416 && x0 < 480 && y0 < 64)
+                || (Gdx.input.isTouched(1) && x1 > 416 && x1 < 480 && y0 < 64);
+
+        if (leftButton && processKeys) {
+            processKeys = false;
+            Score score = getGame().getHighScoreService().getMyBest();
+
+            Gdx.input.getTextInput(new Input.TextInputListener() {
+                @Override
+                public void input(String text) {
+                    if (!text.isEmpty()) {
+                        Score score = new Score(text, oldMap.score, oldMap.level + 1);
+                        getGame().getHighScoreService().saveHighScore(score);
+                    }
+                    game.setScreen(new HighScoreScreen(game));
+                }
+
+                @Override
+                public void canceled() {
+                    game.setScreen(new HighScoreScreen(game));
+                }
+            }, "", score != null ? score.getName() : "");
+
+        } else if (rightButton && processKeys) {
+            game.setScreen(new HighScoreScreen(game));
+        }
     }
 
     @Override
     public void hide() {
-        stage.dispose();
         yellowFont.dispose();
     }
 
