@@ -12,7 +12,7 @@ public class SettingsServiceDesktop implements SettingsService {
 
     @Override
     public boolean isSoundEnabled() {
-        return true;
+        return false;
     }
 
 }

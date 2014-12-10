@@ -52,7 +52,7 @@ public class Giana {
         bounds.y = pos.y;
         state = GianaState.SPAWN;
         stateTime = 0;
-        killerBounds.width = bounds.width;
+        killerBounds.width = bounds.width - 0.4f;
         killerBounds.height = 0.2f;
 
         headHitBounds.width = bounds.width - 0.2f;
@@ -62,8 +62,8 @@ public class Giana {
     }
 
     void updateKillerBounds() {
-        killerBounds.x = bounds.x;
-        killerBounds.y = bounds.y - 0.3f;
+        killerBounds.x = bounds.x + 0.2f;
+        killerBounds.y = bounds.y - 0.2f;
 
         headHitBounds.x = bounds.x + 0.1f;
         headHitBounds.y = bounds.y + bounds.height;

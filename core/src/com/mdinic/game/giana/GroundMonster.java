@@ -87,18 +87,18 @@ public class GroundMonster {
         bounds.x = pos.x;
         bounds.y = pos.y;
 
+        if (alive && map.giana.bounds.overlaps(bounds)) {
+            if (map.giana.state != GianaState.DYING) {
+                map.giana.state = GianaState.DYING;
+                map.giana.stateTime = 0;
+            }
+        }
+
         if (map.giana.killerBounds.overlaps(bounds)) {
             if (map.giana.state != GianaState.DYING && alive && type.canBeKilled) {
                 alive = false;
                 map.score += 50;
                 Sounds.getInstance().play(Sfx.KILL);
-            }
-        }
-
-        if (alive && map.giana.bounds.overlaps(bounds)) {
-            if (map.giana.state != GianaState.DYING) {
-                map.giana.state = GianaState.DYING;
-                map.giana.stateTime = 0;
             }
         }
     }
