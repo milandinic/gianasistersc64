@@ -17,7 +17,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteCache;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
-import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.math.Vector3;
 
 public class MapRenderer {
@@ -25,11 +24,11 @@ public class MapRenderer {
     public static final int SCENE_HEIGHT = 16;
     Map map;
     OrthographicCamera cam;
-    // OrthographicCamera scoreCam;
+
     SpriteCache cache;
     SpriteBatch batch = new SpriteBatch(5460);
     private final SpriteBatch fontBatch;
-    ImmediateModeRenderer20 renderer = new ImmediateModeRenderer20(false, true, 0);
+
     int[][] blocks;
     TextureRegion tileTexture;
 

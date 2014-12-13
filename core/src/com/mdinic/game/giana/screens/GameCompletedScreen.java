@@ -19,8 +19,6 @@ public class GameCompletedScreen extends GianaSistersScreen {
 
     private final Map oldMap;
 
-    static int LEVEL_COUNT = 4;
-
     public GameCompletedScreen(Game game, Map oldMap) {
         super(game);
         this.oldMap = oldMap;
@@ -60,7 +58,7 @@ public class GameCompletedScreen extends GianaSistersScreen {
             if (getGame().getHighScoreService().goodForHighScores(oldMap.score)) {
                 game.setScreen(new EnterYourNameScreen(game, oldMap));
             } else {
-                game.setScreen(new LevelStartingScreen(game, oldMap));
+                game.setScreen(new HighScoreScreen(game));
             }
         }
     }

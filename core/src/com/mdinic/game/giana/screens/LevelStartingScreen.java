@@ -14,7 +14,7 @@ import com.mdinic.game.giana.Sounds.Sfx;
 
 public class LevelStartingScreen extends GianaSistersScreen {
 
-    private static final int TEXT_X = 180;
+    private static final int TEXT_X = 200;
     private BitmapFont yellowFont;
     private float time = 0;
     private SpriteBatch batch;
