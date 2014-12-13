@@ -4,7 +4,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
@@ -15,12 +14,11 @@ import com.mdinic.game.giana.Sounds.Sfx;
 
 public class LevelStartingScreen extends GianaSistersScreen {
 
-    private int fontSize;
+    private static final int TEXT_X = 180;
     private BitmapFont yellowFont;
     private float time = 0;
     private SpriteBatch batch;
     private final Map oldMap;
-    private OrthographicCamera cam;
 
     public LevelStartingScreen(Game game, Map oldMap) {
         super(game);
@@ -33,20 +31,12 @@ public class LevelStartingScreen extends GianaSistersScreen {
         batch = new SpriteBatch();
         batch.getProjectionMatrix().setToOrtho2D(0, 0, 480, 320);
 
-        cam = new OrthographicCamera();
-        this.cam.setToOrtho(false);
-
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/Giana.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 
-        fontSize = Gdx.graphics.getWidth() / SCREEN_WIDTH * 12; // font size 12
-
-        parameter.size = fontSize;
+        parameter.size = 10;
         yellowFont = generator.generateFont(parameter);
         yellowFont.setColor(new Color(0.87f, 0.95f, 0.47f, 1));
-
-        this.cam.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
-        cam.update();
 
         Sounds.getInstance().play(Sfx.START_LEVEL);
         generator.dispose();
@@ -59,13 +49,11 @@ public class LevelStartingScreen extends GianaSistersScreen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
         batch.begin();
-        batch.setProjectionMatrix(cam.combined);
 
-        int x = Gdx.graphics.getWidth() / 2 - fontSize * 4;
-        yellowFont.draw(batch, "  GIANA", x, Gdx.graphics.getHeight() / 2 + fontSize * 8);
-        yellowFont.draw(batch, "GET READY", x, Gdx.graphics.getHeight() / 2 + fontSize * 6);
+        yellowFont.draw(batch, "  GIANA", TEXT_X, 220);
+        yellowFont.draw(batch, "GET READY", TEXT_X, 200);
         String stage = String.format(" STAGE %02d", oldMap.level + 1);
-        yellowFont.draw(batch, stage, x, Gdx.graphics.getHeight() / 2 + fontSize * 4);
+        yellowFont.draw(batch, stage, TEXT_X, 180);
 
         batch.end();
 

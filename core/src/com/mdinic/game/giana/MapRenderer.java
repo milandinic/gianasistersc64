@@ -388,8 +388,9 @@ public class MapRenderer {
             batch.draw(anim.getKeyFrame(map.giana.stateTime, loop), map.giana.pos.x, map.giana.pos.y, 1, 1);
         }
 
-        batch.draw(tileTexture, map.giana.killerBounds.x, map.giana.killerBounds.y, map.giana.killerBounds.width,
-                map.giana.killerBounds.height);
+        // batch.draw(tileTexture, map.giana.killerBounds.x,
+        // map.giana.killerBounds.y, map.giana.killerBounds.width,
+        // map.giana.killerBounds.height);
 
     }
 
