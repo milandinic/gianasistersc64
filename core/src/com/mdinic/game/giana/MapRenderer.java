@@ -19,16 +19,16 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.graphics.glutils.ImmediateModeRenderer20;
 import com.badlogic.gdx.math.Vector3;
-import com.mdinic.game.giana.screens.GameScreen;
 
 public class MapRenderer {
 
     public static final int SCENE_HEIGHT = 16;
     Map map;
     OrthographicCamera cam;
-    OrthographicCamera scoreCam;
+    // OrthographicCamera scoreCam;
     SpriteCache cache;
     SpriteBatch batch = new SpriteBatch(5460);
+    private final SpriteBatch fontBatch;
     ImmediateModeRenderer20 renderer = new ImmediateModeRenderer20(false, true, 0);
     int[][] blocks;
     TextureRegion tileTexture;
@@ -80,8 +80,10 @@ public class MapRenderer {
     public MapRenderer(Map map) {
         this.map = map;
         this.cam = new OrthographicCamera(20, SCENE_HEIGHT);
-        scoreCam = new OrthographicCamera();
-        this.scoreCam.setToOrtho(false);
+
+        fontBatch = new SpriteBatch();
+        fontBatch.getProjectionMatrix().setToOrtho2D(0, 0, 480, 320);
+
         this.cam.position.set(map.giana.pos.x, map.giana.pos.y, 0);
 
         this.cache = new SpriteCache(this.map.tiles.length * this.map.tiles[0].length, false);
@@ -243,9 +245,9 @@ public class MapRenderer {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/Giana.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 
-        fontSize = (Gdx.graphics.getWidth() / GameScreen.SCREEN_WIDTH) * 12;
+        fontSize = (Gdx.graphics.getHeight() / 320) * 12;
 
-        parameter.size = fontSize;
+        parameter.size = 10;
         font = generator.generateFont(parameter); // font size 12
         font.setColor(new Color(0.87f, 0.95f, 0.47f, 1));
         generator.dispose(); // don't forget to dispose to avoid memory leaks!
@@ -267,8 +269,6 @@ public class MapRenderer {
 
         cam.position.lerp(lerpTarget.set(camX, map.tiles[0].length - SCENE_HEIGHT / 2 + 1, 0), 4f * deltaTime);
         cam.update();
-
-        scoreCam.update();
 
         stateTime += deltaTime;
         batch.setProjectionMatrix(cam.combined);
@@ -293,10 +293,6 @@ public class MapRenderer {
 
         batch.end();
 
-        this.scoreCam.position.set(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2, 0);
-        scoreCam.update();
-        batch.setProjectionMatrix(scoreCam.combined);
-
         if (!map.demo) {
             renderUpperText();
         }
@@ -305,16 +301,16 @@ public class MapRenderer {
     }
 
     private void renderUpperText() {
-        batch.begin();
+        fontBatch.begin();
         //
 
         String formatted = String.format("%06d         %02d       %02d         %02d      %02d", map.score,
                 map.diamondsCollected, map.lives, map.level, map.time);
-        font.draw(batch, "GIANA      BONUS     LIVES     STAGE    TIME", 20, Gdx.graphics.getHeight() - fontSize);
+        font.draw(fontBatch, "GIANA       BONUS     LIVES     STAGE    TIME", 10, 315);
 
-        font.draw(batch, formatted, 20, Gdx.graphics.getHeight() - fontSize * 2.1f);
+        font.draw(fontBatch, formatted, 10, 305);
 
-        batch.end();
+        fontBatch.end();
     }
 
     private void renderTreats() {
