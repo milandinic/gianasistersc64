@@ -61,8 +61,6 @@ public class GameScreen extends GianaSistersScreen {
         if (map.giana.bounds.overlaps(map.endDoor.bounds)) {
             if (map.level == 0) {
                 game.setScreen(new HighScoreScreen(game));
-            } else if (map.level + 1 == LEVEL_COUNT) {
-                game.setScreen(new GameCompletedScreen(game, map));
             } else {
                 game.setScreen(new LevelOverScreen(game, map));
             }
