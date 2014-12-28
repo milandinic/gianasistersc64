@@ -33,6 +33,10 @@ public class GameScreen extends GianaSistersScreen {
     @Override
     public void render(float delta) {
         delta = Math.min(0.06f, Gdx.graphics.getDeltaTime());
+
+        if (delta == 0) {
+            return;
+        }
         map.update(delta);
 
         if (map.giana.state == GianaState.DEAD) {

@@ -156,10 +156,6 @@ public class Map {
                 }
             }
         }
-
-        for (GroundMonster monster : groundMonsters) {
-            monster.init();
-        }
     }
 
     boolean match(int src, int dst) {
@@ -167,6 +163,7 @@ public class Map {
     }
 
     public void update(float deltaTime) {
+
         giana.update(deltaTime);
         if (giana.state == GianaState.DEAD)
             return;

@@ -21,11 +21,6 @@ public class GroundMonster {
 
     Vector2 vel = new Vector2();
     Vector2 pos = new Vector2();
-    float angle = 0;
-    int fx = 0;
-    int fy = 0;
-    int bx = 0;
-    int by = 0;
 
     public GroundMonster(Map map, float x, float y, GoundMonsterType type) {
         this.type = type;
@@ -36,46 +31,28 @@ public class GroundMonster {
         bounds.y = y;
         bounds.width = bounds.height = 1;
 
-        vel.set(-1, 0);
-    }
-
-    public void init() {
-        int ix = (int) pos.x;
-        int iy = (int) pos.y;
-
-        int left = map.tiles[ix - 1][map.tiles[0].length - 1 - iy];
-        int right = map.tiles[ix + 1][map.tiles[0].length - 1 - iy];
-        // int top = map.tiles[ix][map.tiles[0].length - 1 - iy - 1];
-        // int bottom = map.tiles[ix][map.tiles[0].length - 1 - iy + 1];
-
-        if (left == Map.TILE) {
-            vel.x = FORWARD_VEL;
-            angle = -90;
-            fx = 1;
-        }
-        if (right == Map.TILE) {
-            vel.x = -FORWARD_VEL;
-            angle = 90;
-            bx = 1;
-        }
+        vel.set(1, 0);
     }
 
     public void update(float deltaTime) {
         stateTime += deltaTime;
-        pos.add(vel.x * deltaTime, vel.y * deltaTime);
-        boolean change = false;
-        int y = map.tiles[0].length - 1 - (int) pos.y;
-        if (state == FORWARD) {
+        bounds.x += vel.x * deltaTime;
+        bounds.y += vel.y * deltaTime;
 
-            change = map.isColidable(map.tiles[(int) Math.floor(pos.x) + fx][y + fy]);
-            change = change || map.tiles[(int) pos.x + fx][y + fy + 1] == 0;
+        boolean change = false;
+        int y = map.tiles[0].length - 1 - (int) Math.floor(bounds.y);
+        if (state == FORWARD) {
+            System.out.println("fw");
+            change = map.isColidable(map.tiles[(int) Math.ceil(bounds.x)][y]);
+            change = change || map.tiles[(int) bounds.x][y + 1] == 0;
         } else {
-            change = map.isColidable(map.tiles[(int) Math.ceil(pos.x) + bx][y + by]);
-            change = change || map.tiles[(int) pos.x + bx + 1][y + by + 1] == 0;
+            System.out.println("bw");
+            change = map.isColidable(map.tiles[(int) Math.floor(bounds.x)][y]);
+            change = change || map.tiles[(int) bounds.x + 1][y + 1] == 0;
         }
         if (change) {
-            pos.x -= vel.x * deltaTime;
-            pos.y -= vel.y * deltaTime;
+            bounds.x -= vel.x * deltaTime;
+            bounds.y -= vel.y * deltaTime;
             state = -state;
             vel.scl(-1);
             if (state == FORWARD)
@@ -84,10 +61,7 @@ public class GroundMonster {
                 vel.nor().scl(BACKWARD_VEL);
         }
 
-        bounds.x = pos.x;
-        bounds.y = pos.y;
-
-        if (map.giana.killerBounds.overlaps(bounds)) {
+        if (map.giana.killerBounds.overlaps(bounds) && !map.demo) {
             if (map.giana.state != GianaState.DYING && alive && type.canBeKilled) {
                 alive = false;
                 map.score += 50;
@@ -95,12 +69,15 @@ public class GroundMonster {
             }
         }
 
-        if (alive && map.giana.bounds.overlaps(bounds)) {
+        if (alive && map.giana.bounds.overlaps(bounds) && !map.demo) {
             if (map.giana.state != GianaState.DYING) {
                 map.giana.state = GianaState.DYING;
                 map.giana.stateTime = 0;
             }
         }
+
+        pos.x = bounds.x;
+        pos.y = bounds.y;
 
     }
 }
