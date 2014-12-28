@@ -27,6 +27,8 @@ public class Map {
 
     static int BEE = 0xd2a285;
 
+    static int QUICK_SAND = 0xA45A04;
+
     static int LEVEL_PIXELBUFFER = 20;
 
     List<Integer> colidableColors = new ArrayList<Integer>();
@@ -56,6 +58,7 @@ public class Map {
     Array<Treat> treats = new Array<Treat>();
     Array<SmallDiamoind> treatSmallDiamoinds = new Array<SmallDiamoind>();
     Array<Tile> tileArray = new Array<Tile>();
+    Array<QuickSand> quickSandArray = new Array<QuickSand>();
 
     Array<Bee> bees = new Array<Bee>();
     Array<Fish> fishes = new Array<Fish>();
@@ -80,6 +83,7 @@ public class Map {
         colidableColors.add(TREAT_BOX);
         colidableColors.add(TREAT_BOX_BALL);
         colidableColors.add(TILE);
+        colidableColors.add(QUICK_SAND);
     }
 
     public void collectDiamound() {
@@ -121,6 +125,10 @@ public class Map {
 
                 } else if (match(pix, DIAMOND)) {
                     diamonds.add(new Diamond(this, x, pixmap.getHeight() - 1 - y));
+
+                } else if (match(pix, QUICK_SAND)) {
+                    quickSandArray.add(new QuickSand(this, x, pixmap.getHeight() - 1 - y));
+                    tiles[x][y] = pix;
                 } else if (match(pix, BEE)) {
                     bees.add(new Bee(this, x, pixmap.getHeight() - 1 - y));
                 } else if (GoundMonsterType.containsColor(pix) != null) {
@@ -200,6 +208,10 @@ public class Map {
 
         for (Tile tile : tileArray) {
             tile.update(deltaTime);
+        }
+
+        for (QuickSand sand : quickSandArray) {
+            sand.update(deltaTime);
         }
 
     }

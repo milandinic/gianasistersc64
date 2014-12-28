@@ -75,6 +75,7 @@ public class MapRenderer {
     private Animation piranhaAnim;
     private Animation waspRightAnim;
     private Animation waspLeftAnim;
+    private Animation quicksandAnim;
 
     public MapRenderer(Map map) {
         this.map = map;
@@ -122,6 +123,9 @@ public class MapRenderer {
         Texture diamondTexture = new Texture(Gdx.files.internal("data/diamond.png"));
         Texture treatboxTexture = new Texture(Gdx.files.internal("data/treatbox.png"));
         Texture movingSpikesTexture = new Texture(Gdx.files.internal("data/movingspikes.png"));
+
+        quicksandAnim = new Animation(0.1f,
+                new TextureRegion(new Texture(Gdx.files.internal("data/quicksand.png"))).split(20, 20)[0]);
 
         Texture groundMonstersTexture = new Texture(Gdx.files.internal("data/groundmonsters.png"));
         Texture lobsterTexture = new Texture(Gdx.files.internal("data/lobster.png"));
@@ -279,16 +283,17 @@ public class MapRenderer {
             batch.draw(endDoor, map.endDoor.bounds.x, map.endDoor.bounds.y, 2, 2);
 
         renderSimpleImages();
-
         renderMovingSpikes();
+        renderDiamonds();
         renderGroundMonsters();
         renderPiranhas();
         renderBees();
         renderTreats();
         renderGiana();
-        renderDiamonds();
+
         renderTreatBoxeSmallDiamonds();
         renderTreatBoxes();
+        renderQuickSand();
 
         batch.end();
 
@@ -456,6 +461,18 @@ public class MapRenderer {
     private void renderPiranhas() {
         for (Fish fish : map.fishes) {
             batch.draw(piranhaAnim.getKeyFrame(fish.stateTime, true), fish.pos.x, fish.pos.y, 1, 1);
+        }
+    }
+
+    private void renderQuickSand() {
+        for (QuickSand sand : map.quickSandArray) {
+            if (sand.active) {
+                TextureRegion frame = quicksandAnim.getKeyFrame(sand.stateTime, false);
+
+                batch.draw(frame, sand.pos.x + 0.0f, sand.pos.y, 0.33f, 1);
+                batch.draw(frame, sand.pos.x + 0.33f, sand.pos.y, 0.33f, 1);
+                batch.draw(frame, sand.pos.x + 0.66f, sand.pos.y, 0.33f, 1);
+            }
         }
     }
 
