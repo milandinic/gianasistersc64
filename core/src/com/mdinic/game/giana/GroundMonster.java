@@ -42,13 +42,13 @@ public class GroundMonster {
         boolean change = false;
         int y = map.tiles[0].length - 1 - (int) Math.floor(bounds.y);
         if (state == FORWARD) {
-            System.out.println("fw");
+            // System.out.println("fw");
             change = map.isColidable(map.tiles[(int) Math.ceil(bounds.x)][y]);
-            change = change || map.tiles[(int) bounds.x][y + 1] == 0;
+            change = change || map.tiles[(int) Math.ceil(bounds.x)][y + 1] == 0;
         } else {
-            System.out.println("bw");
+            // System.out.println("bw");
             change = map.isColidable(map.tiles[(int) Math.floor(bounds.x)][y]);
-            change = change || map.tiles[(int) bounds.x + 1][y + 1] == 0;
+            change = change || map.tiles[(int) Math.floor(bounds.x)][y + 1] == 0;
         }
         if (change) {
             bounds.x -= vel.x * deltaTime;

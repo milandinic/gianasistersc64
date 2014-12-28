@@ -149,15 +149,15 @@ public class MapRenderer {
             textureRegion.flip(true, false);
         }
         Animation eyeAnimLeft = new Animation(0.3f, eyeRegionLeft);
-        Animation eyeAnimRight = new Animation(0.4f, eyeRegionRight);
-        groundMonsterAnimations.put(GoundMonsterType.EYE, new Animation[] { eyeAnimLeft, eyeAnimRight });
+        Animation eyeAnimRight = new Animation(0.3f, eyeRegionRight);
+        groundMonsterAnimations.put(GoundMonsterType.EYE, new Animation[] { eyeAnimRight, eyeAnimLeft });
 
         TextureRegion[] wormRegion = new TextureRegion(new Texture(Gdx.files.internal("data/worm.png"))).split(25, 21)[0];
 
         Animation wormAnimLeft = new Animation(0.1f, wormRegion);
         Animation wormAnimRight = new Animation(0.1f, wormRegion[6], wormRegion[5], wormRegion[4], wormRegion[3],
                 wormRegion[2], wormRegion[1], wormRegion[0]);
-        groundMonsterAnimations.put(GoundMonsterType.WORM, new Animation[] { wormAnimLeft, wormAnimRight });
+        groundMonsterAnimations.put(GoundMonsterType.WORM, new Animation[] { wormAnimRight, wormAnimLeft });
 
         TextureRegion groundMonstersRegion = new TextureRegion(groundMonstersTexture);
         groundMonstersRegion.setRegion(0, 0, 240, 20);
@@ -177,7 +177,7 @@ public class MapRenderer {
         }
         Animation lobsterAnimRight = new Animation(0.2f, lobsterTextureRegion);
         Animation lobsterAnimLeft = new Animation(0.2f, lobsterTextureRegionToFlip);
-        groundMonsterAnimations.put(GoundMonsterType.LOBSTER, new Animation[] { lobsterAnimRight, lobsterAnimLeft });
+        groundMonsterAnimations.put(GoundMonsterType.LOBSTER, new Animation[] { lobsterAnimLeft, lobsterAnimRight });
 
         movingSpikesAnim = new Animation(0.3f, new TextureRegion(movingSpikesTexture).split(48, 16)[0]);
 
