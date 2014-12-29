@@ -33,7 +33,7 @@ public class QuickSand {
             case NORMAL:
                 if (map.giana.killerBounds.overlaps(bounds)) {
                     stateTime += deltaTime;
-                    if (stateTime > 0.3f) {
+                    if (stateTime > 0.2f) {
                         state = State.GONE;
                     }
                 }
