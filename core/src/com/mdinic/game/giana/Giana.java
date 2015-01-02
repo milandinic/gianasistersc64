@@ -106,18 +106,24 @@ public class Giana {
 
             processKeys();
 
-            accel.y = -GRAVITY;
-            accel.scl(deltaTime);
-            vel.add(accel.x, accel.y);
-            if (accel.x == 0)
-                vel.x *= DAMP;
-            if (vel.x > MAX_VEL)
-                vel.x = MAX_VEL;
-            if (vel.x < -MAX_VEL)
-                vel.x = -MAX_VEL;
-            vel.scl(deltaTime);
-            tryMove();
-            vel.scl(1.0f / deltaTime);
+            if (map.demo) {
+                bounds.x += 0.1f;
+                pos.x = bounds.x;
+                maxX = pos.x;
+            } else {
+                accel.y = -GRAVITY;
+                accel.scl(deltaTime);
+                vel.add(accel.x, accel.y);
+                if (accel.x == 0)
+                    vel.x *= DAMP;
+                if (vel.x > MAX_VEL)
+                    vel.x = MAX_VEL;
+                if (vel.x < -MAX_VEL)
+                    vel.x = -MAX_VEL;
+                vel.scl(deltaTime);
+                tryMove();
+                vel.scl(1.0f / deltaTime);
+            }
 
             if (state == GianaState.SPAWN) {
                 if (stateTime > 0.4f) {
@@ -179,6 +185,8 @@ public class Giana {
         dir = RIGHT;
         accel.x = ACCELERATION * dir;
         active = false;
+        grounded = true;
+        vel.y = 0;
     }
 
     private void tryMove() {
