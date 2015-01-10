@@ -40,7 +40,7 @@ public class HighScoreServiceDesktop implements HighScoreService {
     }
 
     @Override
-    public void fetchHighScores() {
+    public void fetchHighScores(final boolean save) {
 
     }
 
