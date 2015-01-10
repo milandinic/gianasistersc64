@@ -45,7 +45,7 @@ public class HighScoreScreen extends GianaSistersScreen {
         redFont = generator.generateFont(parameter);
         redFont.setColor(new Color(0.66f, 0.21f, 0.14f, 1));
 
-        getGame().getHighScoreService().fetchHighScores();
+        getGame().getHighScoreService().fetchHighScores(false);
 
         generator.dispose();
     }

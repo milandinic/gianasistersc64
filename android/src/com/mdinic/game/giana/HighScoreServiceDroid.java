@@ -17,6 +17,7 @@ import com.parse.ParseQuery;
 
 public class HighScoreServiceDroid implements HighScoreService {
 
+    private static final String DATE = "date";
     private static final String SCORE = "score";
     private static final String LEVEL = "level";
     private static final String USERNAME = "username";
@@ -43,11 +44,11 @@ public class HighScoreServiceDroid implements HighScoreService {
 
         internetAvailable = checker != null && checker.isAvailableConnection();
 
-        fetchHighScores();
+        fetchHighScores(true);
     }
 
     @Override
-    public void fetchHighScores() {
+    public void fetchHighScores(final boolean saveLocalScoreToWeb) {
         if (internetAvailable()) {
             ParseQuery<ParseObject> query = ParseQuery.getQuery("GameScore");
             query.setLimit(10);
@@ -71,8 +72,20 @@ public class HighScoreServiceDroid implements HighScoreService {
                             scores = newScores;
                             haveUpdate = true;
                         }
+                        if (saveLocalScoreToWeb) {
+
+                            Score myBestScore = getMyBest();
+
+                            if (myBestScore != null && getUnsavedHighscoreFlag()) {
+                                if (goodForHighScores(myBestScore.getScore())) {
+                                    persistObject(myBestScore);
+                                }
+                            }
+                            setUnsavedHighscoreFlag(false);
+                        }
                     }
                 }
+
             });
         } else {
             scores = getOfflineScores();
@@ -87,19 +100,7 @@ public class HighScoreServiceDroid implements HighScoreService {
         Score myBestScore = getMyBest();
 
         if (internetAvailable()) {
-
-            if (myBestScore != null && getUnsavedHighscoreFlag()) {
-                if (score.getScore() < myBestScore.getScore()) {
-                    score = myBestScore;
-                }
-            }
-
-            ParseObject object = new ParseObject("GameScore");
-            object.put(USERNAME, score.getName());
-            object.put(SCORE, score.getScore());
-            object.put(LEVEL, score.getLevel());
-            object.put("date", score.getDate().getTime());
-            object.saveInBackground();
+            persistObject(score);
             setUnsavedHighscoreFlag(false);
         }
 
@@ -109,6 +110,15 @@ public class HighScoreServiceDroid implements HighScoreService {
         } else if (myBestScore.getScore() < score.getScore()) {
             saveMyOfflineHighScore(score);
         }
+    }
+
+    private void persistObject(Score myBestScore) {
+        ParseObject object = new ParseObject("GameScore");
+        object.put(USERNAME, myBestScore.getName());
+        object.put(SCORE, myBestScore.getScore());
+        object.put(LEVEL, myBestScore.getLevel());
+        object.put(DATE, myBestScore.getDate().getTime());
+        object.saveInBackground();
     }
 
     private void setUnsavedHighscoreFlag(boolean flag) {
@@ -221,4 +231,5 @@ public class HighScoreServiceDroid implements HighScoreService {
 
         return false;
     }
+
 }

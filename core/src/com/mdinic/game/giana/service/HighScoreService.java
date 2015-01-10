@@ -8,20 +8,13 @@ public interface HighScoreService {
 
     List<Score> getScoreUpdate();
 
-    void fetchHighScores();
+    void fetchHighScores(final boolean saveLocalScoreToWeb);
 
     void saveHighScore(Score score);
 
     boolean internetAvailable();
 
     boolean goodForHighScores(int score);
-
-    // offline
-    // List<Score> getOfflineScores();
-    //
-    // void persistOfflineScores(List<Score> scores);
-    //
-    // void saveMyScore(Score score);
 
     Score getMyBest();
 }
