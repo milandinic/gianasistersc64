@@ -34,12 +34,12 @@ public class Sounds {
         startLevelSfx = Gdx.audio.newMusic(Gdx.files.internal("data/sfx/startLevel.mp3"));
         endLevelSfx = Gdx.audio.newMusic(Gdx.files.internal("data/sfx/endLevel-bonus.mp3"));
         gianaJumpSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/jump.mp3"));
-        gianaKillSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/kill.wav"));
-        gianaDyingSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/dying.wav"));
+        gianaKillSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/kill.mp3"));
+        gianaDyingSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/dying.mp3"));
         diamondSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/diamond-collect.mp3"));
-        powerUpSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/powerup.wav"));
-        brickDestroySfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/brick.wav"));
-        treatBoxCoinSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/treatboxcoin.wav"));
+        powerUpSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/powerup.mp3"));
+        brickDestroySfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/brick.mp3"));
+        treatBoxCoinSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/treatboxcoin.mp3"));
     }
 
     public void setMute(boolean mute) {
