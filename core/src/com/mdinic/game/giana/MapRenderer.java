@@ -97,7 +97,9 @@ public class MapRenderer {
     private void createAnimations() {
 
         Texture brownBrick = new Texture(Gdx.files.internal("data/brownbricks.png"));
-        brownBrickAnim = new Animation(0.1f, new TextureRegion(brownBrick).split(24, 16)[0]);
+        TextureRegion[] brownBrickRegion = new TextureRegion(brownBrick).split(24, 16)[0];
+        brownBrickAnim = new Animation(0.1f, brownBrickRegion[1], brownBrickRegion[2], brownBrickRegion[3],
+                brownBrickRegion[4]);
 
         Texture sprites = new Texture(Gdx.files.internal("data/sprites.png"));
         this.tileTexture = new TextureRegion(sprites, 150, 103, 24, 16);
