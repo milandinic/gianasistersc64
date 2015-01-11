@@ -76,6 +76,7 @@ public class MapRenderer {
     private Animation waspRightAnim;
     private Animation waspLeftAnim;
     private Animation quicksandAnim;
+    private Animation brownBrickAnim;
 
     public MapRenderer(Map map) {
         this.map = map;
@@ -93,16 +94,10 @@ public class MapRenderer {
         createAnimations();
     }
 
-    private void drawBlocks() {
-
-        for (Tile tile : map.tileArray) {
-            if (tile.active)
-                batch.draw(tileTexture, tile.pos.x, tile.pos.y, 1, 1);
-        }
-
-    }
-
     private void createAnimations() {
+
+        Texture brownBrick = new Texture(Gdx.files.internal("data/brownbricks.png"));
+        brownBrickAnim = new Animation(0.1f, new TextureRegion(brownBrick).split(24, 16)[0]);
 
         Texture sprites = new Texture(Gdx.files.internal("data/sprites.png"));
         this.tileTexture = new TextureRegion(sprites, 150, 103, 24, 16);
@@ -484,6 +479,26 @@ public class MapRenderer {
                 batch.draw(waspLeftAnim.getKeyFrame(bee.stateTime, true), bee.pos.x, bee.pos.y, 1, 1);
 
         }
+    }
+
+    private void drawBlocks() {
+
+        for (Tile tile : map.tileArray) {
+            if (tile.active) {
+                switch (tile.state) {
+                case NORMAL:
+                    batch.draw(tileTexture, tile.pos.x, tile.pos.y, 1, 1);
+                    break;
+                case EXPLODING:
+                    batch.draw(brownBrickAnim.getKeyFrame(tile.stateTime, false), tile.pos.x, tile.pos.y, 1, 1);
+                    break;
+                case GONE:
+                    break;
+                }
+
+            }
+        }
+
     }
 
     public void dispose() {
