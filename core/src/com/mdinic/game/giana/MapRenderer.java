@@ -76,7 +76,7 @@ public class MapRenderer {
     private Animation waspRightAnim;
     private Animation waspLeftAnim;
     private Animation quicksandAnim;
-    private Animation brownBrickAnim;
+    private Animation brickAnim;
 
     public MapRenderer(Map map) {
         this.map = map;
@@ -95,14 +95,14 @@ public class MapRenderer {
     }
 
     private void createAnimations() {
+        LevelColors colors = LevelColors.values()[map.level];
 
-        Texture brownBrick = new Texture(Gdx.files.internal("data/brownbricks.png"));
-        TextureRegion[] brownBrickRegion = new TextureRegion(brownBrick).split(24, 16)[0];
-        brownBrickAnim = new Animation(0.1f, brownBrickRegion[1], brownBrickRegion[2], brownBrickRegion[3],
-                brownBrickRegion[4]);
+        Texture brick = new Texture(Gdx.files.internal("data/bricks-" + colors.getBrickColor().getName() + ".png"));
+        TextureRegion[] brickRegion = new TextureRegion(brick).split(24, 16)[0];
+        brickAnim = new Animation(0.1f, brickRegion[1], brickRegion[2], brickRegion[3], brickRegion[4]);
 
         Texture sprites = new Texture(Gdx.files.internal("data/sprites.png"));
-        this.tileTexture = new TextureRegion(sprites, 150, 103, 24, 16);
+        this.tileTexture = brickRegion[0];
         this.endDoor = new TextureRegion(sprites, 16, 196, 32, 32);
 
         simpleImageTextureRegions.put(SimpleImageType.BIG_CLOUD, new TextureRegion(sprites, 13, 10, 42, 17));
@@ -121,8 +121,8 @@ public class MapRenderer {
         Texture treatboxTexture = new Texture(Gdx.files.internal("data/treatbox.png"));
         Texture movingSpikesTexture = new Texture(Gdx.files.internal("data/movingspikes.png"));
 
-        quicksandAnim = new Animation(0.1f,
-                new TextureRegion(new Texture(Gdx.files.internal("data/quicksand.png"))).split(20, 20)[0]);
+        quicksandAnim = new Animation(0.1f, new TextureRegion(new Texture(Gdx.files.internal("data/quicksand-"
+                + colors.getBrickColor().getName() + ".png"))).split(20, 20)[0]);
 
         Texture groundMonstersTexture = new Texture(Gdx.files.internal("data/groundmonsters.png"));
         Texture lobsterTexture = new Texture(Gdx.files.internal("data/lobster.png"));
@@ -277,7 +277,8 @@ public class MapRenderer {
         drawBlocks();
 
         if (map.endDoor != null)
-            batch.draw(endDoor, map.endDoor.bounds.x, map.endDoor.bounds.y, 2, 2);
+            batch.draw(endDoor, map.endDoor.bounds.x, map.endDoor.bounds.y, map.endDoor.bounds.width,
+                    map.endDoor.bounds.height);
 
         renderSimpleImages();
         renderMovingSpikes();
@@ -492,7 +493,7 @@ public class MapRenderer {
                     batch.draw(tileTexture, tile.pos.x, tile.pos.y, 1, 1);
                     break;
                 case EXPLODING:
-                    batch.draw(brownBrickAnim.getKeyFrame(tile.stateTime, false), tile.pos.x, tile.pos.y, 1, 1);
+                    batch.draw(brickAnim.getKeyFrame(tile.stateTime, false), tile.pos.x, tile.pos.y, 1, 1);
                     break;
                 case GONE:
                     break;

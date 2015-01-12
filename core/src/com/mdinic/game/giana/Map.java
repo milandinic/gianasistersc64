@@ -103,7 +103,8 @@ public class Map {
         Pixmap pixmap = new Pixmap(Gdx.files.internal("data/levels.png"));
 
         // background color
-        int pix = (pixmap.getPixel(0, level * LEVEL_PIXELBUFFER) >>> 8) & 0xffffff;
+        int pix = LevelColors.values()[level].getBackgroundColor();
+        // (pixmap.getPixel(0, level * LEVEL_PIXELBUFFER) >>> 8) & 0xffffff;
         r = (pix & 0xff0000) >>> 16;
         g = (pix & 0x00ff00) >>> 8;
         b = (pix & 0x0000ff);

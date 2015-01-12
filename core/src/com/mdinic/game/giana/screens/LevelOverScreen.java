@@ -64,7 +64,7 @@ public class LevelOverScreen extends GianaSistersScreen {
         batch.end();
 
         if (time > 3) {
-            if (oldMap.level + 1 == LEVEL_COUNT) {
+            if (oldMap.level == LEVEL_COUNT) {
                 game.setScreen(new GameCompletedScreen(game, oldMap));
             } else {
                 game.setScreen(new LevelStartingScreen(game, oldMap));
