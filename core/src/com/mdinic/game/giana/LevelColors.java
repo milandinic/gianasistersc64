@@ -3,7 +3,8 @@ package com.mdinic.game.giana;
 public enum LevelColors {
 
     INTRO(0x826fe8), LEVEL1(0x826fe8), LEVEL2(0x826fe8), LEVEL3(0x826fe8), LEVEL4(0x826fe8), LEVEL5(0x826fe8), LEVEL6(
-            0x826fe8), LEVEL7, LEVEL8(0x826fe8), LEVEL9, LEVEL10, LEVEL11(BrickColor.RED), LEVEL12(BrickColor.GREY), LEVEL13, LEVEL14, LEVEL15;
+            0x826fe8), LEVEL7, LEVEL8(0x826fe8), LEVEL9, LEVEL10, LEVEL11(BrickColor.RED), LEVEL12(BrickColor.GREY), LEVEL13(
+            BrickColor.GREY), LEVEL14, LEVEL15;
 
     enum BrickType {
         SMALL, BIG
