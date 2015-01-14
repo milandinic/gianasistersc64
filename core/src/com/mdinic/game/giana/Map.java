@@ -20,13 +20,14 @@ public class Map {
     static int END = 0xff00ff;
 
     static int DIAMOND = 5570300;
+    static int PIRANHA = 0x6a75ff;
     static int MOVING_SPIKES = 0x00ff00;
 
     static int TREAT_BOX = 0xff8a00;
     static int TREAT_BOX_BALL = 0xffcb8d;
 
     static int BEE = 0xd2a285;
-
+    static int WATER = 0x7b7eae;
     static int QUICK_SAND = 0xA45A04;
 
     static int LEVEL_PIXELBUFFER = 20;
@@ -62,6 +63,7 @@ public class Map {
 
     Array<Bee> bees = new Array<Bee>();
     Array<Fish> fishes = new Array<Fish>();
+    Array<Water> waters = new Array<Water>();
 
     Vector2 startPosition = new Vector2();
     public EndDoor endDoor;
@@ -79,6 +81,12 @@ public class Map {
         time = 99;
         this.level = level;
         loadBinary(level);
+        if (giana == null) {
+            throw new IllegalStateException("Giana not on the map");
+        }
+        if (endDoor == null) {
+            throw new IllegalStateException("End door not on the map");
+        }
 
         colidableColors.add(TREAT_BOX);
         colidableColors.add(TREAT_BOX_BALL);
@@ -126,7 +134,8 @@ public class Map {
 
                 } else if (match(pix, DIAMOND)) {
                     diamonds.add(new Diamond(this, x, pixmap.getHeight() - 1 - y));
-
+                } else if (match(pix, PIRANHA)) {
+                    fishes.add(new Fish(this, x, pixmap.getHeight() - 1 - y));
                 } else if (match(pix, QUICK_SAND)) {
                     quickSandArray.add(new QuickSand(this, x, pixmap.getHeight() - 1 - y));
                     tiles[x][y] = pix;
@@ -146,6 +155,8 @@ public class Map {
                             }
                         }
                     }
+                } else if (match(pix, WATER)) {
+                    waters.add(new Water(this, x, pixmap.getHeight() - 1 - y));
                 } else if (match(pix, MOVING_SPIKES)) {
                     movingSpikes.add(new MovingSpikes(this, x, pixmap.getHeight() - 1 - y));
                 } else if (match(pix, TREAT_BOX)) {
@@ -189,6 +200,10 @@ public class Map {
         for (MovingSpikes mSpike : movingSpikes) {
             mSpike.update(deltaTime);
         }
+
+        for (Water water : waters) {
+            water.update(deltaTime);
+        }
         for (GroundMonster monster : groundMonsters) {
             monster.update(deltaTime);
         }
@@ -203,8 +218,7 @@ public class Map {
         }
 
         for (Fish fish : fishes) {
-            if (fish.active)
-                fish.update(deltaTime);
+            fish.update(deltaTime);
         }
 
         for (Tile tile : tileArray) {

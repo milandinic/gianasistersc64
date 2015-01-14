@@ -61,8 +61,6 @@ public class MapRenderer {
 
     Animation movingSpikesAnim;
 
-    // FPSLogger fps = new FPSLogger();
-
     java.util.Map<GoundMonsterType, Animation[]> groundMonsterAnimations = new HashMap<GoundMonsterType, Animation[]>();
 
     private BitmapFont font;
@@ -72,11 +70,13 @@ public class MapRenderer {
     java.util.Map<SimpleImageType, TextureRegion> simpleImageTextureRegions = new HashMap<SimpleImageType, TextureRegion>();
     private Animation treatBallRightAnim;
     private Animation treatBallLeftAnim;
-    private Animation piranhaAnim;
+    private Animation piranhaUpAnim;
+    private Animation piranhaDownAnim;
     private Animation waspRightAnim;
     private Animation waspLeftAnim;
     private Animation quicksandAnim;
     private Animation brickAnim;
+    private Animation waterAnim;
 
     public MapRenderer(Map map) {
         this.map = map;
@@ -116,6 +116,9 @@ public class MapRenderer {
         smallDiamondAnim = new Animation(0.1f, new TextureRegion(new Texture(
                 Gdx.files.internal("data/smalldiamond.png"))).split(8, 8)[0]);
 
+        waterAnim = new Animation(0.1f, new TextureRegion(new Texture(Gdx.files.internal("data/water.png"))).split(24,
+                12)[0]);
+
         Texture gianaTexture = new Texture(Gdx.files.internal("data/giana.png"));
         Texture diamondTexture = new Texture(Gdx.files.internal("data/diamond.png"));
         Texture treatboxTexture = new Texture(Gdx.files.internal("data/treatbox.png"));
@@ -137,10 +140,15 @@ public class MapRenderer {
 
         waspLeftAnim = new Animation(0.3f, waspRegionLeft);
 
-        TextureRegion[] piranhaRegion = new TextureRegion(new Texture(Gdx.files.internal("data/piranha.png"))).split(
-                20, 20)[0];
+        piranhaUpAnim = new Animation(0.2f,
+                new TextureRegion(new Texture(Gdx.files.internal("data/piranha.png"))).split(20, 20)[0]);
 
-        piranhaAnim = new Animation(0.2f, piranhaRegion);
+        TextureRegion[] piranhaDownRegion = new TextureRegion(new Texture(Gdx.files.internal("data/piranha.png")))
+                .split(20, 20)[0];
+        for (TextureRegion textureRegion : piranhaDownRegion) {
+            textureRegion.flip(false, true);
+        }
+        piranhaDownAnim = new Animation(0.2f, piranhaDownRegion);
 
         TextureRegion[] eyeRegionLeft = new TextureRegion(new Texture(Gdx.files.internal("data/eye.png")))
                 .split(24, 17)[0];
@@ -282,6 +290,7 @@ public class MapRenderer {
 
         renderSimpleImages();
         renderMovingSpikes();
+        renderWaters();
         renderDiamonds();
         renderGroundMonsters();
         renderPiranhas();
@@ -437,6 +446,13 @@ public class MapRenderer {
         }
     }
 
+    private void renderWaters() {
+        for (int i = 0; i < map.waters.size; i++) {
+            Water water = map.waters.get(i);
+            batch.draw(waterAnim.getKeyFrame(water.stateTime, true), water.pos.x, water.pos.y, 1, 1);
+        }
+    }
+
     private void renderGroundMonsters() {
         for (int i = 0; i < map.groundMonsters.size; i++) {
             GroundMonster monster = map.groundMonsters.get(i);
@@ -458,7 +474,11 @@ public class MapRenderer {
 
     private void renderPiranhas() {
         for (Fish fish : map.fishes) {
-            batch.draw(piranhaAnim.getKeyFrame(fish.stateTime, true), fish.pos.x, fish.pos.y, 1, 1);
+            if (fish.state == Fish.FORWARD)
+                batch.draw(piranhaUpAnim.getKeyFrame(fish.stateTime, true), fish.pos.x, fish.pos.y, 1, 1);
+            else
+                batch.draw(piranhaDownAnim.getKeyFrame(fish.stateTime, true), fish.pos.x, fish.pos.y, 1, 1);
+
         }
     }
 
