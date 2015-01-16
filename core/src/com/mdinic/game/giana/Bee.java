@@ -30,7 +30,7 @@ public class Bee {
         bounds.y = y;
         bounds.width = bounds.height = 1;
 
-        vel.set(-1, 0);
+        vel.set(-FORWARD_VEL, 0);
     }
 
     public void init() {
