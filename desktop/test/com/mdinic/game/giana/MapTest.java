@@ -18,8 +18,6 @@ public class MapTest {
         LwjglNativesLoader.load();
 
         Gdx.files = new LwjglFiles();
-        // Gdx.input = new LwjglInput();
-        // Gdx.net = new LwjglNet();
 
         for (int i = 0; i <= GianaSistersScreen.LEVEL_COUNT; i++) {
             Map map = new Map(i);

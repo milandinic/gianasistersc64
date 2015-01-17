@@ -285,18 +285,19 @@ public class MapRenderer {
         batch.setProjectionMatrix(cam.combined);
         batch.begin();
 
-        drawBlocks();
+        batch.draw(endDoor, map.endDoor.bounds.x, map.endDoor.bounds.y, map.endDoor.bounds.width,
+                map.endDoor.bounds.height);
 
-        if (map.endDoor != null)
-            batch.draw(endDoor, map.endDoor.bounds.x, map.endDoor.bounds.y, map.endDoor.bounds.width,
-                    map.endDoor.bounds.height);
+        renderWaters();
+        renderPiranhas();
+        drawBlocks();
 
         renderSimpleImages();
         renderMovingSpikes();
-        renderWaters();
+
         renderDiamonds();
         renderGroundMonsters();
-        renderPiranhas();
+
         renderBees();
         renderTreats();
         renderGiana();
