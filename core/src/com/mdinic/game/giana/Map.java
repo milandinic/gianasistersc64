@@ -205,7 +205,9 @@ public class Map {
             water.update(deltaTime);
         }
         for (GroundMonster monster : groundMonsters) {
-            monster.update(deltaTime);
+            if (monster.alive) {
+                monster.update(deltaTime);
+            }
         }
 
         for (Bee bee : bees) {

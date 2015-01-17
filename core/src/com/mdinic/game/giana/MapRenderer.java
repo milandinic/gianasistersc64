@@ -63,6 +63,8 @@ public class MapRenderer {
 
     java.util.Map<GoundMonsterType, Animation[]> groundMonsterAnimations = new HashMap<GoundMonsterType, Animation[]>();
 
+    java.util.Map<GoundMonsterType, TextureRegion> deadGroundMonsterAnimations = new HashMap<GoundMonsterType, TextureRegion>();
+
     private BitmapFont font;
 
     int fontSize;
@@ -159,6 +161,7 @@ public class MapRenderer {
         }
         Animation eyeAnimLeft = new Animation(0.3f, eyeRegionLeft);
         Animation eyeAnimRight = new Animation(0.3f, eyeRegionRight);
+
         groundMonsterAnimations.put(GoundMonsterType.EYE, new Animation[] { eyeAnimRight, eyeAnimLeft });
 
         TextureRegion[] wormRegion = new TextureRegion(new Texture(Gdx.files.internal("data/worm.png"))).split(25, 21)[0];
@@ -460,14 +463,13 @@ public class MapRenderer {
             if (animations.length == 0) {
                 throw new IllegalStateException("ground monster type is not supported " + monster.type);
             } else {
-                if (monster.alive) {
-                    int index = 0;
-                    if (monster.type.needsMirror && monster.state == GroundMonster.BACKWARD) {
-                        index = 1;
-                    }
-                    batch.draw(animations[index].getKeyFrame(monster.stateTime, true), monster.pos.x, monster.pos.y, 1,
-                            1);
+                int index = 0;
+                if (monster.type.needsMirror && monster.state == GroundMonster.BACKWARD) {
+                    index = 1;
                 }
+                batch.draw(animations[index].getKeyFrame(monster.stateTime, true), monster.pos.x, monster.pos.y, 1,
+                        monster.alive ? 1 : 0.2f);
+
             }
         }
     }
