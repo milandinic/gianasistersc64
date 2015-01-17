@@ -300,11 +300,12 @@ public class MapRenderer {
 
         renderBees();
         renderTreats();
-        renderGiana();
 
         renderTreatBoxeSmallDiamonds();
         renderTreatBoxes();
         renderQuickSand();
+
+        renderGiana();
 
         batch.end();
 
