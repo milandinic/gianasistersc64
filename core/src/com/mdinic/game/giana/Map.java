@@ -74,7 +74,7 @@ public class Map {
         this.lives = oldMap.lives;
         this.diamondsCollected = oldMap.diamondsCollected;
         this.score = oldMap.score;
-        // this.giana.big = oldMap.giana.big;
+        this.giana.power = oldMap.giana.power;
     }
 
     public Map(int level) {

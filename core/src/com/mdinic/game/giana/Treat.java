@@ -73,13 +73,20 @@ public class Treat {
 
         if (map.giana.bounds.overlaps(bounds)) {
             active = false;
-            map.score += 100;
-            map.giana.big = true;
-            map.giana.state = GianaState.GROW;
-            map.giana.stateTime = 0;
-            Sounds.getInstance().play(Sfx.POWERUP);
-        }
 
+            if (!GianaPower.isBig(map.giana.power)) {
+                Sounds.getInstance().play(Sfx.POWERUP);
+                map.giana.state = GianaState.GROW;
+                map.giana.stateTime = 0;
+                map.score += 100;
+            } else {
+                map.score += 50;
+                Sounds.getInstance().play(Sfx.TREAT);
+            }
+            if (GianaPower.hasNext(map.giana.power)) {
+                map.giana.power = GianaPower.values()[map.giana.power.ordinal() + 1];
+            }
+        }
     }
 
     private void tryMove() {

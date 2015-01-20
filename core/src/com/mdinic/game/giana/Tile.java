@@ -32,7 +32,8 @@ public class Tile {
             stateTime += deltaTime;
             switch (state) {
             case NORMAL:
-                if (map.giana.headHitBounds.overlaps(bounds) && map.giana.big && map.giana.state == GianaState.JUMP) {
+                if (map.giana.headHitBounds.overlaps(bounds) && GianaPower.isBig(map.giana.power)
+                        && map.giana.state == GianaState.JUMP) {
                     state = State.EXPLODING;
                     Sounds.getInstance().play(Sfx.BRICK_DESTROY);
                     stateTime = 0;

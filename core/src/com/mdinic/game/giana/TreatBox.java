@@ -39,8 +39,7 @@ public class TreatBox {
                 if (map.giana.headHitBounds.overlaps(bounds)) {
                     Sounds.getInstance().play(Sfx.TREAT_BOX_COIN);
                     active = false;
-                    map.score += 25;
-                    map.diamondsCollected++;
+                    map.collectDiamound();
                     map.treatSmallDiamoinds.add(new SmallDiamoind(map, pos.x, pos.y));
                 }
                 break;

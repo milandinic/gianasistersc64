@@ -19,6 +19,8 @@ public class Sounds {
     private final Sound treatBoxCoinSfx;
     private final Music introSfx;
 
+    private final Sound treatSfx;
+
     private static Sounds INSTANCE = new Sounds();
 
     public static Sounds getInstance() {
@@ -26,7 +28,7 @@ public class Sounds {
     }
 
     public enum Sfx {
-        START_LEVEL, END_LEVEL, JUMP, KILL, DYING, POWERUP, BRICK_DESTROY, TREAT_BOX_COIN, DIAMOND, INTRO
+        START_LEVEL, END_LEVEL, JUMP, KILL, DYING, POWERUP, BRICK_DESTROY, TREAT_BOX_COIN, DIAMOND, INTRO, TREAT
     };
 
     public Sounds() {
@@ -40,6 +42,7 @@ public class Sounds {
         powerUpSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/powerup.mp3"));
         brickDestroySfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/brick.mp3"));
         treatBoxCoinSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/treatboxcoin.mp3"));
+        treatSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/treat.mp3"));
     }
 
     public void setMute(boolean mute) {
@@ -81,6 +84,9 @@ public class Sounds {
         case DIAMOND:
             diamondSfx.play();
             break;
+        case TREAT:
+            treatSfx.play();
+            break;
         default:
             break;
         }
@@ -120,6 +126,9 @@ public class Sounds {
             break;
         case DIAMOND:
             diamondSfx.stop();
+            break;
+        case TREAT:
+            treatSfx.stop();
             break;
         default:
             break;

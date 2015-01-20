@@ -79,6 +79,9 @@ public class MapRenderer {
     private Animation quicksandAnim;
     private Animation brickAnim;
     private Animation waterAnim;
+    private Animation lightningAnim;
+    private Animation doubleLightningAnim;
+    private TextureRegion strawberry;
 
     public MapRenderer(Map map) {
         this.map = map;
@@ -213,6 +216,13 @@ public class MapRenderer {
         Collections.reverse(asList);
         treatBallLeftAnim = new Animation(0.1f, asList.toArray(new TextureRegion[treatBall.length]));
 
+        lightningAnim = new Animation(0.1f,
+                new TextureRegion(new Texture(Gdx.files.internal("data/lightning.png"))).split(9, 15)[0]);
+        doubleLightningAnim = new Animation(0.1f, new TextureRegion(new Texture(
+                Gdx.files.internal("data/double_lightning.png"))).split(19, 15)[0]);
+
+        strawberry = new TextureRegion(new Texture(Gdx.files.internal("data/strawberry.png")));
+
         TextureRegion gianaBigRegion = new TextureRegion(gianaTexture);
         gianaBigRegion.setRegion(0, 125, 189, 28);
         TextureRegion[] gianaBRight = gianaBigRegion.split(27, 28)[0];
@@ -332,10 +342,32 @@ public class MapRenderer {
     private void renderTreats() {
         for (Treat treat : map.treats) {
             if (treat.active) {
-                if (treat.dir == Treat.RIGHT)
-                    batch.draw(treatBallRightAnim.getKeyFrame(treat.stateTime, true), treat.pos.x, treat.pos.y, 1, 1);
-                else
-                    batch.draw(treatBallLeftAnim.getKeyFrame(treat.stateTime, true), treat.pos.x, treat.pos.y, 1, 1);
+
+                switch (map.giana.power) {
+                case NONE: {
+                    if (treat.dir == Treat.RIGHT)
+                        batch.draw(treatBallRightAnim.getKeyFrame(treat.stateTime, true), treat.pos.x, treat.pos.y, 1,
+                                1);
+                    else
+                        batch.draw(treatBallLeftAnim.getKeyFrame(treat.stateTime, true), treat.pos.x, treat.pos.y, 1, 1);
+                    break;
+                }
+                case BIG: {
+                    batch.draw(lightningAnim.getKeyFrame(treat.stateTime, true), treat.pos.x, treat.pos.y, 0.5f, 0.8f);
+                    break;
+                }
+                case SHOOT: {
+                    batch.draw(doubleLightningAnim.getKeyFrame(treat.stateTime, true), treat.pos.x, treat.pos.y, 1,
+                            0.8f);
+                    break;
+                }
+                case STRAWBERRY: {
+                    batch.draw(strawberry, treat.pos.x, treat.pos.y, 1, 0.8f);
+                    break;
+                }
+                default:
+                }
+
             }
         }
     }
@@ -344,7 +376,7 @@ public class MapRenderer {
         Animation anim = null;
         boolean loop = true;
 
-        if (map.giana.big) {
+        if (GianaPower.isBig(map.giana.power)) {
             if (map.giana.state == GianaState.RUN) {
                 if (map.giana.dir == Giana.LEFT)
                     anim = gianaBigLeft;
