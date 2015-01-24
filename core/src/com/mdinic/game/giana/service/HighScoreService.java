@@ -6,9 +6,15 @@ public interface HighScoreService {
 
     boolean haveScoreUpdate();
 
+    boolean haveTodaysScoreUpdate();
+
     List<Score> getScoreUpdate();
 
-    void fetchHighScores(final boolean saveLocalScoreToWeb);
+    List<Score> getTodaysScoreUpdate();
+
+    void fetchHighScores();
+
+    void fetchTodaysHighScores(final boolean saveLocalScoreToWeb);
 
     void saveHighScore(Score score);
 

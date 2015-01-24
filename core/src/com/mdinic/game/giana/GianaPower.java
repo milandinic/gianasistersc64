@@ -8,6 +8,7 @@ public enum GianaPower {
     }
 
     public static boolean hasNext(GianaPower power) {
-        return power.compareTo(STRAWBERRY) < 0;
+        return power.compareTo(BIG) < 0;
+        // return power.compareTo(STRAWBERRY) < 0;
     }
 }

@@ -38,7 +38,7 @@ public class Giana {
 
     Rectangle[] r = { new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle() };
 
-    public GianaPower power = GianaPower.BIG;
+    public GianaPower power = GianaPower.NONE;
 
     private boolean playDead = true;
 

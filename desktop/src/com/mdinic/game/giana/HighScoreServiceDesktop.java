@@ -11,19 +11,21 @@ import com.mdinic.game.giana.service.Score;
 public class HighScoreServiceDesktop implements HighScoreService {
 
     List<Score> scores = new ArrayList<Score>();
+    List<Score> todaysScores = new ArrayList<Score>();
 
     public HighScoreServiceDesktop() {
+
         scores.add(new Score("user", 123, 1));
         scores.add(new Score("Giana", 1260, 1));
         scores.add(new Score("Maria", 1630, 1));
         scores.add(new Score("Milan", 1530, 1));
         scores.add(new Score("Sanela", 1130, 1));
-        scores.add(new Score("Anna", 1220, 1));
-        scores.add(new Score("Pera", 1210, 1));
 
-        scores.add(new Score("Vera", 2210, 1));
-        scores.add(new Score("root", 4210, 1));
-        scores.add(new Score("Mile", 1910, 1));
+        todaysScores.add(new Score("Anna", 1220, 1));
+        todaysScores.add(new Score("Pera", 1210, 1));
+        todaysScores.add(new Score("Vera", 2210, 1));
+        todaysScores.add(new Score("root", 4210, 1));
+        todaysScores.add(new Score("Mile", 1910, 1));
 
         Collections.sort(scores, new Comparator<Score>() {
 
@@ -40,7 +42,7 @@ public class HighScoreServiceDesktop implements HighScoreService {
     }
 
     @Override
-    public void fetchHighScores(final boolean save) {
+    public void fetchHighScores() {
 
     }
 
@@ -69,12 +71,32 @@ public class HighScoreServiceDesktop implements HighScoreService {
     }
 
     @Override
-    public Score getMyBest() {
-        return new Score("me", 1, 1);
+    public boolean goodForHighScores(int score) {
+        return false;
     }
 
     @Override
-    public boolean goodForHighScores(int score) {
-        return false;
+    public List<Score> getTodaysScoreUpdate() {
+        List<Score> result = new ArrayList<Score>(todaysScores.size() + 1);
+        result.addAll(todaysScores);
+        todaysScores.clear();
+
+        return result;
+    }
+
+    @Override
+    public void fetchTodaysHighScores(boolean saveLocalScoreToWeb) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public boolean haveTodaysScoreUpdate() {
+        return !todaysScores.isEmpty();
+    }
+
+    @Override
+    public Score getMyBest() {
+        return new Score("me", 1, 1);
     }
 }

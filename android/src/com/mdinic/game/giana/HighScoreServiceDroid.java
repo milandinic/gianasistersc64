@@ -1,6 +1,7 @@
 package com.mdinic.game.giana;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
@@ -17,6 +18,8 @@ import com.parse.ParseQuery;
 
 public class HighScoreServiceDroid implements HighScoreService {
 
+    private static final String GAME_SCORE = "GameScore";
+    private static final int LIMIT_SCORES = 5;
     private static final String DATE = "date";
     private static final String SCORE = "score";
     private static final String LEVEL = "level";
@@ -30,12 +33,14 @@ public class HighScoreServiceDroid implements HighScoreService {
     private static final String TOTALSCORES = "totalscores";
 
     private List<Score> scores = new ArrayList<Score>();
+    private List<Score> todaysScores = new ArrayList<Score>();
 
     private final Activity activity;
 
     final Object object = new Object();
 
     boolean haveUpdate = true;
+    boolean haveTodaysUpdate = true;
     boolean internetAvailable = false;
 
     public HighScoreServiceDroid(Activity activity, InternetConnectionChecker checker) {
@@ -44,14 +49,15 @@ public class HighScoreServiceDroid implements HighScoreService {
 
         internetAvailable = checker != null && checker.isAvailableConnection();
 
-        fetchHighScores(true);
+        fetchHighScores();
+        fetchTodaysHighScores(true);
     }
 
     @Override
-    public void fetchHighScores(final boolean saveLocalScoreToWeb) {
+    public void fetchHighScores() {
         if (internetAvailable()) {
-            ParseQuery<ParseObject> query = ParseQuery.getQuery("GameScore");
-            query.setLimit(10);
+            ParseQuery<ParseObject> query = ParseQuery.getQuery(GAME_SCORE);
+            query.setLimit(LIMIT_SCORES);
             query.addDescendingOrder(SCORE);
 
             synchronized (object) {
@@ -67,29 +73,20 @@ public class HighScoreServiceDroid implements HighScoreService {
                             newScores.add(new Score(parseObject.getString(USERNAME), parseObject.getInt(SCORE),
                                     parseObject.getInt(LEVEL)));
                         }
-                        persistScores(newScores);
+                        persistScores(newScores, "");
                         synchronized (object) {
                             scores = newScores;
                             haveUpdate = true;
-                        }
-                        if (saveLocalScoreToWeb) {
-
-                            Score myBestScore = getMyBest();
-
-                            if (myBestScore != null && getUnsavedHighscoreFlag()) {
-                                if (goodForHighScores(myBestScore.getScore())) {
-                                    persistObject(myBestScore);
-                                }
-                            }
-                            setUnsavedHighscoreFlag(false);
                         }
                     }
                 }
 
             });
         } else {
-            scores = getOfflineScores();
-            haveUpdate = true;
+            synchronized (object) {
+                scores = getOfflineScores("");
+                haveUpdate = true;
+            }
         }
 
     }
@@ -110,34 +107,18 @@ public class HighScoreServiceDroid implements HighScoreService {
         } else if (myBestScore.getScore() < score.getScore()) {
             saveMyOfflineHighScore(score);
         }
+
+        fetchHighScores();
+        fetchTodaysHighScores(false);
     }
 
     private void persistObject(Score myBestScore) {
-        ParseObject object = new ParseObject("GameScore");
+        ParseObject object = new ParseObject(GAME_SCORE);
         object.put(USERNAME, myBestScore.getName());
         object.put(SCORE, myBestScore.getScore());
         object.put(LEVEL, myBestScore.getLevel());
         object.put(DATE, myBestScore.getDate().getTime());
         object.saveInBackground();
-    }
-
-    private void setUnsavedHighscoreFlag(boolean flag) {
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-        editor.putBoolean(UNSAVED_SCORE, flag);
-        editor.commit();
-    }
-
-    private boolean getUnsavedHighscoreFlag() {
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-        return sharedPref.getBoolean(UNSAVED_SCORE, false);
-    }
-
-    @Override
-    public boolean haveScoreUpdate() {
-        synchronized (object) {
-            return haveUpdate;
-        }
     }
 
     @Override
@@ -148,44 +129,6 @@ public class HighScoreServiceDroid implements HighScoreService {
             result.addAll(scores);
         }
         return result;
-    }
-
-    @Override
-    public boolean internetAvailable() {
-        return internetAvailable;
-    }
-
-    public List<Score> getOfflineScores() {
-        List<Score> localScores = new ArrayList<Score>();
-
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-
-        int highScores = sharedPref.getInt(TOTALSCORES, 0);
-
-        for (int i = 0; i < highScores; i++) {
-            localScores.add(new Score(sharedPref.getString(USERNAME + i, ""), sharedPref.getInt(SCORE + i, 0),
-                    sharedPref.getInt(LEVEL + i, 0)));
-        }
-
-        return localScores;
-    }
-
-    public void persistScores(List<Score> scores) {
-
-        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPref.edit();
-
-        editor.putInt(TOTALSCORES, scores.size());
-
-        for (int i = 0; i < scores.size(); i++) {
-            Score score = scores.get(i);
-
-            editor.putInt(SCORE + i, score.getScore());
-            editor.putInt(LEVEL + i, score.getLevel());
-            editor.putString(USERNAME + i, score.getName());
-        }
-
-        editor.commit();
     }
 
     public void saveMyOfflineHighScore(Score score) {
@@ -219,17 +162,153 @@ public class HighScoreServiceDroid implements HighScoreService {
 
     @Override
     public boolean goodForHighScores(int score) {
-        if (scores.isEmpty() || scores.size() < 10) {
+        if (todaysScores.isEmpty() || todaysScores.size() < LIMIT_SCORES) {
             return true;
         }
 
-        for (Score topScore : scores) {
+        for (Score topScore : todaysScores) {
             if (topScore.getScore() < score) {
                 return true;
             }
         }
-
         return false;
     }
 
+    @Override
+    public List<Score> getTodaysScoreUpdate() {
+        List<Score> result = new ArrayList<Score>(todaysScores.size() + 1);
+        synchronized (object) {
+            haveTodaysUpdate = false;
+            result.addAll(todaysScores);
+        }
+        return result;
+    }
+
+    @Override
+    public void fetchTodaysHighScores(final boolean saveLocalScoreToWeb) {
+        if (internetAvailable()) {
+            ParseQuery<ParseObject> query = ParseQuery.getQuery(GAME_SCORE);
+            query.setLimit(LIMIT_SCORES);
+            query.addDescendingOrder(SCORE);
+            Date from = new Date();
+            from.setSeconds(0);
+            from.setMinutes(0);
+            from.setHours(0);
+
+            query.whereGreaterThan("createdAt", from);
+
+            Date to = new Date();
+            to.setSeconds(59);
+            to.setMinutes(59);
+            to.setHours(23);
+
+            query.whereLessThan("createdAt", to);
+
+            synchronized (object) {
+                todaysScores.clear();
+            }
+
+            query.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> scoreList, ParseException e) {
+                    if (e == null) {
+                        List<Score> newScores = new ArrayList<Score>();
+                        for (ParseObject parseObject : scoreList) {
+                            newScores.add(new Score(parseObject.getString(USERNAME), parseObject.getInt(SCORE),
+                                    parseObject.getInt(LEVEL)));
+                        }
+                        persistScores(newScores, "todays");
+                        synchronized (object) {
+                            todaysScores = newScores;
+                            haveTodaysUpdate = true;
+                        }
+                        if (saveLocalScoreToWeb) {
+
+                            Score myBestScore = getMyBest();
+
+                            if (myBestScore != null && getUnsavedHighscoreFlag()) {
+                                if (goodForHighScores(myBestScore.getScore())) {
+                                    persistObject(myBestScore);
+                                }
+                            }
+                            setUnsavedHighscoreFlag(false);
+                        }
+                    }
+                }
+
+            });
+        } else {
+            synchronized (object) {
+                todaysScores = getOfflineScores("todays");
+                haveTodaysUpdate = true;
+            }
+        }
+    }
+
+    @Override
+    public boolean haveTodaysScoreUpdate() {
+        synchronized (object) {
+            return haveTodaysUpdate;
+        }
+    }
+
+    @Override
+    public boolean haveScoreUpdate() {
+        synchronized (object) {
+            return haveUpdate;
+        }
+    }
+
+    @Override
+    public boolean internetAvailable() {
+        return internetAvailable;
+    }
+
+    // offline
+    public List<Score> getOfflineScores(String prefix) {
+        List<Score> localScores = new ArrayList<Score>();
+
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+
+        int highScores = sharedPref.getInt(prefix + TOTALSCORES, 0);
+
+        for (int i = 0; i < highScores; i++) {
+            localScores.add(new Score(sharedPref.getString(prefix + USERNAME + i, ""), sharedPref.getInt(prefix + SCORE
+                    + i, 0), sharedPref.getInt(prefix + LEVEL + i, 0)));
+        }
+
+        return localScores;
+    }
+
+    public void persistScores(List<Score> scores, String prefix) {
+
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+
+        editor.putInt(prefix + TOTALSCORES, scores.size());
+
+        for (int i = 0; i < scores.size(); i++) {
+            Score score = scores.get(i);
+
+            editor.putInt(prefix + SCORE + i, score.getScore());
+            editor.putInt(prefix + LEVEL + i, score.getLevel());
+            editor.putString(prefix + USERNAME + i, score.getName());
+        }
+
+        editor.commit();
+    }
+
+    // offline flag
+
+    private void setUnsavedHighscoreFlag(boolean flag) {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(UNSAVED_SCORE, flag);
+        editor.commit();
+    }
+
+    private boolean getUnsavedHighscoreFlag() {
+        SharedPreferences sharedPref = activity.getPreferences(Context.MODE_PRIVATE);
+        return sharedPref.getBoolean(UNSAVED_SCORE, false);
+    }
 }

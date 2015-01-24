@@ -23,6 +23,7 @@ public class HighScoreScreen extends GianaSistersScreen {
     private float time = 0;
 
     List<Score> scores = new ArrayList<Score>();
+    List<Score> todaysScores = new ArrayList<Score>();
 
     private BitmapFont redFont;
 
@@ -45,7 +46,8 @@ public class HighScoreScreen extends GianaSistersScreen {
         redFont = generator.generateFont(parameter);
         redFont.setColor(new Color(0.66f, 0.21f, 0.14f, 1));
 
-        getGame().getHighScoreService().fetchHighScores(false);
+        getGame().getHighScoreService().fetchHighScores();
+        getGame().getHighScoreService().fetchTodaysHighScores(true);
 
         generator.dispose();
     }
@@ -62,16 +64,35 @@ public class HighScoreScreen extends GianaSistersScreen {
             scores = getGame().getHighScoreService().getScoreUpdate();
         }
 
-        whileFont.draw(batch, "ALL TIME GREATEST               STAGE", 50, 280);
+        if (getGame().getHighScoreService().haveTodaysScoreUpdate()) {
+            todaysScores = getGame().getHighScoreService().getTodaysScoreUpdate();
+        }
+
+        whileFont.draw(batch, "ALL TIME GREATEST                STAGE", 50, 280);
 
         for (int i = 0; i < scores.size(); i++) {
             Score score = scores.get(i);
 
             String name = String.format("%-22s", score.getName());
-            String f = String.format("%02d. %07d %s %02d", i + 1, score.getScore(), name.substring(0, 22),
-                    score.getLevel());
+            String f = String.format(" %d. %07d %s", i + 1, score.getScore(), name.substring(0, 22));
             redFont.draw(batch, f, 50, 260 - i * 15);
 
+            String level = String.format("%02d", score.getLevel());
+            redFont.draw(batch, level, 400, 260 - i * 15);
+        }
+
+        whileFont.draw(batch, "TODAYS GREATEST                  STAGE", 50, 265 - 6 * 15);
+
+        for (int i = 0; i < todaysScores.size(); i++) {
+            Score score = todaysScores.get(i);
+
+            String name = String.format("%-22s", score.getName());
+            String f = String.format(" %d. %07d %s", i + 1, score.getScore(), name.substring(0, 22));
+
+            redFont.draw(batch, f, 50, 260 - (i + 7) * 15);
+
+            String level = String.format("%02d", score.getLevel());
+            redFont.draw(batch, level, 400, 260 - (i + 7) * 15);
         }
 
         if (time > 1 && (Gdx.input.isKeyPressed(Keys.ANY_KEY) || Gdx.input.justTouched())) {
