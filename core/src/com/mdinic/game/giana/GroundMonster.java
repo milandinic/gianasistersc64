@@ -1,35 +1,18 @@
 package com.mdinic.game.giana;
 
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.mdinic.game.giana.Sounds.Sfx;
-
-public class GroundMonster {
+public class GroundMonster extends Monster {
     static final int FORWARD = 1;
     static final int BACKWARD = -1;
     static final float FORWARD_VEL = 1;
     static final float BACKWARD_VEL = 1;
 
-    boolean alive = true;
-
     GoundMonsterType type = GoundMonsterType.OWL;
 
     int state = FORWARD;
-    float stateTime = 0;
-    Map map;
-    Rectangle bounds = new Rectangle();
-
-    Vector2 vel = new Vector2();
-    Vector2 pos = new Vector2();
 
     public GroundMonster(Map map, float x, float y, GoundMonsterType type) {
+        super(map, x, y);
         this.type = type;
-        this.map = map;
-        pos.x = x;
-        pos.y = y;
-        bounds.x = x;
-        bounds.y = y;
-        bounds.width = bounds.height = 1;
 
         vel.set(1, 0);
     }
@@ -61,20 +44,9 @@ public class GroundMonster {
                 vel.nor().scl(BACKWARD_VEL);
         }
 
-        if (map.giana.killerBounds.overlaps(bounds) && !map.demo) {
-            if (map.giana.state != GianaState.DYING && alive && type.canBeKilled) {
-                alive = false;
-                map.score += 50;
-                Sounds.getInstance().play(Sfx.KILL);
-            }
-        }
+        killByGiana(type.canBeKilled);
 
-        if (alive && map.giana.bounds.overlaps(bounds) && !map.demo) {
-            if (map.giana.state != GianaState.DYING) {
-                map.giana.state = GianaState.DYING;
-                map.giana.stateTime = 0;
-            }
-        }
+        tryToKilGiana();
 
         pos.x = bounds.x;
         pos.y = bounds.y;

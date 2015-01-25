@@ -42,6 +42,8 @@ public class Giana {
 
     private boolean playDead = true;
 
+    Bullet bullet = null;
+
     public Giana(Map map, float x, float y) {
         this.map = map;
         pos.x = x;
@@ -57,6 +59,8 @@ public class Giana {
 
         headHitBounds.width = bounds.width - 0.2f;
         headHitBounds.height = 0.2f;
+
+        bullet = new Bullet(map, 0, 0, 1, false);
 
         updateKillerBounds();
     }
@@ -100,7 +104,7 @@ public class Giana {
                 playDead = true;
                 state = GianaState.DEAD;
                 map.lives--;
-
+                map.giana.power = GianaPower.NONE;
             }
         } else {
 
@@ -139,6 +143,9 @@ public class Giana {
 
         }
 
+        if (bullet.active) {
+            bullet.update(deltaTime);
+        }
     }
 
     private void processKeys() {
@@ -154,6 +161,16 @@ public class Giana {
                 || (Gdx.input.isTouched(1) && x1 > 70 && x1 < 134);
         boolean jumpButton = (Gdx.input.isTouched(0) && x0 > 416 && x0 < 480 && y0 < 64)
                 || (Gdx.input.isTouched(1) && x1 > 416 && x1 < 480 && y0 < 64);
+
+        boolean fireButton = (Gdx.input.isTouched(0) && x0 > 416 && x0 < 480 && y0 > 64 && y0 < 128)
+                || (Gdx.input.isTouched(1) && x1 > 416 && x1 < 480 && y0 > 64 && y0 < 128);
+
+        if (power.hasGun() && bullet.active == false && (Gdx.input.isKeyPressed(Keys.SPACE) || fireButton)) {
+
+            Sounds.getInstance().play(Sfx.JUMP);
+            bullet = new Bullet(map, pos.x, pos.y + 0.4f, dir == LEFT ? 1 : -1, power.isHoming());
+            bullet.active = true;
+        }
 
         if ((Gdx.input.isKeyPressed(Keys.W) || jumpButton) && state != GianaState.JUMP && grounded) {
             Sounds.getInstance().play(Sfx.JUMP);

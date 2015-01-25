@@ -40,13 +40,15 @@ public class Tile {
                 }
                 break;
             case EXPLODING:
-                if (stateTime > 0.3f) {
+                if (stateTime > 0.1f) {
+                    map.tiles[(int) pos.x][map.tiles[0].length - 1 - (int) pos.y] = 0;
+                }
+                if (stateTime > 0.4f) {
                     state = State.GONE;
                 }
                 break;
             case GONE:
                 active = false;
-                map.tiles[(int) pos.x][map.tiles[0].length - 1 - (int) pos.y] = 0;
                 break;
             default:
                 break;

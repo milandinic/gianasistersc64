@@ -7,8 +7,15 @@ public enum GianaPower {
         return power.compareTo(NONE) > 0;
     }
 
+    public boolean hasGun() {
+        return this.compareTo(BIG) > 0;
+    }
+
+    public boolean isHoming() {
+        return this.compareTo(SHOOT) > 0;
+    }
+
     public static boolean hasNext(GianaPower power) {
-        return power.compareTo(BIG) < 0;
-        // return power.compareTo(STRAWBERRY) < 0;
+        return power.compareTo(STRAWBERRY) < 0;
     }
 }

@@ -59,6 +59,9 @@ public class MapRenderer {
     TextureRegion dying;
     TextureRegion endDoor;
 
+    TextureRegion bullet;
+    TextureRegion bulletExplode;
+
     Animation movingSpikesAnim;
 
     java.util.Map<GoundMonsterType, Animation[]> groundMonsterAnimations = new HashMap<GoundMonsterType, Animation[]>();
@@ -76,6 +79,8 @@ public class MapRenderer {
     private Animation piranhaDownAnim;
     private Animation waspRightAnim;
     private Animation waspLeftAnim;
+    private TextureRegion waspLeftDead;
+    private TextureRegion waspRightDead;
     private Animation quicksandAnim;
     private Animation brickAnim;
     private Animation waterAnim;
@@ -106,6 +111,9 @@ public class MapRenderer {
         TextureRegion[] brickRegion = new TextureRegion(brick).split(24, 16)[0];
         brickAnim = new Animation(0.1f, brickRegion[1], brickRegion[2], brickRegion[3], brickRegion[4]);
 
+        bullet = new TextureRegion(new Texture(Gdx.files.internal("data/bullet.png")));
+        bulletExplode = new TextureRegion(new Texture(Gdx.files.internal("data/bulletexplode.png")));
+
         Texture sprites = new Texture(Gdx.files.internal("data/sprites.png"));
         this.tileTexture = brickRegion[0];
         this.endDoor = new TextureRegion(sprites, 16, 196, 32, 32);
@@ -134,11 +142,19 @@ public class MapRenderer {
 
         Texture groundMonstersTexture = new Texture(Gdx.files.internal("data/groundmonsters.png"));
         Texture lobsterTexture = new Texture(Gdx.files.internal("data/lobster.png"));
-        waspRightAnim = new Animation(0.3f, new TextureRegion(new Texture(Gdx.files.internal("data/wasp.png"))).split(
-                24, 20)[0]);
+
+        TextureRegion[] waspRightRegion = new TextureRegion(new Texture(Gdx.files.internal("data/wasp.png"))).split(24,
+                20)[0];
+        waspRightAnim = new Animation(0.3f, waspRightRegion);
 
         TextureRegion[] waspRegionLeft = new TextureRegion(new Texture(Gdx.files.internal("data/wasp.png"))).split(24,
                 20)[0];
+
+        waspRightDead = new TextureRegion(waspRightRegion[0]);
+        waspRightDead.flip(false, true);
+        waspLeftDead = new TextureRegion(waspRegionLeft[0]);
+        waspLeftDead.flip(false, true);
+
         for (TextureRegion textureRegion : waspRegionLeft) {
             textureRegion.flip(true, false);
         }
@@ -374,9 +390,13 @@ public class MapRenderer {
 
     private void renderGiana() {
         Animation anim = null;
-        boolean loop = true;
 
         if (GianaPower.isBig(map.giana.power)) {
+
+            if (map.giana.bullet.active) {
+                batch.draw(bullet, map.giana.bullet.pos.x, map.giana.bullet.pos.y, 0.3f, 0.3f);
+            }
+
             if (map.giana.state == GianaState.RUN) {
                 if (map.giana.dir == Giana.LEFT)
                     anim = gianaBigLeft;
@@ -429,7 +449,7 @@ public class MapRenderer {
             return;
         }
         if (map.giana.active) {
-            batch.draw(anim.getKeyFrame(map.giana.stateTime, loop), map.giana.pos.x, map.giana.pos.y, 1, 1);
+            batch.draw(anim.getKeyFrame(map.giana.stateTime, true), map.giana.pos.x, map.giana.pos.y, 1, 1);
         }
 
         // batch.draw(tileTexture, map.giana.killerBounds.x,
@@ -532,10 +552,18 @@ public class MapRenderer {
 
     private void renderBees() {
         for (Bee bee : map.bees) {
-            if (bee.state == Bee.FORWARD)
-                batch.draw(waspRightAnim.getKeyFrame(bee.stateTime, true), bee.pos.x, bee.pos.y, 1, 1);
-            else
-                batch.draw(waspLeftAnim.getKeyFrame(bee.stateTime, true), bee.pos.x, bee.pos.y, 1, 1);
+            if (bee.alive) {
+                if (bee.state == Bee.FORWARD)
+                    batch.draw(waspRightAnim.getKeyFrame(bee.stateTime, true), bee.pos.x, bee.pos.y, 1, 1);
+                else
+                    batch.draw(waspLeftAnim.getKeyFrame(bee.stateTime, true), bee.pos.x, bee.pos.y, 1, 1);
+            } else {
+                if (bee.state == Bee.FORWARD)
+                    batch.draw(waspRightDead, bee.pos.x, bee.pos.y, 1, 1);
+                else
+                    batch.draw(waspLeftDead, bee.pos.x, bee.pos.y, 1, 1);
+
+            }
 
         }
     }

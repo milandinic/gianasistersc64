@@ -14,6 +14,7 @@ public class OnscreenControlRenderer {
     TextureRegion left;
     TextureRegion right;
     TextureRegion jump;
+    TextureRegion fire;
 
     TextureRegion soundOn;
     TextureRegion soundOff;
@@ -39,6 +40,7 @@ public class OnscreenControlRenderer {
 
         soundOn = buttons[3];
         soundOff = buttons[4];
+        fire = buttons[5];
 
         batch = new SpriteBatch();
         batch.getProjectionMatrix().setToOrtho2D(0, 0, 480, 320);
@@ -59,6 +61,7 @@ public class OnscreenControlRenderer {
         batch.draw(left, 0, 0);
         batch.draw(right, 70, 0);
 
+        batch.draw(fire, 480 - 64, 64);
         batch.draw(jump, 480 - 64, 0);
         batch.end();
 

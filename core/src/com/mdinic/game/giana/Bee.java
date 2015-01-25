@@ -1,35 +1,15 @@
 package com.mdinic.game.giana;
 
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-
-public class Bee {
+public class Bee extends Monster {
     static final int FORWARD = 1;
     static final int BACKWARD = -1;
     static final float FORWARD_VEL = 2;
     static final float BACKWARD_VEL = 2;
 
-    boolean alive = true;
-
     int state = FORWARD;
-    float stateTime = 0;
-    Map map;
-    Rectangle bounds = new Rectangle();
-
-    Vector2 vel = new Vector2();
-    Vector2 pos = new Vector2();
-    int fx = 0;
-    int bx = 0;
 
     public Bee(Map map, float x, float y) {
-
-        this.map = map;
-        pos.x = x;
-        pos.y = y;
-        bounds.x = x;
-        bounds.y = y;
-        bounds.width = bounds.height = 1;
-
+        super(map, x, y);
         vel.set(-FORWARD_VEL, 0);
     }
 
@@ -52,9 +32,20 @@ public class Bee {
 
     public void update(float deltaTime) {
         stateTime += deltaTime;
-        pos.add(vel.x * deltaTime, vel.y * deltaTime);
-        boolean change = false;
         int y = map.tiles[0].length - 1 - (int) pos.y;
+
+        if (alive) {
+            pos.add(vel.x * deltaTime, vel.y * deltaTime);
+        } else {
+            if (map.isColidable(map.tiles[(int) Math.floor(pos.x) + fx][y])) {
+                return;
+            } else {
+                vel.set(0, -8);
+                pos.add(vel.x * deltaTime, vel.y * deltaTime);
+            }
+        }
+        boolean change = false;
+
         if (state == FORWARD) {
             change = map.isColidable(map.tiles[(int) Math.floor(pos.x) + fx][y]);
         } else {
@@ -74,11 +65,9 @@ public class Bee {
         bounds.x = pos.x;
         bounds.y = pos.y;
 
-        if (alive && map.giana.bounds.overlaps(bounds)) {
-            if (map.giana.state != GianaState.DYING) {
-                map.giana.state = GianaState.DYING;
-                map.giana.stateTime = 0;
-            }
-        }
+        killByGiana(true);
+
+        tryToKilGiana();
     }
+
 }
