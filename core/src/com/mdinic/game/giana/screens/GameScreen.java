@@ -3,11 +3,14 @@ package com.mdinic.game.giana.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.mdinic.game.giana.GianaState;
+import com.mdinic.game.giana.LevelConf;
 import com.mdinic.game.giana.Map;
 import com.mdinic.game.giana.MapRenderer;
 import com.mdinic.game.giana.OnscreenControlRenderer;
+import com.mdinic.game.giana.Sounds;
 
 public class GameScreen extends GianaSistersScreen {
     Map map;
@@ -28,6 +31,8 @@ public class GameScreen extends GianaSistersScreen {
     public void show() {
         renderer = new MapRenderer(map);
         controlRenderer = new OnscreenControlRenderer(map, this);
+
+        Sounds.getInstance().play(LevelConf.values()[map.level].getMusic());
     }
 
     @Override
@@ -77,8 +82,28 @@ public class GameScreen extends GianaSistersScreen {
     }
 
     @Override
+    public void resume() {
+        super.resume();
+        super.pause();
+        Music music = Sounds.getInstance().getCurrentMusic();
+        if (music != null) {
+            music.play();
+        }
+    }
+
+    @Override
+    public void pause() {
+        super.pause();
+        Music music = Sounds.getInstance().getCurrentMusic();
+        if (music != null) {
+            music.pause();
+        }
+    }
+
+    @Override
     public void hide() {
         Gdx.app.debug("GianaSisters", "dispose game screen");
+        Sounds.getInstance().stop(LevelConf.values()[map.level].getMusic());
         renderer.dispose();
         controlRenderer.dispose();
     }

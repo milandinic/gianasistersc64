@@ -8,8 +8,14 @@ public class Sounds {
 
     private boolean mute = false;
 
+    private final Music introSfx;
     private final Music startLevelSfx;
     private final Music endLevelSfx;
+    private final Music musicLight;
+    private final Music musicFast;
+
+    private Music currentMusic = null;
+
     private final Sound gianaJumpSfx;
     private final Sound gianaKillSfx;
     private final Sound gianaDyingSfx;
@@ -17,7 +23,7 @@ public class Sounds {
     private final Sound powerUpSfx;
     private final Sound brickDestroySfx;
     private final Sound treatBoxCoinSfx;
-    private final Music introSfx;
+    private final Sound fireBulletSfx;
 
     private final Sound treatSfx;
 
@@ -28,10 +34,17 @@ public class Sounds {
     }
 
     public enum Sfx {
-        START_LEVEL, END_LEVEL, JUMP, KILL, DYING, POWERUP, BRICK_DESTROY, TREAT_BOX_COIN, DIAMOND, INTRO, TREAT
+        JUMP, KILL, DYING, POWERUP, BRICK_DESTROY, TREAT_BOX_COIN, DIAMOND, TREAT, FIRE_BULLET
+    };
+
+    public enum BgMusic {
+        START_LEVEL, END_LEVEL, INTRO, MUSIC_LIGHT, MUSIC_FAST
     };
 
     public Sounds() {
+        musicLight = Gdx.audio.newMusic(Gdx.files.internal("data/sfx/bgMusic1.mp3"));
+        musicFast = Gdx.audio.newMusic(Gdx.files.internal("data/sfx/bgMusic2.mp3"));
+
         introSfx = Gdx.audio.newMusic(Gdx.files.internal("data/sfx/intro.mp3"));
         startLevelSfx = Gdx.audio.newMusic(Gdx.files.internal("data/sfx/startLevel.mp3"));
         endLevelSfx = Gdx.audio.newMusic(Gdx.files.internal("data/sfx/endLevel-bonus.mp3"));
@@ -43,10 +56,42 @@ public class Sounds {
         brickDestroySfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/brick.mp3"));
         treatBoxCoinSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/treatboxcoin.mp3"));
         treatSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/treat.mp3"));
+        fireBulletSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/fire.mp3"));
     }
 
     public void setMute(boolean mute) {
         this.mute = mute;
+    }
+
+    public void play(BgMusic music) {
+        if (mute) {
+            return;
+        }
+        switch (music) {
+
+        case INTRO:
+            introSfx.play();
+            currentMusic = introSfx;
+            break;
+        case END_LEVEL:
+            endLevelSfx.play();
+            currentMusic = endLevelSfx;
+            break;
+        case START_LEVEL:
+            startLevelSfx.play();
+            currentMusic = startLevelSfx;
+            break;
+        case MUSIC_LIGHT:
+            musicLight.play();
+            currentMusic = musicLight;
+            break;
+        case MUSIC_FAST:
+            musicFast.play();
+            currentMusic = musicFast;
+            break;
+        default:
+            break;
+        }
     }
 
     public void play(Sfx sfx) {
@@ -54,18 +99,14 @@ public class Sounds {
             return;
         }
         switch (sfx) {
-        case INTRO:
-            introSfx.play();
-            break;
+
         case BRICK_DESTROY:
             brickDestroySfx.play();
             break;
         case DYING:
             gianaDyingSfx.play();
             break;
-        case END_LEVEL:
-            endLevelSfx.play();
-            break;
+
         case JUMP:
             gianaJumpSfx.play();
             break;
@@ -74,9 +115,6 @@ public class Sounds {
             break;
         case POWERUP:
             powerUpSfx.play();
-            break;
-        case START_LEVEL:
-            startLevelSfx.play();
             break;
         case TREAT_BOX_COIN:
             treatBoxCoinSfx.play();
@@ -87,28 +125,34 @@ public class Sounds {
         case TREAT:
             treatSfx.play();
             break;
+        case FIRE_BULLET:
+            fireBulletSfx.play();
+            break;
         default:
             break;
         }
     }
 
-    public void stop(Sfx sfx) {
-        if (mute) {
-            return;
+    public void stopCurrentMusic() {
+        if (currentMusic != null) {
+            currentMusic.stop();
+            currentMusic = null;
         }
+    }
+
+    public Music getCurrentMusic() {
+        return currentMusic;
+    }
+
+    public void stop(Sfx sfx) {
         switch (sfx) {
-        case INTRO:
-            introSfx.stop();
-            break;
         case BRICK_DESTROY:
             brickDestroySfx.stop();
             break;
         case DYING:
             gianaDyingSfx.stop();
             break;
-        case END_LEVEL:
-            endLevelSfx.stop();
-            break;
+
         case JUMP:
             gianaJumpSfx.stop();
             break;
@@ -118,9 +162,6 @@ public class Sounds {
         case POWERUP:
             powerUpSfx.stop();
             break;
-        case START_LEVEL:
-            startLevelSfx.stop();
-            break;
         case TREAT_BOX_COIN:
             treatBoxCoinSfx.stop();
             break;
@@ -129,6 +170,31 @@ public class Sounds {
             break;
         case TREAT:
             treatSfx.stop();
+            break;
+        case FIRE_BULLET:
+            fireBulletSfx.stop();
+            break;
+        default:
+            break;
+        }
+    }
+
+    public void stop(BgMusic music) {
+        switch (music) {
+        case INTRO:
+            introSfx.stop();
+            break;
+        case END_LEVEL:
+            endLevelSfx.stop();
+            break;
+        case START_LEVEL:
+            startLevelSfx.stop();
+            break;
+        case MUSIC_LIGHT:
+            musicLight.stop();
+            break;
+        case MUSIC_FAST:
+            musicFast.stop();
             break;
         default:
             break;

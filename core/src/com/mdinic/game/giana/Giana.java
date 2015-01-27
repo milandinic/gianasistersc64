@@ -30,7 +30,7 @@ public class Giana {
 
     public GianaState state;
     public float stateTime = 0;
-    int dir = LEFT;
+    int dir = RIGHT;
     Map map;
     boolean grounded = false;
     boolean active = true;
@@ -52,7 +52,7 @@ public class Giana {
         bounds.height = 0.8f;
         bounds.x = pos.x + 0.2f;
         bounds.y = pos.y;
-        state = GianaState.SPAWN;
+        state = GianaState.IDLE;
         stateTime = 0;
         killerBounds.width = bounds.width - 0.2f;
         killerBounds.height = 0.2f;
@@ -60,7 +60,8 @@ public class Giana {
         headHitBounds.width = bounds.width - 0.2f;
         headHitBounds.height = 0.2f;
 
-        bullet = new Bullet(map, 0, 0, 1, false);
+        bullet = new Bullet(map, pos, 1, false);
+        bullet.active = false;
 
         updateKillerBounds();
     }
@@ -89,7 +90,7 @@ public class Giana {
         }
 
         if (state == GianaState.DYING) {
-
+            Sounds.getInstance().stopCurrentMusic();
             if (stateTime < 0.2f) {
                 if (playDead) {
                     playDead = false;
@@ -129,11 +130,10 @@ public class Giana {
                 vel.scl(1.0f / deltaTime);
             }
 
-            if (state == GianaState.SPAWN) {
-                if (stateTime > 0.4f) {
-                    state = GianaState.IDLE;
-                }
-            }
+            /*
+             * if (state == GianaState.SPAWN) { if (stateTime > 0.4f) { state =
+             * GianaState.IDLE; } }
+             */
 
             if (map.tiles[0].length - bounds.y >= MapRenderer.SCENE_HEIGHT - 1) {
                 map.giana.stateTime = 0;
@@ -149,28 +149,33 @@ public class Giana {
     }
 
     private void processKeys() {
-        if (!processKeys || state == GianaState.SPAWN || state == GianaState.DYING)
+        if (!processKeys || state == GianaState.DYING)
             return;
 
         float x0 = (Gdx.input.getX(0) / (float) Gdx.graphics.getWidth()) * 480;
         float x1 = (Gdx.input.getX(1) / (float) Gdx.graphics.getWidth()) * 480;
+        float x2 = (Gdx.input.getX(2) / (float) Gdx.graphics.getWidth()) * 480;
         float y0 = 320 - (Gdx.input.getY(0) / (float) Gdx.graphics.getHeight()) * 320;
+        float y1 = 320 - (Gdx.input.getY(1) / (float) Gdx.graphics.getHeight()) * 320;
+        float y2 = 320 - (Gdx.input.getY(2) / (float) Gdx.graphics.getHeight()) * 320;
 
         boolean leftButton = (Gdx.input.isTouched(0) && x0 < 70) || (Gdx.input.isTouched(1) && x1 < 70);
         boolean rightButton = (Gdx.input.isTouched(0) && x0 > 70 && x0 < 134)
                 || (Gdx.input.isTouched(1) && x1 > 70 && x1 < 134);
+
         boolean jumpButton = (Gdx.input.isTouched(0) && x0 > 416 && x0 < 480 && y0 < 64)
-                || (Gdx.input.isTouched(1) && x1 > 416 && x1 < 480 && y0 < 64);
+                || (Gdx.input.isTouched(1) && x1 > 416 && x1 < 480 && y1 < 64);
 
         boolean fireButton = (Gdx.input.isTouched(0) && x0 > 416 && x0 < 480 && y0 > 64 && y0 < 128)
-                || (Gdx.input.isTouched(1) && x1 > 416 && x1 < 480 && y0 > 64 && y0 < 128);
+                || (Gdx.input.isTouched(1) && x1 > 416 && x1 < 480 && y1 > 64 && y1 < 128)
+                || (Gdx.input.isTouched(2) && x2 > 416 && x2 < 480 && y2 > 64 && y2 < 128);
 
-        if (power.hasGun() && bullet.active == false && (Gdx.input.isKeyPressed(Keys.SPACE) || fireButton)) {
+        if (!bullet.active)
+            if (power.hasGun() && (Gdx.input.isKeyPressed(Keys.SPACE) || fireButton)) {
 
-            Sounds.getInstance().play(Sfx.JUMP);
-            bullet = new Bullet(map, pos.x, pos.y + 0.4f, dir == LEFT ? 1 : -1, power.isHoming());
-            bullet.active = true;
-        }
+                bullet = new Bullet(map, pos, dir == LEFT ? 1 : -1, power.isHoming());
+                Sounds.getInstance().play(Sfx.FIRE_BULLET);
+            }
 
         if ((Gdx.input.isKeyPressed(Keys.W) || jumpButton) && state != GianaState.JUMP && grounded) {
             Sounds.getInstance().play(Sfx.JUMP);
@@ -229,7 +234,7 @@ public class Giana {
                 if (vel.y < 0) {
                     bounds.y = rect.y + rect.height + 0.01f;
                     grounded = true;
-                    if (state != GianaState.DYING && state != GianaState.SPAWN)
+                    if (state != GianaState.DYING)
                         state = Math.abs(accel.x) > 0.1f ? GianaState.RUN : GianaState.IDLE;
                 } else
                     bounds.y = rect.y - bounds.height - 0.01f;

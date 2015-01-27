@@ -111,7 +111,7 @@ public class Map {
         Pixmap pixmap = new Pixmap(Gdx.files.internal("data/levels.png"));
 
         // background color
-        int pix = LevelColors.values()[level].getBackgroundColor();
+        int pix = LevelConf.values()[level].getBackgroundColor();
         // (pixmap.getPixel(0, level * LEVEL_PIXELBUFFER) >>> 8) & 0xffffff;
         r = (pix & 0xff0000) >>> 16;
         g = (pix & 0x00ff00) >>> 8;
@@ -130,8 +130,6 @@ public class Map {
                     startPosition.set(x, pixmap.getHeight() - 1 - y);
 
                     giana = new Giana(this, startPosition.x, startPosition.y);
-                    giana.state = GianaState.SPAWN;
-
                 } else if (match(pix, DIAMOND)) {
                     diamonds.add(new Diamond(this, x, pixmap.getHeight() - 1 - y));
                 } else if (match(pix, PIRANHA)) {

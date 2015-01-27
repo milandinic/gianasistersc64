@@ -18,6 +18,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Vector3;
+import com.mdinic.game.giana.Bullet.BulletState;
 
 public class MapRenderer {
 
@@ -105,7 +106,7 @@ public class MapRenderer {
     }
 
     private void createAnimations() {
-        LevelColors colors = LevelColors.values()[map.level];
+        LevelConf colors = LevelConf.values()[map.level];
 
         Texture brick = new Texture(Gdx.files.internal("data/bricks-" + colors.getBrickColor().getName() + ".png"));
         TextureRegion[] brickRegion = new TextureRegion(brick).split(24, 16)[0];
@@ -368,7 +369,7 @@ public class MapRenderer {
                         batch.draw(treatBallLeftAnim.getKeyFrame(treat.stateTime, true), treat.pos.x, treat.pos.y, 1, 1);
                     break;
                 }
-                case BIG: {
+                case BREAK_BRICK: {
                     batch.draw(lightningAnim.getKeyFrame(treat.stateTime, true), treat.pos.x, treat.pos.y, 0.5f, 0.8f);
                     break;
                 }
@@ -377,7 +378,7 @@ public class MapRenderer {
                             0.8f);
                     break;
                 }
-                case STRAWBERRY: {
+                case HOMING: {
                     batch.draw(strawberry, treat.pos.x, treat.pos.y, 1, 0.8f);
                     break;
                 }
@@ -394,7 +395,11 @@ public class MapRenderer {
         if (GianaPower.isBig(map.giana.power)) {
 
             if (map.giana.bullet.active) {
-                batch.draw(bullet, map.giana.bullet.pos.x, map.giana.bullet.pos.y, 0.3f, 0.3f);
+                if (map.giana.bullet.state == BulletState.EXPLODE) {
+                    batch.draw(bulletExplode, map.giana.bullet.pos.x, map.giana.bullet.pos.y, 0.6f, 0.6f);
+                } else {
+                    batch.draw(bullet, map.giana.bullet.pos.x, map.giana.bullet.pos.y, 0.3f, 0.3f);
+                }
             }
 
             if (map.giana.state == GianaState.RUN) {
@@ -440,10 +445,6 @@ public class MapRenderer {
             anim = gianaGrow;
         }
 
-        if (map.giana.state == GianaState.SPAWN) {
-            batch.draw(spawn, map.giana.pos.x, map.giana.pos.y, 1, 1);
-            return;
-        }
         if (map.giana.state == GianaState.DYING) {
             batch.draw(dying, map.giana.pos.x, map.giana.pos.y, 1, 1);
             return;
@@ -451,10 +452,6 @@ public class MapRenderer {
         if (map.giana.active) {
             batch.draw(anim.getKeyFrame(map.giana.stateTime, true), map.giana.pos.x, map.giana.pos.y, 1, 1);
         }
-
-        // batch.draw(tileTexture, map.giana.killerBounds.x,
-        // map.giana.killerBounds.y, map.giana.killerBounds.width,
-        // map.giana.killerBounds.height);
 
     }
 

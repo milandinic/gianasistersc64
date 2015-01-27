@@ -80,10 +80,10 @@ public class Treat {
                 map.giana.stateTime = 0;
                 map.score += 100;
             } else {
-                map.score += 50;
+                map.score += 100;
                 Sounds.getInstance().play(Sfx.TREAT);
             }
-            if (GianaPower.hasNext(map.giana.power)) {
+            if (map.giana.power.hasNext()) {
                 map.giana.power = GianaPower.values()[map.giana.power.ordinal() + 1];
             }
         }

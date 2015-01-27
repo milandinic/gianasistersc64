@@ -5,13 +5,13 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Bullet {
 
-    static final float VELOCITY = 18;
+    static final float VELOCITY = 22;
 
     static final float DISTANCE = 8;
 
     Map map;
     boolean homing = true;
-
+    float time = 0;
     Vector2 startPos = new Vector2();
     Vector2 pos = new Vector2();
     Vector2 vel = new Vector2();
@@ -21,15 +21,17 @@ public class Bullet {
     Vector2 target;
 
     enum BulletState {
-        FIND_VICTIM, FLY
+        FIND_VICTIM, FLY, EXPLODE
     };
 
     BulletState state = BulletState.FIND_VICTIM;
 
     int sign;
-    boolean active = false;
+    boolean active = true;
 
-    public Bullet(Map map, float x, float y, int sign, boolean homing) {
+    public Bullet(Map map, Vector2 gianaPos, int sign, boolean homing) {
+        float x = gianaPos.x;
+        float y = gianaPos.y + 0.8f;
         this.map = map;
         this.startPos.set(x, y);
         this.pos.set(x, y);
@@ -95,7 +97,7 @@ public class Bullet {
     }
 
     public void update(float deltaTime) {
-
+        time += deltaTime;
         switch (state) {
         case FIND_VICTIM:
             if (homing)
@@ -105,16 +107,22 @@ public class Bullet {
 
             if (victimMonster == null) {
                 target = new Vector2(map.giana.pos);
-                target.add(-sign * DISTANCE, 0);
+                target.add(-sign * DISTANCE + 2, 0);
             }
 
             break;
         case FLY:
 
             break;
-
+        case EXPLODE:
+            if (time > 0.1f) {
+                active = false;
+                state = BulletState.FLY;
+            }
+            return;
         default:
-            break;
+            // do nothing
+            return;
         }
 
         if (victimMonster != null) {
@@ -162,6 +170,10 @@ public class Bullet {
         int p3y = (int) (bounds.y + bounds.height);
         int p4x = (int) bounds.x;
         int p4y = (int) (bounds.y + bounds.height);
+
+        if (map.tiles[0].length - 2 - p1y < 0) {
+            return;
+        }
 
         int[][] tiles = map.tiles;
         int tile1 = tiles[p1x][map.tiles[0].length - 1 - p1y];

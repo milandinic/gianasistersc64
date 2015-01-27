@@ -60,9 +60,11 @@ public class OnscreenControlRenderer {
 
         batch.draw(left, 0, 0);
         batch.draw(right, 70, 0);
-
-        batch.draw(fire, 480 - 64, 64);
         batch.draw(jump, 480 - 64, 0);
+
+        if (map.giana.power.hasGun())
+            batch.draw(fire, 480 - 64, 64);
+
         batch.end();
 
         processKeys();

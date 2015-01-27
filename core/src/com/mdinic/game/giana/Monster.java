@@ -2,6 +2,7 @@ package com.mdinic.game.giana;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.mdinic.game.giana.Bullet.BulletState;
 import com.mdinic.game.giana.Sounds.Sfx;
 
 public class Monster {
@@ -30,14 +31,19 @@ public class Monster {
     }
 
     protected void killByGiana(boolean canBeKilled) {
-        boolean killed = (map.giana.bullet.active && map.giana.bullet.bounds.overlaps(bounds))
+        boolean hit = (map.giana.bullet.active && map.giana.bullet.bounds.overlaps(bounds))
                 || map.giana.killerBounds.overlaps(bounds);
-        if (killed && !map.demo) {
-            if (map.giana.state != GianaState.DYING && alive && canBeKilled) {
-                alive = false;
-                map.score += 50;
-                Sounds.getInstance().play(Sfx.KILL);
-                map.giana.bullet.active = false;
+        if (hit && !map.demo) {
+            if (map.giana.state != GianaState.DYING && alive) {
+                if (canBeKilled) {
+                    alive = false;
+                    map.score += 50;
+                    Sounds.getInstance().play(Sfx.KILL);
+                }
+                if (map.giana.bullet.state != BulletState.EXPLODE) {
+                    map.giana.bullet.time = 0;
+                    map.giana.bullet.state = BulletState.EXPLODE;
+                }
             }
         }
     }

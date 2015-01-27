@@ -37,21 +37,29 @@ public class TreatBox {
             switch (type) {
             case DIAMOND:
                 if (map.giana.headHitBounds.overlaps(bounds)) {
-                    Sounds.getInstance().play(Sfx.TREAT_BOX_COIN);
-                    active = false;
-                    map.collectDiamound();
-                    map.treatSmallDiamoinds.add(new SmallDiamoind(map, pos.x, pos.y));
+                    diamond();
                 }
                 break;
             case BALL:
                 if (map.giana.headHitBounds.overlaps(bounds)) {
-                    active = false;
-                    map.treats.add(new Treat(map, pos.x, pos.y));
+                    if (map.giana.power.hasNext()) {
+                        active = false;
+                        map.treats.add(new Treat(map, pos.x, pos.y));
+                    } else {
+                        diamond();
+                    }
                 }
                 break;
             default:
                 break;
             }
         }
+    }
+
+    private void diamond() {
+        Sounds.getInstance().play(Sfx.TREAT_BOX_COIN);
+        active = false;
+        map.collectDiamound();
+        map.treatSmallDiamoinds.add(new SmallDiamoind(map, pos.x, pos.y));
     }
 }

@@ -4,7 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.mdinic.game.giana.Sounds;
-import com.mdinic.game.giana.Sounds.Sfx;
+import com.mdinic.game.giana.Sounds.BgMusic;
 
 public class IntroScreen extends GameScreen {
 
@@ -17,7 +17,7 @@ public class IntroScreen extends GameScreen {
     public void show() {
         super.show();
         Sounds.getInstance().setMute(!getGame().getSettingsService().isSoundEnabled());
-        Sounds.getInstance().play(Sfx.INTRO);
+        Sounds.getInstance().play(BgMusic.INTRO);
     }
 
     @Override
@@ -33,7 +33,7 @@ public class IntroScreen extends GameScreen {
 
     @Override
     public void hide() {
-        Sounds.getInstance().stop(Sfx.INTRO);
+        Sounds.getInstance().stop(BgMusic.INTRO);
         super.hide();
     }
 

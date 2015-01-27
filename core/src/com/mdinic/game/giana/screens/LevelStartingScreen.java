@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.mdinic.game.giana.Map;
 import com.mdinic.game.giana.Sounds;
-import com.mdinic.game.giana.Sounds.Sfx;
+import com.mdinic.game.giana.Sounds.BgMusic;
 
 public class LevelStartingScreen extends GianaSistersScreen {
 
@@ -38,7 +38,7 @@ public class LevelStartingScreen extends GianaSistersScreen {
         yellowFont = generator.generateFont(parameter);
         yellowFont.setColor(new Color(0.87f, 0.95f, 0.47f, 1));
 
-        Sounds.getInstance().play(Sfx.START_LEVEL);
+        Sounds.getInstance().play(BgMusic.START_LEVEL);
         generator.dispose();
     }
 
