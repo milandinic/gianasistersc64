@@ -64,9 +64,6 @@ public class Sounds {
     }
 
     public void play(BgMusic music) {
-        if (mute) {
-            return;
-        }
         switch (music) {
 
         case INTRO:
@@ -90,7 +87,12 @@ public class Sounds {
             currentMusic = musicFast;
             break;
         default:
+            currentMusic = null;
             break;
+        }
+
+        if (currentMusic != null) {
+            currentMusic.setVolume(mute ? 0 : 1);
         }
     }
 
@@ -106,7 +108,6 @@ public class Sounds {
         case DYING:
             gianaDyingSfx.play();
             break;
-
         case JUMP:
             gianaJumpSfx.play();
             break;

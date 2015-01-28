@@ -2,6 +2,7 @@ package com.mdinic.game.giana;
 
 import com.badlogic.gdx.Application.ApplicationType;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -89,6 +90,10 @@ public class OnscreenControlRenderer {
             boolean enabled = screen.getGame().getSettingsService().isSoundEnabled();
             screen.getGame().getSettingsService().enableSound(!enabled);
             Sounds.getInstance().setMute(enabled);
+            Music music = Sounds.getInstance().getCurrentMusic();
+            if (music != null) {
+                music.setVolume(screen.getGame().getSettingsService().isSoundEnabled() ? 1 : 0);
+            }
         }
 
     }

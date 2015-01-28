@@ -31,14 +31,14 @@ public class Bullet {
 
     public Bullet(Map map, Vector2 gianaPos, int sign, boolean homing) {
         float x = gianaPos.x;
-        float y = gianaPos.y + 0.8f;
+        float y = gianaPos.y + 0.7f;
         this.map = map;
         this.startPos.set(x, y);
         this.pos.set(x, y);
         this.bounds.x = x + 0.2f;
         this.bounds.y = y + 0.2f;
-        this.bounds.width = 0.6f;
-        this.bounds.height = 0.6f;
+        this.bounds.width = 0.3f;
+        this.bounds.height = 0.3f;
         this.vel.set(sign * VELOCITY, 0);
         this.sign = sign;
         this.target = new Vector2();
