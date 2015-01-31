@@ -63,8 +63,6 @@ public class MapRenderer {
     TextureRegion bullet;
     TextureRegion bulletExplode;
 
-    Animation movingSpikesAnim;
-
     java.util.Map<GoundMonsterType, Animation[]> groundMonsterAnimations = new HashMap<GoundMonsterType, Animation[]>();
 
     java.util.Map<GoundMonsterType, TextureRegion> deadGroundMonsterAnimations = new HashMap<GoundMonsterType, TextureRegion>();
@@ -74,6 +72,8 @@ public class MapRenderer {
     int fontSize;
 
     java.util.Map<SimpleImageType, TextureRegion> simpleImageTextureRegions = new HashMap<SimpleImageType, TextureRegion>();
+    java.util.Map<FixedTrapType, Animation> fixedTrapTypeAnim = new HashMap<FixedTrapType, Animation>();
+
     private Animation treatBallRightAnim;
     private Animation treatBallLeftAnim;
     private Animation piranhaUpAnim;
@@ -84,7 +84,7 @@ public class MapRenderer {
     private TextureRegion waspRightDead;
     private Animation quicksandAnim;
     private Animation brickAnim;
-    private Animation waterAnim;
+
     private Animation lightningAnim;
     private Animation doubleLightningAnim;
     private TextureRegion strawberry;
@@ -109,6 +109,7 @@ public class MapRenderer {
         LevelConf colors = LevelConf.values()[map.level];
 
         Texture brick = new Texture(Gdx.files.internal("data/bricks-" + colors.getBrickColor().getName() + ".png"));
+
         TextureRegion[] brickRegion = new TextureRegion(brick).split(24, 16)[0];
         brickAnim = new Animation(0.1f, brickRegion[1], brickRegion[2], brickRegion[3], brickRegion[4]);
 
@@ -126,17 +127,29 @@ public class MapRenderer {
         simpleImageTextureRegions.put(SimpleImageType.WIDE_BUSH, new TextureRegion(sprites, 20, 83, 80, 20));
         simpleImageTextureRegions.put(SimpleImageType.COLUMN, new TextureRegion(sprites, 161, 259, 48, 25));
         simpleImageTextureRegions.put(SimpleImageType.FLOATING_COLUMN_UP, new TextureRegion(sprites, 164, 160, 48, 16));
+        simpleImageTextureRegions.put(SimpleImageType.BLUE_WIRE, new TextureRegion(sprites, 384, 221, 16, 16));
+        simpleImageTextureRegions.put(SimpleImageType.SMALL_COLUMN, new TextureRegion(sprites, 201, 44, 25, 25));
+        simpleImageTextureRegions.put(SimpleImageType.STATIC_ALIEN, new TextureRegion(sprites, 381, 177, 24, 32));
 
         smallDiamondAnim = new Animation(0.1f, new TextureRegion(new Texture(
                 Gdx.files.internal("data/smalldiamond.png"))).split(8, 8)[0]);
-
-        waterAnim = new Animation(0.1f, new TextureRegion(new Texture(Gdx.files.internal("data/water.png"))).split(24,
-                12)[0]);
 
         Texture gianaTexture = new Texture(Gdx.files.internal("data/giana.png"));
         Texture diamondTexture = new Texture(Gdx.files.internal("data/diamond.png"));
         Texture treatboxTexture = new Texture(Gdx.files.internal("data/treatbox.png"));
         Texture movingSpikesTexture = new Texture(Gdx.files.internal("data/movingspikes.png"));
+        Texture fireTexture = new Texture(Gdx.files.internal("data/fire.png"));
+        Texture waterTexture = new Texture(Gdx.files.internal("data/water.png"));
+
+        Animation waterAnim = new Animation(0.1f, new TextureRegion(waterTexture).split(24, 12)[0]);
+        Animation fireAnim = new Animation(0.1f, new TextureRegion(fireTexture).split(27, 16)[0]);
+        Animation movingSpikesAnim = new Animation(0.3f, new TextureRegion(movingSpikesTexture).split(48, 16)[0]);
+        Animation triangleAnim = new Animation(1f, new TextureRegion(sprites, 381, 140, 24, 24));
+
+        fixedTrapTypeAnim.put(FixedTrapType.FIRE, fireAnim);
+        fixedTrapTypeAnim.put(FixedTrapType.MOVING_SPIKES, movingSpikesAnim);
+        fixedTrapTypeAnim.put(FixedTrapType.WATER, waterAnim);
+        fixedTrapTypeAnim.put(FixedTrapType.TRIANGLE, triangleAnim);
 
         quicksandAnim = new Animation(0.1f, new TextureRegion(new Texture(Gdx.files.internal("data/quicksand-"
                 + colors.getBrickColor().getName() + ".png"))).split(20, 20)[0]);
@@ -189,8 +202,6 @@ public class MapRenderer {
 
         groundMonsterAnimations.put(GoundMonsterType.JELLY,
                 new Animation[] { new Animation(0.2f, groundMonstersRegion.split(24, 20)[0]) });
-
-        movingSpikesAnim = new Animation(0.3f, new TextureRegion(movingSpikesTexture).split(48, 16)[0]);
 
         diamondAnim = new Animation(0.3f, new TextureRegion(diamondTexture).split(16, 16)[0]);
         TextureRegion[] treatboxRegion = new TextureRegion(treatboxTexture).split(30, 20)[0];
@@ -299,7 +310,6 @@ public class MapRenderer {
         drawBlocks();
 
         renderSimpleImages();
-        renderMovingSpikes();
 
         renderDiamonds();
         renderGroundMonsters();
@@ -472,17 +482,13 @@ public class MapRenderer {
         }
     }
 
-    private void renderMovingSpikes() {
-        for (int i = 0; i < map.movingSpikes.size; i++) {
-            MovingSpikes spikes = map.movingSpikes.get(i);
-            batch.draw(movingSpikesAnim.getKeyFrame(spikes.stateTime, true), spikes.pos.x, spikes.pos.y, 3, 1);
-        }
-    }
-
     private void renderWaters() {
         for (int i = 0; i < map.waters.size; i++) {
-            Water water = map.waters.get(i);
-            batch.draw(waterAnim.getKeyFrame(water.stateTime, true), water.pos.x, water.pos.y, 1, 1);
+            FixedTrap trap = map.waters.get(i);
+            Animation anim = fixedTrapTypeAnim.get(trap.type);
+
+            batch.draw(anim.getKeyFrame(trap.stateTime, true), trap.pos.x, trap.pos.y, trap.bounds.width,
+                    trap.bounds.height);
         }
     }
 

@@ -21,13 +21,11 @@ public class Map {
 
     static int DIAMOND = 5570300;
     static int PIRANHA = 0x6a75ff;
-    static int MOVING_SPIKES = 0x00ff00;
 
     static int TREAT_BOX = 0xff8a00;
     static int TREAT_BOX_BALL = 0xffcb8d;
 
     static int BEE = 0xd2a285;
-    static int WATER = 0x7b7eae;
     static int QUICK_SAND = 0xA45A04;
 
     static int LEVEL_PIXELBUFFER = 20;
@@ -53,7 +51,6 @@ public class Map {
 
     Array<Diamond> diamonds = new Array<Diamond>();
     Array<TreatBox> treatBoxes = new Array<TreatBox>();
-    Array<MovingSpikes> movingSpikes = new Array<MovingSpikes>();
     Array<GroundMonster> groundMonsters = new Array<GroundMonster>();
     Array<SimpleImage> simpleImages = new Array<SimpleImage>();
     Array<Treat> treats = new Array<Treat>();
@@ -63,7 +60,7 @@ public class Map {
 
     Array<Bee> bees = new Array<Bee>();
     Array<Fish> fishes = new Array<Fish>();
-    Array<Water> waters = new Array<Water>();
+    Array<FixedTrap> waters = new Array<FixedTrap>();
 
     Vector2 startPosition = new Vector2();
     public EndDoor endDoor;
@@ -153,10 +150,9 @@ public class Map {
                             }
                         }
                     }
-                } else if (match(pix, WATER)) {
-                    waters.add(new Water(this, x, pixmap.getHeight() - 1 - y));
-                } else if (match(pix, MOVING_SPIKES)) {
-                    movingSpikes.add(new MovingSpikes(this, x, pixmap.getHeight() - 1 - y));
+                } else if (FixedTrapType.containsColor(pix) != null) {
+                    FixedTrapType type = FixedTrapType.containsColor(pix);
+                    waters.add(new FixedTrap(this, x, pixmap.getHeight() - 1 - y, type));
                 } else if (match(pix, TREAT_BOX)) {
                     treatBoxes.add(new TreatBox(this, x, pixmap.getHeight() - 1 - y, TreatType.DIAMOND));
                     tiles[x][y] = pix;
@@ -195,11 +191,8 @@ public class Map {
         for (SmallDiamoind diamond : treatSmallDiamoinds) {
             diamond.update(deltaTime);
         }
-        for (MovingSpikes mSpike : movingSpikes) {
-            mSpike.update(deltaTime);
-        }
 
-        for (Water water : waters) {
+        for (FixedTrap water : waters) {
             water.update(deltaTime);
         }
         for (GroundMonster monster : groundMonsters) {
@@ -232,6 +225,6 @@ public class Map {
     }
 
     public boolean isDeadly(int tileId) {
-        return tileId == MOVING_SPIKES;
+        return FixedTrapType.containsColor(tileId) != null;
     }
 }
