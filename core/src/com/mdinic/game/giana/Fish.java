@@ -43,7 +43,6 @@ public class Fish {
         bounds.y += vel.y * deltaTime;
 
         boolean change = false;
-        int y = map.tiles[0].length - 1 - (int) Math.floor(bounds.y);
         if (state == FORWARD) {
             change = pos.y - min > startPos.y;
         } else {
