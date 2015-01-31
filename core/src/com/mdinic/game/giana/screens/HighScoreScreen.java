@@ -6,12 +6,15 @@ import java.util.List;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.mdinic.game.giana.Sounds;
+import com.mdinic.game.giana.Sounds.BgMusic;
 import com.mdinic.game.giana.service.Score;
 
 public class HighScoreScreen extends GianaSistersScreen {
@@ -48,6 +51,9 @@ public class HighScoreScreen extends GianaSistersScreen {
 
         getGame().getHighScoreService().fetchHighScores();
         getGame().getHighScoreService().fetchTodaysHighScores(true);
+
+        Sounds.getInstance().play(BgMusic.HIGHSCORES);
+        Sounds.getInstance().getCurrentMusic().setLooping(true);
 
         generator.dispose();
     }
@@ -104,10 +110,30 @@ public class HighScoreScreen extends GianaSistersScreen {
     }
 
     @Override
+    public void resume() {
+        super.resume();
+        Music music = Sounds.getInstance().getCurrentMusic();
+        if (music != null) {
+            music.play();
+        }
+    }
+
+    @Override
+    public void pause() {
+        super.pause();
+        Music music = Sounds.getInstance().getCurrentMusic();
+        if (music != null) {
+            music.pause();
+        }
+    }
+
+    @Override
     public void hide() {
         Gdx.app.debug("HighScoreScreen", "dispose intro");
         batch.dispose();
         whileFont.dispose();
         redFont.dispose();
+
+        Sounds.getInstance().stop(BgMusic.HIGHSCORES);
     }
 }

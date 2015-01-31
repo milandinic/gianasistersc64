@@ -84,7 +84,6 @@ public class GameScreen extends GianaSistersScreen {
     @Override
     public void resume() {
         super.resume();
-        super.pause();
         Music music = Sounds.getInstance().getCurrentMusic();
         if (music != null) {
             music.play();

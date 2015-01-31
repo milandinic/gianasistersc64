@@ -13,6 +13,7 @@ public class Sounds {
     private final Music endLevelSfx;
     private final Music musicLight;
     private final Music musicFast;
+    private final Music highscores;
 
     private Music currentMusic = null;
 
@@ -38,12 +39,13 @@ public class Sounds {
     };
 
     public enum BgMusic {
-        START_LEVEL, END_LEVEL, INTRO, MUSIC_LIGHT, MUSIC_FAST
+        START_LEVEL, END_LEVEL, INTRO, MUSIC_LIGHT, MUSIC_FAST, HIGHSCORES
     };
 
     public Sounds() {
         musicLight = Gdx.audio.newMusic(Gdx.files.internal("data/sfx/bgMusic1.mp3"));
         musicFast = Gdx.audio.newMusic(Gdx.files.internal("data/sfx/bgMusic2.mp3"));
+        highscores = Gdx.audio.newMusic(Gdx.files.internal("data/sfx/highscores.mp3"));
 
         introSfx = Gdx.audio.newMusic(Gdx.files.internal("data/sfx/intro.mp3"));
         startLevelSfx = Gdx.audio.newMusic(Gdx.files.internal("data/sfx/startLevel.mp3"));
@@ -85,6 +87,10 @@ public class Sounds {
         case MUSIC_FAST:
             musicFast.play();
             currentMusic = musicFast;
+            break;
+        case HIGHSCORES:
+            highscores.play();
+            currentMusic = highscores;
             break;
         default:
             currentMusic = null;
@@ -196,6 +202,9 @@ public class Sounds {
             break;
         case MUSIC_FAST:
             musicFast.stop();
+            break;
+        case HIGHSCORES:
+            highscores.stop();
             break;
         default:
             break;
