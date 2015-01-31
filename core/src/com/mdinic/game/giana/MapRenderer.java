@@ -141,8 +141,15 @@ public class MapRenderer {
         quicksandAnim = new Animation(0.1f, new TextureRegion(new Texture(Gdx.files.internal("data/quicksand-"
                 + colors.getBrickColor().getName() + ".png"))).split(20, 20)[0]);
 
+        loadMonster("purple-alien", 20, 20, GoundMonsterType.PURPLE_ALIEN, 0.3f, false);
+        loadMonster("yellow-alien", 20, 20, GoundMonsterType.YELLOW_ALIEN, 0.3f, false);
+        loadMonster("bug", 22, 9, GoundMonsterType.BUG, 0.3f, false);
+        loadMonster("eye", 24, 17, GoundMonsterType.EYE, 0.3f, true);
+        loadMonster("dagger", 24, 16, GoundMonsterType.DAGGER, 0.3f, true);
+        loadMonster("lobster", 24, 20, GoundMonsterType.LOBSTER, 0.2f, true);
+        loadMonster("worm", 25, 21, GoundMonsterType.WORM, 0.1f, true);
+
         Texture groundMonstersTexture = new Texture(Gdx.files.internal("data/groundmonsters.png"));
-        Texture lobsterTexture = new Texture(Gdx.files.internal("data/lobster.png"));
 
         TextureRegion[] waspRightRegion = new TextureRegion(new Texture(Gdx.files.internal("data/wasp.png"))).split(24,
                 20)[0];
@@ -172,25 +179,6 @@ public class MapRenderer {
         }
         piranhaDownAnim = new Animation(0.2f, piranhaDownRegion);
 
-        TextureRegion[] eyeRegionLeft = new TextureRegion(new Texture(Gdx.files.internal("data/eye.png")))
-                .split(24, 17)[0];
-        TextureRegion[] eyeRegionRight = new TextureRegion(new Texture(Gdx.files.internal("data/eye.png"))).split(24,
-                17)[0];
-        for (TextureRegion textureRegion : eyeRegionRight) {
-            textureRegion.flip(true, false);
-        }
-        Animation eyeAnimLeft = new Animation(0.3f, eyeRegionLeft);
-        Animation eyeAnimRight = new Animation(0.3f, eyeRegionRight);
-
-        groundMonsterAnimations.put(GoundMonsterType.EYE, new Animation[] { eyeAnimRight, eyeAnimLeft });
-
-        TextureRegion[] wormRegion = new TextureRegion(new Texture(Gdx.files.internal("data/worm.png"))).split(25, 21)[0];
-
-        Animation wormAnimLeft = new Animation(0.1f, wormRegion);
-        Animation wormAnimRight = new Animation(0.1f, wormRegion[6], wormRegion[5], wormRegion[4], wormRegion[3],
-                wormRegion[2], wormRegion[1], wormRegion[0]);
-        groundMonsterAnimations.put(GoundMonsterType.WORM, new Animation[] { wormAnimRight, wormAnimLeft });
-
         TextureRegion groundMonstersRegion = new TextureRegion(groundMonstersTexture);
         groundMonstersRegion.setRegion(0, 0, 240, 20);
 
@@ -201,15 +189,6 @@ public class MapRenderer {
 
         groundMonsterAnimations.put(GoundMonsterType.JELLY,
                 new Animation[] { new Animation(0.2f, groundMonstersRegion.split(24, 20)[0]) });
-
-        TextureRegion[] lobsterTextureRegion = new TextureRegion(lobsterTexture).split(24, 20)[0];
-        TextureRegion[] lobsterTextureRegionToFlip = new TextureRegion(lobsterTexture).split(24, 20)[0];
-        for (TextureRegion textureRegion : lobsterTextureRegionToFlip) {
-            textureRegion.flip(true, false);
-        }
-        Animation lobsterAnimRight = new Animation(0.2f, lobsterTextureRegion);
-        Animation lobsterAnimLeft = new Animation(0.2f, lobsterTextureRegionToFlip);
-        groundMonsterAnimations.put(GoundMonsterType.LOBSTER, new Animation[] { lobsterAnimLeft, lobsterAnimRight });
 
         movingSpikesAnim = new Animation(0.3f, new TextureRegion(movingSpikesTexture).split(48, 16)[0]);
 
@@ -518,8 +497,8 @@ public class MapRenderer {
                 if (monster.type.needsMirror && monster.state == GroundMonster.BACKWARD) {
                     index = 1;
                 }
-                batch.draw(animations[index].getKeyFrame(monster.stateTime, true), monster.pos.x, monster.pos.y, 1,
-                        monster.alive ? 1 : 0.2f);
+                batch.draw(animations[index].getKeyFrame(monster.stateTime, true), monster.pos.x, monster.pos.y,
+                        monster.bounds.width, monster.alive ? monster.bounds.height : 0.2f);
 
             }
         }
@@ -582,7 +561,28 @@ public class MapRenderer {
 
             }
         }
+    }
 
+    void loadMonster(String textureName, int width, int height, GoundMonsterType type, float speed, boolean swap) {
+
+        TextureRegion[] rightRegion = new TextureRegion(new Texture(Gdx.files.internal("data/" + textureName + ".png")))
+                .split(width, height)[0];
+
+        TextureRegion[] leftRegion = new TextureRegion(new Texture(Gdx.files.internal("data/" + textureName + ".png")))
+                .split(width, height)[0];
+
+        for (TextureRegion textureRegion : leftRegion) {
+            textureRegion.flip(true, false);
+        }
+
+        Animation animLeft = new Animation(speed, leftRegion);
+        Animation animRight = new Animation(speed, rightRegion);
+
+        if (swap)
+            groundMonsterAnimations.put(type, new Animation[] { animLeft, animRight });
+        else
+
+            groundMonsterAnimations.put(type, new Animation[] { animRight, animLeft });
     }
 
     public void dispose() {

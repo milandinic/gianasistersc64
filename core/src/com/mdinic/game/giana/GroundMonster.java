@@ -13,7 +13,8 @@ public class GroundMonster extends Monster {
     public GroundMonster(Map map, float x, float y, GoundMonsterType type) {
         super(map, x, y);
         this.type = type;
-
+        this.bounds.width = type.width;
+        this.bounds.height = type.height;
         vel.set(1, 0);
     }
 
