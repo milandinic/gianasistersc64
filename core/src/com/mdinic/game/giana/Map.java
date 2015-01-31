@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.mdinic.game.giana.TreatBox.TreatType;
 
@@ -61,8 +60,6 @@ public class Map {
     Array<Bee> bees = new Array<Bee>();
     Array<Fish> fishes = new Array<Fish>();
     Array<FixedTrap> waters = new Array<FixedTrap>();
-
-    Vector2 startPosition = new Vector2();
     public EndDoor endDoor;
 
     public Map(Map oldMap) {
@@ -123,49 +120,47 @@ public class Map {
 
             for (int x = 0; x < 150; x++) {
                 pix = (pixmap.getPixel(x, y + (level * LEVEL_PIXELBUFFER)) >>> 8) & 0xffffff;
+                int newY = pixmap.getHeight() - 1 - y;
                 if (match(pix, START)) {
-                    startPosition.set(x, pixmap.getHeight() - 1 - y);
-
-                    giana = new Giana(this, startPosition.x, startPosition.y);
+                    giana = new Giana(this, x, newY);
                 } else if (match(pix, DIAMOND)) {
-                    diamonds.add(new Diamond(this, x, pixmap.getHeight() - 1 - y));
+                    diamonds.add(new Diamond(this, x, newY));
                 } else if (match(pix, PIRANHA)) {
-                    fishes.add(new Fish(this, x, pixmap.getHeight() - 1 - y));
+                    fishes.add(new Fish(this, x, newY));
                 } else if (match(pix, QUICK_SAND)) {
-                    quickSandArray.add(new QuickSand(this, x, pixmap.getHeight() - 1 - y));
+                    quickSandArray.add(new QuickSand(this, x, newY));
                     tiles[x][y] = pix;
                 } else if (match(pix, BEE)) {
-                    bees.add(new Bee(this, x, pixmap.getHeight() - 1 - y));
+                    bees.add(new Bee(this, x, newY));
                 } else if (GoundMonsterType.containsColor(pix) != null) {
-                    groundMonsters.add(new GroundMonster(this, x, pixmap.getHeight() - 1 - y, GoundMonsterType
-                            .containsColor(pix)));
+                    groundMonsters.add(new GroundMonster(this, x, newY, GoundMonsterType.containsColor(pix)));
 
                 } else if (SimpleImageType.containsColor(pix) != null) {
                     SimpleImageType imageType = SimpleImageType.containsColor(pix);
-                    simpleImages.add(new SimpleImage(x, pixmap.getHeight() - 1 - y, imageType));
+                    simpleImages.add(new SimpleImage(x, newY, imageType));
                     if (imageType.colidable) {
-                        for (int j = 0; j < SimpleImageType.COLUMN.height; j++) {
-                            for (int i = 0; i < SimpleImageType.COLUMN.width; i++) {
-                                tiles[x + i][y + j] = pix;
+                        for (int j = 0; j < imageType.height; j++) {
+                            for (int i = 0; i < imageType.width; i++) {
+                                tiles[x + i][y - j] = pix;
                             }
                         }
                     }
                 } else if (FixedTrapType.containsColor(pix) != null) {
                     FixedTrapType type = FixedTrapType.containsColor(pix);
-                    waters.add(new FixedTrap(this, x, pixmap.getHeight() - 1 - y, type));
+                    waters.add(new FixedTrap(this, x, newY, type));
                 } else if (match(pix, TREAT_BOX)) {
-                    treatBoxes.add(new TreatBox(this, x, pixmap.getHeight() - 1 - y, TreatType.DIAMOND));
+                    treatBoxes.add(new TreatBox(this, x, newY, TreatType.DIAMOND));
                     tiles[x][y] = pix;
                 } else if (match(pix, TREAT_BOX_BALL)) {
-                    treatBoxes.add(new TreatBox(this, x, pixmap.getHeight() - 1 - y, TreatType.BALL));
+                    treatBoxes.add(new TreatBox(this, x, newY, TreatType.BALL));
                     tiles[x][y] = pix;
                 } else if (match(pix, END)) {
-                    endDoor = new EndDoor(x, pixmap.getHeight() - 1 - y);
+                    endDoor = new EndDoor(x, newY);
                 } else {
                     if (tiles[x][y] == 0) {
                         tiles[x][y] = pix;
                         if (match(pix, TILE))
-                            tileArray.add(new Tile(this, x, pixmap.getHeight() - 1 - y));
+                            tileArray.add(new Tile(this, x, newY));
                     }
                 }
             }

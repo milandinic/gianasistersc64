@@ -56,6 +56,7 @@ public class GameCompletedScreen extends GianaSistersScreen {
 
         if (time > 5) {
             if (getGame().getHighScoreService().goodForHighScores(oldMap.score)) {
+                oldMap.level--;
                 game.setScreen(new EnterYourNameScreen(game, oldMap));
             } else {
                 game.setScreen(new HighScoreScreen(game));

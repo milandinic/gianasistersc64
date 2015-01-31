@@ -17,7 +17,7 @@ public class FixedTrap {
         pos.x = type.moveHalfX ? x + 0.5f : x;
         pos.y = y;
         stateTime = 0;
-        bounds.x = x;
+        bounds.x = pos.x;
         bounds.y = y;
         bounds.height = type.height;
         bounds.width = type.width;
