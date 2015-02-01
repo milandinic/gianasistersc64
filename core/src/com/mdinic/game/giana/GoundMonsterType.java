@@ -3,7 +3,7 @@ package com.mdinic.game.giana;
 public enum GoundMonsterType {
 
     OWL(0x7a2991, false, true), JELLY(0x5a2b8f, false, true), LOBSTER(0x5ad68f, true, true), WORM(0xb5b737, true, false), EYE(
-            0xffb662, true, true), BUG(0x3dff3d, true, true, 1f, 0.5f), YELLOW_ALIEN(0x3d223d, true, true), PURPLE_ALIEN(
+            0xffb662, true, true), BUG(0x3dff3d, true, true, 1f, 0.5f), YELLOW_ALIEN(0x3d223d, true, false), PURPLE_ALIEN(
             0xc640c4, true, true), DAGGER(0xe8c056, true, true, 1, 0.8f);
 
     boolean needsMirror;
