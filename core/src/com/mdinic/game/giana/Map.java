@@ -59,7 +59,7 @@ public class Map {
 
     Array<Bee> bees = new Array<Bee>();
     Array<Fish> fishes = new Array<Fish>();
-    Array<FixedTrap> waters = new Array<FixedTrap>();
+    Array<FixedTrap> fixedTraps = new Array<FixedTrap>();
     public EndDoor endDoor;
 
     public Map(Map oldMap) {
@@ -147,7 +147,7 @@ public class Map {
                     }
                 } else if (FixedTrapType.containsColor(pix) != null) {
                     FixedTrapType type = FixedTrapType.containsColor(pix);
-                    waters.add(new FixedTrap(this, x, newY, type));
+                    fixedTraps.add(new FixedTrap(this, x, newY, type));
                 } else if (match(pix, TREAT_BOX)) {
                     treatBoxes.add(new TreatBox(this, x, newY, TreatType.DIAMOND));
                     tiles[x][y] = pix;
@@ -187,7 +187,7 @@ public class Map {
             diamond.update(deltaTime);
         }
 
-        for (FixedTrap water : waters) {
+        for (FixedTrap water : fixedTraps) {
             water.update(deltaTime);
         }
         for (GroundMonster monster : groundMonsters) {

@@ -136,7 +136,8 @@ public class MapRenderer {
 
         Texture gianaTexture = new Texture(Gdx.files.internal("data/giana.png"));
         Texture diamondTexture = new Texture(Gdx.files.internal("data/diamond.png"));
-        Texture treatboxTexture = new Texture(Gdx.files.internal("data/treatbox.png"));
+        Texture treatboxTexture = new Texture(Gdx.files.internal("data/treatbox-" + colors.getBrickColor().getName()
+                + ".png"));
         Texture movingSpikesTexture = new Texture(Gdx.files.internal("data/movingspikes.png"));
         Texture fireTexture = new Texture(Gdx.files.internal("data/fire.png"));
         Texture waterTexture = new Texture(Gdx.files.internal("data/water.png"));
@@ -204,8 +205,12 @@ public class MapRenderer {
                 new Animation[] { new Animation(0.2f, groundMonstersRegion.split(24, 20)[0]) });
 
         diamondAnim = new Animation(0.3f, new TextureRegion(diamondTexture).split(16, 16)[0]);
+
+        // treat box
         TextureRegion[] treatboxRegion = new TextureRegion(treatboxTexture).split(30, 20)[0];
-        usedTreatBox = treatboxRegion[treatboxRegion.length - 1];
+
+        usedTreatBox = new TextureRegion(sprites, 213 + colors.getBrickColor().ordinal() * 30, 377, 30, 20);
+
         List<TextureRegion> tbArray = new ArrayList<TextureRegion>();
         for (int i = 0; i < treatboxRegion.length; i++) {
             tbArray.add(treatboxRegion[i]);
@@ -305,7 +310,7 @@ public class MapRenderer {
         batch.draw(endDoor, map.endDoor.bounds.x, map.endDoor.bounds.y, map.endDoor.bounds.width,
                 map.endDoor.bounds.height);
 
-        renderWaters();
+        renderFixedTraps();
         renderPiranhas();
         drawBlocks();
 
@@ -482,9 +487,9 @@ public class MapRenderer {
         }
     }
 
-    private void renderWaters() {
-        for (int i = 0; i < map.waters.size; i++) {
-            FixedTrap trap = map.waters.get(i);
+    private void renderFixedTraps() {
+        for (int i = 0; i < map.fixedTraps.size; i++) {
+            FixedTrap trap = map.fixedTraps.get(i);
             Animation anim = fixedTrapTypeAnim.get(trap.type);
 
             batch.draw(anim.getKeyFrame(trap.stateTime, true), trap.pos.x, trap.pos.y, trap.bounds.width,
@@ -595,5 +600,17 @@ public class MapRenderer {
         cache.dispose();
         batch.dispose();
         tileTexture.getTexture().dispose();
+
+        usedTreatBox.getTexture().dispose();
+        spawn.getTexture().dispose();
+        dying.getTexture().dispose();
+        endDoor.getTexture().dispose();
+
+        bullet.getTexture().dispose();
+        bulletExplode.getTexture().dispose();
+
+        waspLeftDead.getTexture().dispose();
+        waspRightDead.getTexture().dispose();
+        strawberry.getTexture().dispose();
     }
 }
