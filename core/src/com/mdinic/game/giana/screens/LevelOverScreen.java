@@ -4,8 +4,11 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.mdinic.game.giana.Map;
@@ -16,8 +19,10 @@ public class LevelOverScreen extends GianaSistersScreen {
 
     private BitmapFont yellowFont;
     private float time = 0;
+    private float stateTime = 0;
     private SpriteBatch batch;
     private final Map oldMap;
+    private Animation yellowCristalAnim;
 
     public LevelOverScreen(Game game, Map oldMap) {
         super(game);
@@ -26,6 +31,9 @@ public class LevelOverScreen extends GianaSistersScreen {
 
     @Override
     public void show() {
+
+        yellowCristalAnim = new Animation(0.3f, new TextureRegion(new Texture(
+                Gdx.files.internal("data/yellow-cristal.png"))).split(11, 11)[0]);
 
         batch = new SpriteBatch();
         batch.getProjectionMatrix().setToOrtho2D(0, 0, 480, 320);
@@ -42,7 +50,7 @@ public class LevelOverScreen extends GianaSistersScreen {
 
     @Override
     public void render(float delta) {
-
+        stateTime += delta;
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -60,6 +68,8 @@ public class LevelOverScreen extends GianaSistersScreen {
         String update = String.format(" %02d   x  10      %06d", oldMap.time, oldMap.score);
 
         yellowFont.draw(batch, update, 100, 160);
+
+        batch.draw(yellowCristalAnim.getKeyFrame(stateTime, true), 240, 150);
 
         batch.end();
 

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -13,7 +14,6 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.SpriteCache;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
@@ -26,12 +26,10 @@ public class MapRenderer {
     Map map;
     OrthographicCamera cam;
 
-    SpriteCache cache;
     SpriteBatch batch = new SpriteBatch(5460);
     private final SpriteBatch fontBatch;
 
     int[][] blocks;
-    TextureRegion tileTexture;
 
     Animation gianaLeft;
     Animation gianaRight;
@@ -39,33 +37,31 @@ public class MapRenderer {
     Animation gianaJumpRight;
     Animation gianaIdleLeft;
     Animation gianaIdleRight;
-
     Animation gianaBigLeft;
     Animation gianaBigRight;
     Animation gianaBigJumpLeft;
     Animation gianaBigJumpRight;
     Animation gianaBigIdleLeft;
     Animation gianaBigIdleRight;
-
     Animation gianaDead;
     Animation gianaGrow;
-
     Animation smallDiamondAnim;
-
     Animation diamondAnim;
     Animation treatBoxAnim;
+    Animation whiteCristalAnim;
 
+    TextureRegion tileTexture;
     TextureRegion usedTreatBox;
     TextureRegion spawn;
     TextureRegion dying;
     TextureRegion endDoor;
-
     TextureRegion bullet;
     TextureRegion bulletExplode;
+    TextureRegion waspLeftDead;
+    TextureRegion waspRightDead;
+    TextureRegion strawberry;
 
     java.util.Map<GoundMonsterType, Animation[]> groundMonsterAnimations = new HashMap<GoundMonsterType, Animation[]>();
-
-    java.util.Map<GoundMonsterType, TextureRegion> deadGroundMonsterAnimations = new HashMap<GoundMonsterType, TextureRegion>();
 
     private BitmapFont font;
 
@@ -80,14 +76,11 @@ public class MapRenderer {
     private Animation piranhaDownAnim;
     private Animation waspRightAnim;
     private Animation waspLeftAnim;
-    private TextureRegion waspLeftDead;
-    private TextureRegion waspRightDead;
     private Animation quicksandAnim;
     private Animation brickAnim;
 
     private Animation lightningAnim;
     private Animation doubleLightningAnim;
-    private TextureRegion strawberry;
 
     public MapRenderer(Map map) {
         this.map = map;
@@ -97,8 +90,6 @@ public class MapRenderer {
         fontBatch.getProjectionMatrix().setToOrtho2D(0, 0, 480, 320);
 
         this.cam.position.set(map.giana.pos.x, map.giana.pos.y, 0);
-
-        this.cache = new SpriteCache(this.map.tiles.length * this.map.tiles[0].length, false);
         this.blocks = new int[(int) Math.ceil(this.map.tiles.length / 24.0f)][(int) Math
                 .ceil(this.map.tiles[0].length / 16.0f)];
 
@@ -133,6 +124,9 @@ public class MapRenderer {
 
         smallDiamondAnim = new Animation(0.1f, new TextureRegion(new Texture(
                 Gdx.files.internal("data/smalldiamond.png"))).split(8, 8)[0]);
+
+        whiteCristalAnim = new Animation(0.3f, new TextureRegion(new Texture(
+                Gdx.files.internal("data/white-cristal.png"))).split(11, 11)[0]);
 
         Texture gianaTexture = new Texture(Gdx.files.internal("data/giana.png"));
         Texture diamondTexture = new Texture(Gdx.files.internal("data/diamond.png"));
@@ -333,8 +327,6 @@ public class MapRenderer {
         if (!map.demo) {
             renderUpperText();
         }
-
-        // fps.log();
     }
 
     private void renderUpperText() {
@@ -346,6 +338,8 @@ public class MapRenderer {
         font.draw(fontBatch, "GIANA       BONUS     LIVES     STAGE    TIME", 10, 315);
 
         font.draw(fontBatch, formatted, 10, 305);
+
+        fontBatch.draw(whiteCristalAnim.getKeyFrame(stateTime, true), 130, 295);
 
         fontBatch.end();
     }
@@ -597,20 +591,67 @@ public class MapRenderer {
     }
 
     public void dispose() {
-        cache.dispose();
-        batch.dispose();
         tileTexture.getTexture().dispose();
-
         usedTreatBox.getTexture().dispose();
         spawn.getTexture().dispose();
         dying.getTexture().dispose();
         endDoor.getTexture().dispose();
-
         bullet.getTexture().dispose();
         bulletExplode.getTexture().dispose();
-
         waspLeftDead.getTexture().dispose();
         waspRightDead.getTexture().dispose();
         strawberry.getTexture().dispose();
+
+        for (Entry<FixedTrapType, Animation> entry : fixedTrapTypeAnim.entrySet()) {
+            disposeAnimation(entry.getValue());
+        }
+
+        for (Entry<SimpleImageType, TextureRegion> entry : simpleImageTextureRegions.entrySet()) {
+            entry.getValue().getTexture().dispose();
+        }
+
+        for (Entry<GoundMonsterType, Animation[]> entry : groundMonsterAnimations.entrySet()) {
+            for (Animation animation : entry.getValue()) {
+                disposeAnimation(animation);
+            }
+        }
+
+        disposeAnimation(gianaLeft);
+        disposeAnimation(gianaRight);
+        disposeAnimation(gianaJumpLeft);
+        disposeAnimation(gianaJumpRight);
+        disposeAnimation(gianaIdleLeft);
+        disposeAnimation(gianaIdleRight);
+        disposeAnimation(gianaBigLeft);
+        disposeAnimation(gianaBigRight);
+        disposeAnimation(gianaBigJumpLeft);
+        disposeAnimation(gianaBigJumpRight);
+        disposeAnimation(gianaBigIdleLeft);
+        disposeAnimation(gianaBigIdleRight);
+        disposeAnimation(gianaDead);
+        disposeAnimation(gianaGrow);
+        disposeAnimation(smallDiamondAnim);
+        disposeAnimation(diamondAnim);
+        disposeAnimation(treatBoxAnim);
+        disposeAnimation(treatBallRightAnim);
+        disposeAnimation(treatBallLeftAnim);
+        disposeAnimation(piranhaUpAnim);
+        disposeAnimation(piranhaDownAnim);
+        disposeAnimation(waspRightAnim);
+        disposeAnimation(waspLeftAnim);
+        disposeAnimation(quicksandAnim);
+        disposeAnimation(brickAnim);
+        disposeAnimation(lightningAnim);
+        disposeAnimation(doubleLightningAnim);
+        disposeAnimation(whiteCristalAnim);
+
+        batch.dispose();
+    }
+
+    void disposeAnimation(Animation anim) {
+        TextureRegion[] keyFrames = anim.getKeyFrames();
+        for (TextureRegion textureRegion : keyFrames) {
+            textureRegion.getTexture().dispose();
+        }
     }
 }
