@@ -8,13 +8,12 @@ import com.badlogic.gdx.graphics.GL20;
 import com.mdinic.game.giana.GianaState;
 import com.mdinic.game.giana.LevelConf;
 import com.mdinic.game.giana.Map;
-import com.mdinic.game.giana.MapRenderer;
 import com.mdinic.game.giana.OnscreenControlRenderer;
 import com.mdinic.game.giana.Sounds;
 
 public class GameScreen extends GianaSistersScreen {
     Map map;
-    MapRenderer renderer;
+    // MapRenderer renderer;
     OnscreenControlRenderer controlRenderer;
 
     public GameScreen(Game game, int level) {
@@ -29,7 +28,7 @@ public class GameScreen extends GianaSistersScreen {
 
     @Override
     public void show() {
-        renderer = new MapRenderer(map);
+        renderer.setMap(map);
         controlRenderer = new OnscreenControlRenderer(map, this);
 
         Sounds.getInstance().play(LevelConf.values()[map.level].getMusic());
@@ -103,7 +102,6 @@ public class GameScreen extends GianaSistersScreen {
     public void hide() {
         Gdx.app.debug("GianaSisters", "dispose game screen");
         Sounds.getInstance().stop(LevelConf.values()[map.level].getMusic());
-        renderer.dispose();
         controlRenderer.dispose();
     }
 

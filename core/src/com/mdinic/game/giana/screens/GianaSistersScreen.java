@@ -3,6 +3,7 @@ package com.mdinic.game.giana.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 import com.mdinic.game.giana.GianaSistersC64;
+import com.mdinic.game.giana.MapRenderer;
 
 public abstract class GianaSistersScreen implements Screen {
 
@@ -11,8 +12,13 @@ public abstract class GianaSistersScreen implements Screen {
     public static final int SCREEN_WIDTH = 480;
     public static final int LEVEL_COUNT = 20;
 
+    protected static MapRenderer renderer;
+
     public GianaSistersScreen(Game game) {
         this.game = game;
+        if (renderer == null) {
+            renderer = new MapRenderer();
+        }
     }
 
     public GianaSistersC64 getGame() {

@@ -9,7 +9,8 @@ public enum LevelConf {
             BrickColor.RED, BgMusic.MUSIC_FAST), LEVEL12(BrickColor.GREY, BgMusic.MUSIC_FAST), LEVEL13(BrickColor.GREY,
             BgMusic.MUSIC_FAST), LEVEL14(BrickColor.GREY, BgMusic.MUSIC_FAST), LEVEL15(BrickColor.GREY,
             BgMusic.MUSIC_FAST), LEVEL16(BrickColor.RED, BgMusic.MUSIC_FAST), LEVEL17(0x826fe8, BrickColor.BROWN,
-            BgMusic.MUSIC_LIGHT), LEVEL18(0x826fe8), LEVEL19(0x826fe8), LEVEL20(0x826fe8);
+            BgMusic.MUSIC_LIGHT), LEVEL18(0x826fe8), LEVEL19(0x826fe8), LEVEL20(0x826fe8), LEVEL21(BrickColor.VIOLET,
+            BgMusic.MUSIC_FAST), LEVEL22(BrickColor.VIOLET, BgMusic.MUSIC_FAST);
 
     enum BrickType {
         SMALL, BIG

@@ -19,6 +19,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.badlogic.gdx.math.Vector3;
 import com.mdinic.game.giana.Bullet.BulletState;
+import com.mdinic.game.giana.LevelConf.BrickColor;
 
 public class MapRenderer {
 
@@ -26,10 +27,11 @@ public class MapRenderer {
     Map map;
     OrthographicCamera cam;
 
+    float stateTime = 0;
+    Vector3 lerpTarget = new Vector3();
+
     SpriteBatch batch = new SpriteBatch(5460);
     private final SpriteBatch fontBatch;
-
-    int[][] blocks;
 
     Animation gianaLeft;
     Animation gianaRight;
@@ -47,11 +49,12 @@ public class MapRenderer {
     Animation gianaGrow;
     Animation smallDiamondAnim;
     Animation diamondAnim;
-    Animation treatBoxAnim;
+    java.util.Map<BrickColor, Animation> treatBoxAnim = new HashMap<BrickColor, Animation>();
     Animation whiteCristalAnim;
 
-    TextureRegion tileTexture;
-    TextureRegion usedTreatBox;
+    java.util.Map<BrickColor, TextureRegion> tileTexture = new HashMap<BrickColor, TextureRegion>();
+
+    java.util.Map<BrickColor, TextureRegion> usedTreatBox = new HashMap<BrickColor, TextureRegion>();
     TextureRegion spawn;
     TextureRegion dying;
     TextureRegion endDoor;
@@ -63,52 +66,67 @@ public class MapRenderer {
 
     java.util.Map<GoundMonsterType, Animation[]> groundMonsterAnimations = new HashMap<GoundMonsterType, Animation[]>();
 
-    private BitmapFont font;
-
-    int fontSize;
+    private final BitmapFont font;
 
     java.util.Map<SimpleImageType, TextureRegion> simpleImageTextureRegions = new HashMap<SimpleImageType, TextureRegion>();
     java.util.Map<FixedTrapType, Animation> fixedTrapTypeAnim = new HashMap<FixedTrapType, Animation>();
 
-    private Animation treatBallRightAnim;
-    private Animation treatBallLeftAnim;
-    private Animation piranhaUpAnim;
-    private Animation piranhaDownAnim;
-    private Animation waspRightAnim;
-    private Animation waspLeftAnim;
-    private Animation quicksandAnim;
-    private Animation brickAnim;
+    private final Animation treatBallRightAnim;
+    private final Animation treatBallLeftAnim;
+    private final Animation piranhaUpAnim;
+    private final Animation piranhaDownAnim;
+    private final Animation waspRightAnim;
+    private final Animation waspLeftAnim;
+    java.util.Map<BrickColor, Animation> quicksandAnim = new HashMap<LevelConf.BrickColor, Animation>();
 
-    private Animation lightningAnim;
-    private Animation doubleLightningAnim;
+    java.util.Map<BrickColor, Animation> brickAnim = new HashMap<LevelConf.BrickColor, Animation>();
 
-    public MapRenderer(Map map) {
-        this.map = map;
+    private final Animation lightningAnim;
+    private final Animation doubleLightningAnim;
+
+    public MapRenderer() {
+
         this.cam = new OrthographicCamera(20, SCENE_HEIGHT);
 
         fontBatch = new SpriteBatch();
         fontBatch.getProjectionMatrix().setToOrtho2D(0, 0, 480, 320);
 
-        this.cam.position.set(map.giana.pos.x, map.giana.pos.y, 0);
-        this.blocks = new int[(int) Math.ceil(this.map.tiles.length / 24.0f)][(int) Math
-                .ceil(this.map.tiles[0].length / 16.0f)];
+        Texture sprites = new Texture(Gdx.files.internal("data/sprites.png"));
 
-        createAnimations();
-    }
+        for (BrickColor color : BrickColor.values()) {
+            Texture brick = new Texture(Gdx.files.internal("data/bricks-" + color.getName() + ".png"));
 
-    private void createAnimations() {
-        LevelConf colors = LevelConf.values()[map.level];
+            TextureRegion[] brickRegion = new TextureRegion(brick).split(24, 16)[0];
+            brickAnim.put(color, new Animation(0.1f, brickRegion[1], brickRegion[2], brickRegion[3], brickRegion[4]));
 
-        Texture brick = new Texture(Gdx.files.internal("data/bricks-" + colors.getBrickColor().getName() + ".png"));
+            tileTexture.put(color, brickRegion[0]);
 
-        TextureRegion[] brickRegion = new TextureRegion(brick).split(24, 16)[0];
-        brickAnim = new Animation(0.1f, brickRegion[1], brickRegion[2], brickRegion[3], brickRegion[4]);
+            quicksandAnim.put(
+                    color,
+                    new Animation(0.1f, new TextureRegion(new Texture(Gdx.files.internal("data/quicksand-"
+                            + color.getName() + ".png"))).split(20, 20)[0]));
+
+            // treat box
+
+            Texture treatboxTexture = new Texture(Gdx.files.internal("data/treatbox-" + color.getName() + ".png"));
+
+            TextureRegion[] treatboxRegion = new TextureRegion(treatboxTexture).split(30, 20)[0];
+
+            usedTreatBox.put(color, new TextureRegion(sprites, 213 + color.ordinal() * 30, 377, 30, 20));
+
+            List<TextureRegion> tbArray = new ArrayList<TextureRegion>();
+            for (int i = 0; i < treatboxRegion.length; i++) {
+                tbArray.add(treatboxRegion[i]);
+            }
+            for (int i = treatboxRegion.length - 1; i >= 0; i--) {
+                tbArray.add(treatboxRegion[i]);
+            }
+            treatBoxAnim.put(color, new Animation(0.2f, tbArray.toArray(new TextureRegion[10])));
+        }
 
         bullet = new TextureRegion(new Texture(Gdx.files.internal("data/bullet.png")));
         bulletExplode = new TextureRegion(new Texture(Gdx.files.internal("data/bulletexplode.png")));
 
-        Texture sprites = new Texture(Gdx.files.internal("data/sprites.png"));
-        this.tileTexture = brickRegion[0];
         this.endDoor = new TextureRegion(sprites, 16, 196, 32, 32);
 
         simpleImageTextureRegions.put(SimpleImageType.BIG_CLOUD, new TextureRegion(sprites, 13, 10, 42, 17));
@@ -130,8 +148,7 @@ public class MapRenderer {
 
         Texture gianaTexture = new Texture(Gdx.files.internal("data/giana.png"));
         Texture diamondTexture = new Texture(Gdx.files.internal("data/diamond.png"));
-        Texture treatboxTexture = new Texture(Gdx.files.internal("data/treatbox-" + colors.getBrickColor().getName()
-                + ".png"));
+
         Texture movingSpikesTexture = new Texture(Gdx.files.internal("data/movingspikes.png"));
         Texture fireTexture = new Texture(Gdx.files.internal("data/fire.png"));
         Texture waterTexture = new Texture(Gdx.files.internal("data/water.png"));
@@ -145,9 +162,6 @@ public class MapRenderer {
         fixedTrapTypeAnim.put(FixedTrapType.MOVING_SPIKES, movingSpikesAnim);
         fixedTrapTypeAnim.put(FixedTrapType.WATER, waterAnim);
         fixedTrapTypeAnim.put(FixedTrapType.TRIANGLE, triangleAnim);
-
-        quicksandAnim = new Animation(0.1f, new TextureRegion(new Texture(Gdx.files.internal("data/quicksand-"
-                + colors.getBrickColor().getName() + ".png"))).split(20, 20)[0]);
 
         loadMonster("purple-alien", 20, 20, GoundMonsterType.PURPLE_ALIEN, 0.3f, false);
         loadMonster("yellow-alien", 20, 20, GoundMonsterType.YELLOW_ALIEN, 0.3f, false);
@@ -199,20 +213,6 @@ public class MapRenderer {
                 new Animation[] { new Animation(0.2f, groundMonstersRegion.split(24, 20)[0]) });
 
         diamondAnim = new Animation(0.3f, new TextureRegion(diamondTexture).split(16, 16)[0]);
-
-        // treat box
-        TextureRegion[] treatboxRegion = new TextureRegion(treatboxTexture).split(30, 20)[0];
-
-        usedTreatBox = new TextureRegion(sprites, 213 + colors.getBrickColor().ordinal() * 30, 377, 30, 20);
-
-        List<TextureRegion> tbArray = new ArrayList<TextureRegion>();
-        for (int i = 0; i < treatboxRegion.length; i++) {
-            tbArray.add(treatboxRegion[i]);
-        }
-        for (int i = treatboxRegion.length - 1; i >= 0; i--) {
-            tbArray.add(treatboxRegion[i]);
-        }
-        treatBoxAnim = new Animation(0.2f, tbArray.toArray(new TextureRegion[10]));
 
         TextureRegion treatBallRegion = new TextureRegion(gianaTexture, 0, 88, 175, 18);
 
@@ -272,16 +272,16 @@ public class MapRenderer {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/Giana.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 
-        fontSize = (Gdx.graphics.getHeight() / 320) * 12;
-
         parameter.size = 10;
         font = generator.generateFont(parameter); // font size 12
         font.setColor(new Color(0.87f, 0.95f, 0.47f, 1));
         generator.dispose(); // don't forget to dispose to avoid memory leaks!
     }
 
-    float stateTime = 0;
-    Vector3 lerpTarget = new Vector3();
+    public void setMap(Map map) {
+        this.map = map;
+        this.cam.position.set(map.giana.pos.x, map.giana.pos.y, 0);
+    }
 
     public void render(float deltaTime) {
 
@@ -462,11 +462,12 @@ public class MapRenderer {
     }
 
     private void renderTreatBoxes() {
+        BrickColor color = LevelConf.values()[map.level].getBrickColor();
         for (TreatBox box : map.treatBoxes) {
             if (box.active) {
-                batch.draw(treatBoxAnim.getKeyFrame(box.stateTime, true), box.pos.x, box.pos.y, 1, 1);
+                batch.draw(treatBoxAnim.get(color).getKeyFrame(box.stateTime, true), box.pos.x, box.pos.y, 1, 1);
             } else {
-                batch.draw(usedTreatBox, box.pos.x, box.pos.y, 1, 1);
+                batch.draw(usedTreatBox.get(color), box.pos.x, box.pos.y, 1, 1);
             }
         }
     }
@@ -520,9 +521,10 @@ public class MapRenderer {
     }
 
     private void renderQuickSand() {
+        BrickColor color = LevelConf.values()[map.level].getBrickColor();
         for (QuickSand sand : map.quickSandArray) {
             if (sand.active) {
-                TextureRegion frame = quicksandAnim.getKeyFrame(sand.stateTime, false);
+                TextureRegion frame = quicksandAnim.get(color).getKeyFrame(sand.stateTime, false);
 
                 batch.draw(frame, sand.pos.x + 0.0f, sand.pos.y, 0.33f, 1);
                 batch.draw(frame, sand.pos.x + 0.33f, sand.pos.y, 0.33f, 1);
@@ -550,15 +552,15 @@ public class MapRenderer {
     }
 
     private void drawBlocks() {
-
+        BrickColor color = LevelConf.values()[map.level].getBrickColor();
         for (Tile tile : map.tileArray) {
             if (tile.active) {
                 switch (tile.state) {
                 case NORMAL:
-                    batch.draw(tileTexture, tile.pos.x, tile.pos.y, 1, 1);
+                    batch.draw(tileTexture.get(color), tile.pos.x, tile.pos.y, 1, 1);
                     break;
                 case EXPLODING:
-                    batch.draw(brickAnim.getKeyFrame(tile.stateTime, false), tile.pos.x, tile.pos.y, 1, 1);
+                    batch.draw(brickAnim.get(color).getKeyFrame(tile.stateTime, false), tile.pos.x, tile.pos.y, 1, 1);
                     break;
                 case GONE:
                     break;
@@ -591,8 +593,6 @@ public class MapRenderer {
     }
 
     public void dispose() {
-        tileTexture.getTexture().dispose();
-        usedTreatBox.getTexture().dispose();
         spawn.getTexture().dispose();
         dying.getTexture().dispose();
         endDoor.getTexture().dispose();
@@ -601,6 +601,14 @@ public class MapRenderer {
         waspLeftDead.getTexture().dispose();
         waspRightDead.getTexture().dispose();
         strawberry.getTexture().dispose();
+
+        for (Entry<BrickColor, TextureRegion> entry : tileTexture.entrySet()) {
+            entry.getValue().getTexture().dispose();
+        }
+
+        for (Entry<BrickColor, TextureRegion> entry : usedTreatBox.entrySet()) {
+            entry.getValue().getTexture().dispose();
+        }
 
         for (Entry<FixedTrapType, Animation> entry : fixedTrapTypeAnim.entrySet()) {
             disposeAnimation(entry.getValue());
@@ -614,6 +622,18 @@ public class MapRenderer {
             for (Animation animation : entry.getValue()) {
                 disposeAnimation(animation);
             }
+        }
+
+        for (Entry<BrickColor, Animation> entry : treatBoxAnim.entrySet()) {
+            disposeAnimation(entry.getValue());
+        }
+
+        for (Entry<BrickColor, Animation> entry : quicksandAnim.entrySet()) {
+            disposeAnimation(entry.getValue());
+        }
+
+        for (Entry<BrickColor, Animation> entry : brickAnim.entrySet()) {
+            disposeAnimation(entry.getValue());
         }
 
         disposeAnimation(gianaLeft);
@@ -632,15 +652,13 @@ public class MapRenderer {
         disposeAnimation(gianaGrow);
         disposeAnimation(smallDiamondAnim);
         disposeAnimation(diamondAnim);
-        disposeAnimation(treatBoxAnim);
+
         disposeAnimation(treatBallRightAnim);
         disposeAnimation(treatBallLeftAnim);
         disposeAnimation(piranhaUpAnim);
         disposeAnimation(piranhaDownAnim);
         disposeAnimation(waspRightAnim);
         disposeAnimation(waspLeftAnim);
-        disposeAnimation(quicksandAnim);
-        disposeAnimation(brickAnim);
         disposeAnimation(lightningAnim);
         disposeAnimation(doubleLightningAnim);
         disposeAnimation(whiteCristalAnim);
