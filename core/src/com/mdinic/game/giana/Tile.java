@@ -35,7 +35,7 @@ public class Tile {
                 if (map.giana.headHitBounds.overlaps(bounds) && GianaPower.isBig(map.giana.power)
                         && map.giana.state == GianaState.JUMP) {
                     state = State.EXPLODING;
-                    Sounds.getInstance().play(Sfx.BRICK_DESTROY);
+                    map.sounds.play(Sfx.BRICK_DESTROY);
                     stateTime = 0;
                 }
                 break;

@@ -89,8 +89,8 @@ public class OnscreenControlRenderer {
         if (soundButton) {
             boolean enabled = screen.getGame().getSettingsService().isSoundEnabled();
             screen.getGame().getSettingsService().enableSound(!enabled);
-            Sounds.getInstance().setMute(enabled);
-            Music music = Sounds.getInstance().getCurrentMusic();
+            map.sounds.setMute(enabled);
+            Music music = map.sounds.getCurrentMusic();
             if (music != null) {
                 music.setVolume(screen.getGame().getSettingsService().isSoundEnabled() ? 1 : 0);
             }

@@ -75,13 +75,13 @@ public class Treat {
             active = false;
 
             if (!GianaPower.isBig(map.giana.power)) {
-                Sounds.getInstance().play(Sfx.POWERUP);
+                map.sounds.play(Sfx.POWERUP);
                 map.giana.state = GianaState.GROW;
                 map.giana.stateTime = 0;
                 map.score += 100;
             } else {
                 map.score += 100;
-                Sounds.getInstance().play(Sfx.TREAT);
+                map.sounds.play(Sfx.TREAT);
             }
             if (map.giana.power.hasNext()) {
                 map.giana.power = GianaPower.values()[map.giana.power.ordinal() + 1];

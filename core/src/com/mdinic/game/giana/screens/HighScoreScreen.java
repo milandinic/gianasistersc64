@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
+import com.mdinic.game.giana.MapRenderer;
 import com.mdinic.game.giana.Sounds;
 import com.mdinic.game.giana.Sounds.BgMusic;
 import com.mdinic.game.giana.service.Score;
@@ -30,8 +31,11 @@ public class HighScoreScreen extends GianaSistersScreen {
 
     private BitmapFont redFont;
 
-    public HighScoreScreen(Game game) {
-        super(game);
+    Sounds sounds;
+
+    public HighScoreScreen(Game game, Sounds sounds, MapRenderer renderer) {
+        super(game, renderer);
+        this.sounds = sounds;
     }
 
     @Override
@@ -52,8 +56,8 @@ public class HighScoreScreen extends GianaSistersScreen {
         getGame().getHighScoreService().fetchHighScores();
         getGame().getHighScoreService().fetchTodaysHighScores(true);
 
-        Sounds.getInstance().play(BgMusic.HIGHSCORES);
-        Sounds.getInstance().getCurrentMusic().setLooping(true);
+        sounds.play(BgMusic.HIGHSCORES);
+        sounds.getCurrentMusic().setLooping(true);
 
         generator.dispose();
     }
@@ -102,7 +106,7 @@ public class HighScoreScreen extends GianaSistersScreen {
         }
 
         if (time > 1 && (Gdx.input.isKeyPressed(Keys.ANY_KEY) || Gdx.input.justTouched())) {
-            game.setScreen(new IntroScreen(game));
+            game.setScreen(new IntroScreen(game, sounds, renderer));
             return;
         }
 
@@ -112,7 +116,7 @@ public class HighScoreScreen extends GianaSistersScreen {
     @Override
     public void resume() {
         super.resume();
-        Music music = Sounds.getInstance().getCurrentMusic();
+        Music music = sounds.getCurrentMusic();
         if (music != null) {
             music.play();
         }
@@ -121,7 +125,7 @@ public class HighScoreScreen extends GianaSistersScreen {
     @Override
     public void pause() {
         super.pause();
-        Music music = Sounds.getInstance().getCurrentMusic();
+        Music music = sounds.getCurrentMusic();
         if (music != null) {
             music.pause();
         }
@@ -134,6 +138,6 @@ public class HighScoreScreen extends GianaSistersScreen {
         whileFont.dispose();
         redFont.dispose();
 
-        Sounds.getInstance().stop(BgMusic.HIGHSCORES);
+        sounds.stop(BgMusic.HIGHSCORES);
     }
 }

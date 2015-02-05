@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.mdinic.game.giana.Map;
+import com.mdinic.game.giana.MapRenderer;
 import com.mdinic.game.giana.service.Score;
 
 public class EnterYourNameScreen extends GianaSistersScreen {
@@ -26,8 +27,8 @@ public class EnterYourNameScreen extends GianaSistersScreen {
 
     private boolean processKeys = true;
 
-    public EnterYourNameScreen(Game game, Map oldMap) {
-        super(game);
+    public EnterYourNameScreen(Game game, Map oldMap, MapRenderer renderer) {
+        super(game, renderer);
         this.oldMap = oldMap;
     }
 
@@ -93,17 +94,17 @@ public class EnterYourNameScreen extends GianaSistersScreen {
                         Score score = new Score(text, oldMap.score, oldMap.level + 1);
                         getGame().getHighScoreService().saveHighScore(score);
                     }
-                    game.setScreen(new HighScoreScreen(game));
+                    game.setScreen(new HighScoreScreen(game, oldMap.sounds, renderer));
                 }
 
                 @Override
                 public void canceled() {
-                    game.setScreen(new HighScoreScreen(game));
+                    game.setScreen(new HighScoreScreen(game, oldMap.sounds, renderer));
                 }
             }, "", score != null ? score.getName() : "");
 
         } else if (rightButton && processKeys) {
-            game.setScreen(new HighScoreScreen(game));
+            game.setScreen(new HighScoreScreen(game, oldMap.sounds, renderer));
         }
     }
 

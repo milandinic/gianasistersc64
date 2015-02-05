@@ -3,21 +3,23 @@ package com.mdinic.game.giana.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.mdinic.game.giana.MapRenderer;
 import com.mdinic.game.giana.Sounds;
 import com.mdinic.game.giana.Sounds.BgMusic;
 
 public class IntroScreen extends GameScreen {
 
-    public IntroScreen(Game game) {
-        super(game, 0);
+    public IntroScreen(Game game, Sounds sounds, MapRenderer renderer) {
+        super(game, 0, sounds, renderer);
         map.demo = true;
     }
 
     @Override
     public void show() {
         super.show();
-        Sounds.getInstance().setMute(!getGame().getSettingsService().isSoundEnabled());
-        Sounds.getInstance().play(BgMusic.INTRO);
+
+        map.sounds.setMute(!getGame().getSettingsService().isSoundEnabled());
+        map.sounds.play(BgMusic.INTRO);
     }
 
     @Override
@@ -27,13 +29,13 @@ public class IntroScreen extends GameScreen {
         map.giana.runRight();
 
         if (Gdx.input.isKeyPressed(Keys.ANY_KEY) || Gdx.input.justTouched()) {
-            game.setScreen(new LevelStartingScreen(game, map));
+            game.setScreen(new LevelStartingScreen(game, map, renderer));
         }
     }
 
     @Override
     public void hide() {
-        Sounds.getInstance().stop(BgMusic.INTRO);
+        map.sounds.stop(BgMusic.INTRO);
         super.hide();
     }
 

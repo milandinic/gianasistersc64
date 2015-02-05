@@ -38,7 +38,7 @@ public class Monster {
                 if (canBeKilled) {
                     alive = false;
                     map.score += 50;
-                    Sounds.getInstance().play(Sfx.KILL);
+                    map.sounds.play(Sfx.KILL);
                 }
                 if (map.giana.bullet.state != BulletState.EXPLODE) {
                     map.giana.bullet.time = 0;

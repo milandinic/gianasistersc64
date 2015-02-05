@@ -90,11 +90,11 @@ public class Giana {
         }
 
         if (state == GianaState.DYING) {
-            Sounds.getInstance().stopCurrentMusic();
+            map.sounds.stopCurrentMusic();
             if (stateTime < 0.2f) {
                 if (playDead) {
                     playDead = false;
-                    Sounds.getInstance().play(Sfx.DYING);
+                    map.sounds.play(Sfx.DYING);
                 }
                 pos.y += MIN_MOVE;
                 bounds.y += MIN_MOVE;
@@ -174,11 +174,11 @@ public class Giana {
             if (power.hasGun() && (Gdx.input.isKeyPressed(Keys.SPACE) || fireButton)) {
 
                 bullet = new Bullet(map, pos, dir == LEFT ? 1 : -1, power.isHoming());
-                Sounds.getInstance().play(Sfx.FIRE_BULLET);
+                map.sounds.play(Sfx.FIRE_BULLET);
             }
 
         if ((Gdx.input.isKeyPressed(Keys.W) || jumpButton) && state != GianaState.JUMP && grounded) {
-            Sounds.getInstance().play(Sfx.JUMP);
+            map.sounds.play(Sfx.JUMP);
             state = GianaState.JUMP;
             vel.y = JUMP_VELOCITY;
             grounded = false;

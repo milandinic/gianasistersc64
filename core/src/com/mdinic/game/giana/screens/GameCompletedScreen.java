@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.mdinic.game.giana.Map;
+import com.mdinic.game.giana.MapRenderer;
 
 public class GameCompletedScreen extends GianaSistersScreen {
 
@@ -19,8 +20,8 @@ public class GameCompletedScreen extends GianaSistersScreen {
 
     private final Map oldMap;
 
-    public GameCompletedScreen(Game game, Map oldMap) {
-        super(game);
+    public GameCompletedScreen(Game game, Map oldMap, MapRenderer renderer) {
+        super(game, renderer);
         this.oldMap = oldMap;
     }
 
@@ -57,9 +58,9 @@ public class GameCompletedScreen extends GianaSistersScreen {
         if (time > 5) {
             if (getGame().getHighScoreService().goodForHighScores(oldMap.score)) {
                 oldMap.level--;
-                game.setScreen(new EnterYourNameScreen(game, oldMap));
+                game.setScreen(new EnterYourNameScreen(game, oldMap, renderer));
             } else {
-                game.setScreen(new HighScoreScreen(game));
+                game.setScreen(new HighScoreScreen(game, oldMap.sounds, renderer));
             }
         }
     }

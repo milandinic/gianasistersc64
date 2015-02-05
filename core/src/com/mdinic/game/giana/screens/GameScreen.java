@@ -8,21 +8,23 @@ import com.badlogic.gdx.graphics.GL20;
 import com.mdinic.game.giana.GianaState;
 import com.mdinic.game.giana.LevelConf;
 import com.mdinic.game.giana.Map;
+import com.mdinic.game.giana.MapRenderer;
 import com.mdinic.game.giana.OnscreenControlRenderer;
 import com.mdinic.game.giana.Sounds;
 
 public class GameScreen extends GianaSistersScreen {
     Map map;
-    // MapRenderer renderer;
     OnscreenControlRenderer controlRenderer;
 
-    public GameScreen(Game game, int level) {
-        super(game);
-        map = new Map(level);
+    public GameScreen(Game game, int level, Sounds sounds, MapRenderer renderer) {
+        super(game, renderer);
+
+        map = new Map(level, sounds);
+        renderer.setMap(map);
     }
 
-    public GameScreen(Game game, Map oldMap) {
-        super(game);
+    public GameScreen(Game game, Map oldMap, MapRenderer renderer) {
+        super(game, renderer);
         map = new Map(oldMap);
     }
 
@@ -31,7 +33,7 @@ public class GameScreen extends GianaSistersScreen {
         renderer.setMap(map);
         controlRenderer = new OnscreenControlRenderer(map, this);
 
-        Sounds.getInstance().play(LevelConf.values()[map.level].getMusic());
+        map.sounds.play(LevelConf.values()[map.level].getMusic());
     }
 
     @Override
@@ -47,11 +49,11 @@ public class GameScreen extends GianaSistersScreen {
             map.level--;
             if (map.lives == 0) {
                 if (getGame().getHighScoreService().goodForHighScores(map.score))
-                    game.setScreen(new EnterYourNameScreen(game, map));
+                    game.setScreen(new EnterYourNameScreen(game, map, renderer));
                 else
-                    game.setScreen(new HighScoreScreen(game));
+                    game.setScreen(new HighScoreScreen(game, map.sounds, renderer));
             } else {
-                game.setScreen(new LevelStartingScreen(game, map));
+                game.setScreen(new LevelStartingScreen(game, map, renderer));
             }
 
             return;
@@ -68,14 +70,14 @@ public class GameScreen extends GianaSistersScreen {
 
         if (map.giana.bounds.overlaps(map.endDoor.bounds)) {
             if (map.level == 0) {
-                game.setScreen(new HighScoreScreen(game));
+                game.setScreen(new HighScoreScreen(game, map.sounds, renderer));
             } else {
-                game.setScreen(new LevelOverScreen(game, map));
+                game.setScreen(new LevelOverScreen(game, map, renderer));
             }
         }
 
         if (Gdx.input.isKeyPressed(Keys.ESCAPE)) {
-            game.setScreen(new IntroScreen(game));
+            game.setScreen(new IntroScreen(game, map.sounds, renderer));
         }
 
     }
@@ -83,7 +85,7 @@ public class GameScreen extends GianaSistersScreen {
     @Override
     public void resume() {
         super.resume();
-        Music music = Sounds.getInstance().getCurrentMusic();
+        Music music = map.sounds.getCurrentMusic();
         if (music != null) {
             music.play();
         }
@@ -92,7 +94,7 @@ public class GameScreen extends GianaSistersScreen {
     @Override
     public void pause() {
         super.pause();
-        Music music = Sounds.getInstance().getCurrentMusic();
+        Music music = map.sounds.getCurrentMusic();
         if (music != null) {
             music.pause();
         }
@@ -101,7 +103,7 @@ public class GameScreen extends GianaSistersScreen {
     @Override
     public void hide() {
         Gdx.app.debug("GianaSisters", "dispose game screen");
-        Sounds.getInstance().stop(LevelConf.values()[map.level].getMusic());
+        map.sounds.stop(LevelConf.values()[map.level].getMusic());
         controlRenderer.dispose();
     }
 

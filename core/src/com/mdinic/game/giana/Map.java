@@ -62,18 +62,22 @@ public class Map {
     Array<FixedTrap> fixedTraps = new Array<FixedTrap>();
     public EndDoor endDoor;
 
+    public Sounds sounds;
+
     public Map(Map oldMap) {
-        this(oldMap.level);
+        this(oldMap.level, oldMap.sounds);
 
         this.lives = oldMap.lives;
         this.diamondsCollected = oldMap.diamondsCollected;
         this.score = oldMap.score;
         this.giana.power = oldMap.giana.power;
+        this.sounds = oldMap.sounds;
     }
 
-    public Map(int level) {
+    public Map(int level, Sounds sounds) {
         time = 99;
         this.level = level;
+        this.sounds = sounds;
         loadBinary(level);
         if (giana == null) {
             throw new IllegalStateException("Giana not on the map");

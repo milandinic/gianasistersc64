@@ -8,17 +8,14 @@ import com.mdinic.game.giana.MapRenderer;
 public abstract class GianaSistersScreen implements Screen {
 
     protected final Game game;
+    protected final MapRenderer renderer;
 
     public static final int SCREEN_WIDTH = 480;
     public static final int LEVEL_COUNT = 25;
 
-    protected static MapRenderer renderer;
-
-    public GianaSistersScreen(Game game) {
+    public GianaSistersScreen(Game game, MapRenderer renderer) {
         this.game = game;
-        if (renderer == null) {
-            renderer = new MapRenderer();
-        }
+        this.renderer = renderer;
     }
 
     public GianaSistersC64 getGame() {

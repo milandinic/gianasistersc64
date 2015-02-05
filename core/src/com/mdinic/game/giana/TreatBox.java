@@ -57,7 +57,7 @@ public class TreatBox {
     }
 
     private void diamond() {
-        Sounds.getInstance().play(Sfx.TREAT_BOX_COIN);
+        map.sounds.play(Sfx.TREAT_BOX_COIN);
         active = false;
         map.collectDiamound();
         map.treatSmallDiamoinds.add(new SmallDiamoind(map, pos.x, pos.y));

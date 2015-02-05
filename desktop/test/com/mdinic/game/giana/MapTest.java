@@ -17,10 +17,12 @@ public class MapTest {
 
         LwjglNativesLoader.load();
 
+        Sounds sounds = new Sounds();
+
         Gdx.files = new LwjglFiles();
 
         for (int i = 0; i <= GianaSistersScreen.LEVEL_COUNT; i++) {
-            Map map = new Map(i);
+            Map map = new Map(i, sounds);
         }
 
     }

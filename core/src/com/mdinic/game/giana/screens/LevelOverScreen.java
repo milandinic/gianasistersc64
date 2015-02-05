@@ -12,7 +12,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.mdinic.game.giana.Map;
-import com.mdinic.game.giana.Sounds;
+import com.mdinic.game.giana.MapRenderer;
 import com.mdinic.game.giana.Sounds.BgMusic;
 
 public class LevelOverScreen extends GianaSistersScreen {
@@ -24,8 +24,8 @@ public class LevelOverScreen extends GianaSistersScreen {
     private final Map oldMap;
     private Animation yellowCristalAnim;
 
-    public LevelOverScreen(Game game, Map oldMap) {
-        super(game);
+    public LevelOverScreen(Game game, Map oldMap, MapRenderer renderer) {
+        super(game, renderer);
         this.oldMap = oldMap;
     }
 
@@ -45,7 +45,7 @@ public class LevelOverScreen extends GianaSistersScreen {
         yellowFont = generator.generateFont(parameter);
         yellowFont.setColor(new Color(0.87f, 0.95f, 0.47f, 1));
         generator.dispose();
-        Sounds.getInstance().play(BgMusic.END_LEVEL);
+        oldMap.sounds.play(BgMusic.END_LEVEL);
     }
 
     @Override
@@ -75,9 +75,9 @@ public class LevelOverScreen extends GianaSistersScreen {
 
         if (time > 3) {
             if (oldMap.level == LEVEL_COUNT) {
-                game.setScreen(new GameCompletedScreen(game, oldMap));
+                game.setScreen(new GameCompletedScreen(game, oldMap, renderer));
             } else {
-                game.setScreen(new LevelStartingScreen(game, oldMap));
+                game.setScreen(new LevelStartingScreen(game, oldMap, renderer));
             }
         }
     }

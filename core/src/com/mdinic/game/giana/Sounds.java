@@ -28,12 +28,6 @@ public class Sounds {
 
     private final Sound treatSfx;
 
-    private static Sounds INSTANCE = new Sounds();
-
-    public static Sounds getInstance() {
-        return INSTANCE;
-    }
-
     public enum Sfx {
         JUMP, KILL, DYING, POWERUP, BRICK_DESTROY, TREAT_BOX_COIN, DIAMOND, TREAT, FIRE_BULLET
     };
@@ -59,6 +53,26 @@ public class Sounds {
         treatBoxCoinSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/treatboxcoin.mp3"));
         treatSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/treat.mp3"));
         fireBulletSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/fire.mp3"));
+    }
+
+    public void dispose() {
+
+        introSfx.dispose();
+        startLevelSfx.dispose();
+        endLevelSfx.dispose();
+        musicLight.dispose();
+        musicFast.dispose();
+        highscores.dispose();
+
+        gianaJumpSfx.dispose();
+        gianaKillSfx.dispose();
+        gianaDyingSfx.dispose();
+        diamondSfx.dispose();
+        powerUpSfx.dispose();
+        brickDestroySfx.dispose();
+        treatBoxCoinSfx.dispose();
+        fireBulletSfx.dispose();
+        treatSfx.dispose();
     }
 
     public void setMute(boolean mute) {
