@@ -23,6 +23,7 @@ public class BonusGameScreen extends GianaSistersScreen {
         this.map.lives = oldMap.lives;
         this.map.score = oldMap.score;
         this.map.giana.stateTime = oldMap.giana.stateTime;
+        this.map.giana.power = oldMap.giana.power;
         this.map.time = oldMap.time;
         this.map.diamondsCollected = oldMap.diamondsCollected;
     }
