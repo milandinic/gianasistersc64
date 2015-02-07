@@ -10,7 +10,7 @@ public class GroundMonster extends Monster {
 
     int state = FORWARD;
 
-    public GroundMonster(Map map, float x, float y, GoundMonsterType type) {
+    public GroundMonster(GameMap map, float x, float y, GoundMonsterType type) {
         super(map, x, y);
         this.type = type;
         this.bounds.width = type.width;

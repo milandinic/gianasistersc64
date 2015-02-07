@@ -11,7 +11,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
-import com.mdinic.game.giana.Map;
+import com.mdinic.game.giana.GameMap;
 import com.mdinic.game.giana.MapRenderer;
 import com.mdinic.game.giana.Sounds.BgMusic;
 
@@ -21,10 +21,10 @@ public class LevelOverScreen extends GianaSistersScreen {
     private float time = 0;
     private float stateTime = 0;
     private SpriteBatch batch;
-    private final Map oldMap;
+    private final GameMap oldMap;
     private Animation yellowCristalAnim;
 
-    public LevelOverScreen(Game game, Map oldMap, MapRenderer renderer) {
+    public LevelOverScreen(Game game, GameMap oldMap, MapRenderer renderer) {
         super(game, renderer);
         this.oldMap = oldMap;
     }

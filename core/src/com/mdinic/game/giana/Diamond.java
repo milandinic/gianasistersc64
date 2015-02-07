@@ -10,9 +10,9 @@ public class Diamond {
     Rectangle bounds = new Rectangle();
     float stateTime = 0;
     boolean active = true;
-    Map map;
+    GameMap map;
 
-    public Diamond(Map map, float x, float y) {
+    public Diamond(GameMap map, float x, float y) {
         this.map = map;
         pos.x = x;
         pos.y = y;

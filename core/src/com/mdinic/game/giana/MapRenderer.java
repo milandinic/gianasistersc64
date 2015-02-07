@@ -24,7 +24,7 @@ import com.mdinic.game.giana.LevelConf.BrickColor;
 public class MapRenderer {
 
     public static final int SCENE_HEIGHT = 16;
-    Map map;
+    GameMap map;
     OrthographicCamera cam;
 
     float stateTime = 0;
@@ -139,6 +139,9 @@ public class MapRenderer {
         simpleImageTextureRegions.put(SimpleImageType.BLUE_WIRE, new TextureRegion(sprites, 384, 221, 16, 16));
         simpleImageTextureRegions.put(SimpleImageType.SMALL_COLUMN, new TextureRegion(sprites, 201, 44, 25, 25));
         simpleImageTextureRegions.put(SimpleImageType.STATIC_ALIEN, new TextureRegion(sprites, 381, 177, 24, 32));
+        simpleImageTextureRegions.put(SimpleImageType.SPIRAL_WAGON, new TextureRegion(sprites, 15, 397, 72, 7));
+        simpleImageTextureRegions.put(SimpleImageType.SPIRAL, new TextureRegion(sprites, 40, 374, 24, 23));
+        simpleImageTextureRegions.put(SimpleImageType.MAGICWATER, new TextureRegion(sprites, 227, 270, 28, 3));
 
         smallDiamondAnim = new Animation(0.1f, new TextureRegion(new Texture(
                 Gdx.files.internal("data/smalldiamond.png"))).split(8, 8)[0]);
@@ -278,9 +281,12 @@ public class MapRenderer {
         generator.dispose(); // don't forget to dispose to avoid memory leaks!
     }
 
-    public void setMap(Map map) {
+    public void setMap(GameMap map) {
         this.map = map;
         this.cam.position.set(map.giana.pos.x, map.giana.pos.y, 0);
+
+        cam.position.set(10, map.tiles[0].length - SCENE_HEIGHT / 2 + 1, 0);
+        cam.update();
     }
 
     public void render(float deltaTime) {
@@ -295,14 +301,16 @@ public class MapRenderer {
         }
 
         cam.position.lerp(lerpTarget.set(camX, map.tiles[0].length - SCENE_HEIGHT / 2 + 1, 0), 4f * deltaTime);
-        cam.update();
+        if (!map.bonus)
+            cam.update();
 
         stateTime += deltaTime;
         batch.setProjectionMatrix(cam.combined);
         batch.begin();
 
-        batch.draw(endDoor, map.endDoor.bounds.x, map.endDoor.bounds.y, map.endDoor.bounds.width,
-                map.endDoor.bounds.height);
+        if (map.endDoor != null)
+            batch.draw(endDoor, map.endDoor.bounds.x, map.endDoor.bounds.y, map.endDoor.bounds.width,
+                    map.endDoor.bounds.height);
 
         renderFixedTraps();
         renderPiranhas();
@@ -390,43 +398,54 @@ public class MapRenderer {
                 }
             }
 
-            if (map.giana.state == GianaState.RUN) {
+            switch (map.giana.state) {
+            case RUN:
                 if (map.giana.dir == Giana.LEFT)
                     anim = gianaBigLeft;
                 else
                     anim = gianaBigRight;
-            }
-            if (map.giana.state == GianaState.IDLE) {
+                break;
+            case IDLE:
+            case RIDING:
                 if (map.giana.dir == Giana.LEFT)
                     anim = gianaBigIdleLeft;
                 else
                     anim = gianaBigIdleRight;
-            }
-            if (map.giana.state == GianaState.JUMP) {
+                break;
+            case JUMP:
                 if (map.giana.dir == Giana.LEFT)
                     anim = gianaBigJumpLeft;
                 else
                     anim = gianaBigJumpRight;
+                break;
+            default:
+                break;
             }
         } else {
-            if (map.giana.state == GianaState.RUN) {
+            switch (map.giana.state) {
+            case RUN:
                 if (map.giana.dir == Giana.LEFT)
                     anim = gianaLeft;
                 else
                     anim = gianaRight;
-            }
-            if (map.giana.state == GianaState.IDLE) {
+                break;
+            case RIDING:
+            case IDLE:
                 if (map.giana.dir == Giana.LEFT)
                     anim = gianaIdleLeft;
                 else
                     anim = gianaIdleRight;
-            }
-            if (map.giana.state == GianaState.JUMP) {
+                break;
+            case JUMP:
                 if (map.giana.dir == Giana.LEFT)
                     anim = gianaJumpLeft;
                 else
                     anim = gianaJumpRight;
+                break;
+            default:
+                break;
             }
+
         }
 
         if (map.giana.state == GianaState.GROW) {
@@ -462,7 +481,14 @@ public class MapRenderer {
     }
 
     private void renderTreatBoxes() {
-        BrickColor color = LevelConf.values()[map.level].getBrickColor();
+
+        BrickColor color;
+        if (map.bonus) {
+            color = BonusLevelConf.BONUS.getBrickColor();
+        } else {
+            color = LevelConf.values()[map.level].getBrickColor();
+        }
+
         for (TreatBox box : map.treatBoxes) {
             if (box.active) {
                 batch.draw(treatBoxAnim.get(color).getKeyFrame(box.stateTime, true), box.pos.x, box.pos.y, 1, 1);
@@ -473,13 +499,27 @@ public class MapRenderer {
     }
 
     private void renderSimpleImages() {
-        for (SimpleImage simpleImage : map.simpleImages) {
-            TextureRegion region = simpleImageTextureRegions.get(simpleImage.type);
+        SimpleImageType[] values = SimpleImageType.values();
+        for (SimpleImageType simpleImageType : values) {
+            TextureRegion region = simpleImageTextureRegions.get(simpleImageType);
             if (region != null) {
-                batch.draw(region, simpleImage.bounds.x, simpleImage.bounds.y, simpleImage.bounds.width,
-                        simpleImage.bounds.height);
+                if (map.simpleImages.containsKey(simpleImageType)) {
+                    List<SimpleImage> list = map.simpleImages.get(simpleImageType);
+                    for (SimpleImage simpleImage : list) {
+
+                        if (simpleImageType == SimpleImageType.SPIRAL_WAGON) {
+                            batch.draw(region, simpleImage.bounds.x, simpleImage.bounds.y, simpleImage.bounds.width,
+                                    -simpleImage.bounds.height);
+                        } else {
+                            batch.draw(region, simpleImage.bounds.x, simpleImage.bounds.y, simpleImage.bounds.width,
+                                    simpleImage.bounds.height);
+                        }
+
+                    }
+                }
             }
         }
+
     }
 
     private void renderFixedTraps() {
@@ -521,7 +561,13 @@ public class MapRenderer {
     }
 
     private void renderQuickSand() {
-        BrickColor color = LevelConf.values()[map.level].getBrickColor();
+        BrickColor color;
+        if (map.bonus) {
+            color = BonusLevelConf.BONUS.getBrickColor();
+        } else {
+            color = LevelConf.values()[map.level].getBrickColor();
+        }
+
         for (QuickSand sand : map.quickSandArray) {
             if (sand.active) {
                 TextureRegion frame = quicksandAnim.get(color).getKeyFrame(sand.stateTime, false);
@@ -552,7 +598,13 @@ public class MapRenderer {
     }
 
     private void drawBlocks() {
-        BrickColor color = LevelConf.values()[map.level].getBrickColor();
+        BrickColor color;
+        if (map.bonus) {
+            color = BonusLevelConf.BONUS.getBrickColor();
+        } else {
+            color = LevelConf.values()[map.level].getBrickColor();
+        }
+
         for (Tile tile : map.tileArray) {
             if (tile.active) {
                 switch (tile.state) {

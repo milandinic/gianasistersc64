@@ -23,7 +23,7 @@ public class Treat {
     TreatState state;
     public float stateTime = 0;
     int dir = RIGHT;
-    Map map;
+    GameMap map;
     boolean active = true;
 
     Rectangle[] r = { new Rectangle(), new Rectangle(), new Rectangle(), new Rectangle() };
@@ -32,7 +32,7 @@ public class Treat {
         SPAWN, RUNNING
     }
 
-    public Treat(Map map, float x, float y) {
+    public Treat(GameMap map, float x, float y) {
         this.map = map;
         pos.x = x;
         pos.y = y;
@@ -143,7 +143,7 @@ public class Treat {
         int tile2 = 0;
         int tile4 = 0;
 
-        if (p1x <= 0 || p2x <= 0 || p4x <= 0 || bounds.x < map.giana.maxX - ((Map.MAP_WIDTH / 2) + 2)) {
+        if (p1x <= 0 || p2x <= 0 || p4x <= 0 || bounds.x < map.giana.maxX - ((GameMap.MAP_WIDTH / 2) + 2)) {
             active = false;
             return;
         }

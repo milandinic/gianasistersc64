@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
-import com.mdinic.game.giana.Map;
+import com.mdinic.game.giana.GameMap;
 import com.mdinic.game.giana.MapRenderer;
 
 public class GameCompletedScreen extends GianaSistersScreen {
@@ -18,9 +18,9 @@ public class GameCompletedScreen extends GianaSistersScreen {
     private float time = 0;
     private SpriteBatch batch;
 
-    private final Map oldMap;
+    private final GameMap oldMap;
 
-    public GameCompletedScreen(Game game, Map oldMap, MapRenderer renderer) {
+    public GameCompletedScreen(Game game, GameMap oldMap, MapRenderer renderer) {
         super(game, renderer);
         this.oldMap = oldMap;
     }

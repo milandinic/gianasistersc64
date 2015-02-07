@@ -13,7 +13,7 @@ public class Fish {
 
     int state = BACKWARD;
     float stateTime = 0;
-    Map map;
+    GameMap map;
     Rectangle bounds = new Rectangle();
 
     Vector2 vel = new Vector2();
@@ -22,7 +22,7 @@ public class Fish {
 
     int min = 4;
 
-    public Fish(Map map, float x, float y) {
+    public Fish(GameMap map, float x, float y) {
 
         this.map = map;
         pos.x = x;

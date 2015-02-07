@@ -11,14 +11,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
-import com.mdinic.game.giana.Map;
+import com.mdinic.game.giana.GameMap;
 import com.mdinic.game.giana.MapRenderer;
 import com.mdinic.game.giana.service.Score;
 
 public class EnterYourNameScreen extends GianaSistersScreen {
     private BitmapFont yellowFont;
 
-    private final Map oldMap;
+    private final GameMap oldMap;
 
     SpriteBatch batch;
 
@@ -27,7 +27,7 @@ public class EnterYourNameScreen extends GianaSistersScreen {
 
     private boolean processKeys = true;
 
-    public EnterYourNameScreen(Game game, Map oldMap, MapRenderer renderer) {
+    public EnterYourNameScreen(Game game, GameMap oldMap, MapRenderer renderer) {
         super(game, renderer);
         this.oldMap = oldMap;
     }

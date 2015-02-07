@@ -12,17 +12,17 @@ public class Giana {
     static final int LEFT = -1;
     static final int RIGHT = 1;
     static final float ACCELERATION = 20f;
-    static final float JUMP_VELOCITY = 12;
+    public static final float JUMP_VELOCITY = 12;
     static final float GRAVITY = 20.0f;
     static final float MAX_VEL = 6f;
     static final float DAMP = 0.90f;
 
     Rectangle nowayCollidableRect = new Rectangle(-1, -1, 0, 0);
 
-    Vector2 pos = new Vector2();
+    public Vector2 pos = new Vector2();
     float maxX;
     Vector2 accel = new Vector2();
-    Vector2 vel = new Vector2();
+    public Vector2 vel = new Vector2();
     public Rectangle bounds = new Rectangle();
 
     public Rectangle killerBounds = new Rectangle();
@@ -31,8 +31,8 @@ public class Giana {
     public GianaState state;
     public float stateTime = 0;
     int dir = RIGHT;
-    Map map;
-    boolean grounded = false;
+    GameMap map;
+    public boolean grounded = false;
     boolean active = true;
     boolean processKeys = true;
 
@@ -44,7 +44,7 @@ public class Giana {
 
     Bullet bullet = null;
 
-    public Giana(Map map, float x, float y) {
+    public Giana(GameMap map, float x, float y) {
         this.map = map;
         pos.x = x;
         pos.y = y;
@@ -109,7 +109,12 @@ public class Giana {
             }
         } else {
 
-            processKeys();
+            if (state == GianaState.RIDING) {
+                return;
+            } else {
+
+                processKeys();
+            }
 
             if (map.demo) {
                 bounds.x += 0.1f;
@@ -129,11 +134,6 @@ public class Giana {
                 tryMove();
                 vel.scl(1.0f / deltaTime);
             }
-
-            /*
-             * if (state == GianaState.SPAWN) { if (stateTime > 0.4f) { state =
-             * GianaState.IDLE; } }
-             */
 
             if (map.tiles[0].length - bounds.y >= MapRenderer.SCENE_HEIGHT - 1) {
                 map.giana.stateTime = 0;
@@ -316,7 +316,7 @@ public class Giana {
         if (pos.x < 0) {
             // prevent move to less then zero
             r[1].set(p2x, p2y, 0, 1);
-        } else if (pos.x < maxX - ((Map.MAP_WIDTH / 2) + 2)) {
+        } else if (pos.x < maxX - ((GameMap.MAP_WIDTH / 2) + 2) && !map.bonus) {
             // prevent move in part the game that is passed
             r[1].set(p2x, p2y, 0, 0.3f);
             bounds.x += 0.01f;

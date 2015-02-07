@@ -22,7 +22,7 @@ public class MapTest {
         Gdx.files = new LwjglFiles();
 
         for (int i = 0; i <= GianaSistersScreen.LEVEL_COUNT; i++) {
-            Map map = new Map(i, sounds);
+            GameMap map = new GameMap(i, sounds);
         }
 
     }

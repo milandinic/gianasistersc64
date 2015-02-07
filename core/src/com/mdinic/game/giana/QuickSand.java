@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class QuickSand {
-    Map map;
+    GameMap map;
     Vector2 pos = new Vector2();
     Rectangle bounds = new Rectangle();
     boolean active = true;
@@ -16,7 +16,7 @@ public class QuickSand {
 
     State state = State.NORMAL;
 
-    public QuickSand(Map map, float x, float y) {
+    public QuickSand(GameMap map, float x, float y) {
         this.map = map;
         pos.x = x;
         pos.y = y;

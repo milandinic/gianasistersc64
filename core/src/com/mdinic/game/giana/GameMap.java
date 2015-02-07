@@ -1,14 +1,16 @@
 package com.mdinic.game.giana;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.utils.Array;
 import com.mdinic.game.giana.TreatBox.TreatType;
 
-public class Map {
+public class GameMap {
 
     static int MAP_HEIGHT = 16;
     static int MAP_WIDTH = 16;
@@ -40,7 +42,7 @@ public class Map {
     public int lives = 3;
     public int diamondsCollected;
     public int level;
-    public int time;
+    public int time = 99;
     public int score;
 
     public boolean demo = false;
@@ -51,7 +53,7 @@ public class Map {
     Array<Diamond> diamonds = new Array<Diamond>();
     Array<TreatBox> treatBoxes = new Array<TreatBox>();
     Array<GroundMonster> groundMonsters = new Array<GroundMonster>();
-    Array<SimpleImage> simpleImages = new Array<SimpleImage>();
+    Map<SimpleImageType, List<SimpleImage>> simpleImages = new HashMap<SimpleImageType, List<SimpleImage>>();
     Array<Treat> treats = new Array<Treat>();
     Array<SmallDiamoind> treatSmallDiamoinds = new Array<SmallDiamoind>();
     Array<Tile> tileArray = new Array<Tile>();
@@ -61,10 +63,34 @@ public class Map {
     Array<Fish> fishes = new Array<Fish>();
     Array<FixedTrap> fixedTraps = new Array<FixedTrap>();
     public EndDoor endDoor;
+    public SimpleImage bonusLevelEndDoor;
+    public SimpleImage bonusLevelDoor;
 
     public Sounds sounds;
 
-    public Map(Map oldMap) {
+    int mapLength = 150;
+    boolean bonus = false;
+    private int pixmapHeight;
+
+    public GameMap(int level, Sounds sounds, boolean bonusMap) {
+        mapLength = 24;
+        this.bonus = bonusMap;
+
+        this.level = level;
+        this.sounds = sounds;
+        loadBinary(level, "bonuslevels");
+
+        if (giana == null) {
+            throw new IllegalStateException("Giana not on the map");
+        }
+
+        colidableColors.add(TREAT_BOX);
+        colidableColors.add(TREAT_BOX_BALL);
+        colidableColors.add(TILE);
+        colidableColors.add(QUICK_SAND);
+    }
+
+    public GameMap(GameMap oldMap) {
         this(oldMap.level, oldMap.sounds);
 
         this.lives = oldMap.lives;
@@ -74,11 +100,19 @@ public class Map {
         this.sounds = oldMap.sounds;
     }
 
-    public Map(int level, Sounds sounds) {
-        time = 99;
+    public void turnBonusDoorIntoSand() {
+        quickSandArray.add(new QuickSand(this, bonusLevelDoor.bounds.x, bonusLevelDoor.bounds.y));
+        int y = pixmapHeight - 1 - (int) bonusLevelDoor.bounds.y;
+        tiles[(int) bonusLevelDoor.bounds.x][y] = QUICK_SAND;
+
+        bonusLevelDoor.bounds.width = 0;
+        bonusLevelDoor.bounds.height = 0;
+    }
+
+    public GameMap(int level, Sounds sounds) {
         this.level = level;
         this.sounds = sounds;
-        loadBinary(level);
+        loadBinary(level, "levels");
         if (giana == null) {
             throw new IllegalStateException("Giana not on the map");
         }
@@ -105,11 +139,17 @@ public class Map {
         return colidableColors.contains(value) || SimpleImageType.containsColor(value) != null;
     }
 
-    public void loadBinary(int level) {
-        Pixmap pixmap = new Pixmap(Gdx.files.internal("data/levels.png"));
+    public void loadBinary(int level, String filename) {
+        Pixmap pixmap = new Pixmap(Gdx.files.internal("data/" + filename + ".png"));
 
         // background color
-        int pix = LevelConf.values()[level].getBackgroundColor();
+        int pix;
+        if (bonus) {
+            pix = BonusLevelConf.BONUS.getBackgroundColor();
+        } else {
+            pix = LevelConf.values()[level].getBackgroundColor();
+        }
+
         // (pixmap.getPixel(0, level * LEVEL_PIXELBUFFER) >>> 8) & 0xffffff;
         r = (pix & 0xff0000) >>> 16;
         g = (pix & 0x00ff00) >>> 8;
@@ -118,13 +158,14 @@ public class Map {
         r /= 255f;
         g /= 255f;
         b /= 255f;
+        pixmapHeight = pixmap.getHeight();
 
-        tiles = new int[pixmap.getWidth()][pixmap.getHeight()];
+        tiles = new int[pixmap.getWidth()][pixmapHeight];
         for (int y = 0; y < MAP_HEIGHT; y++) {
 
-            for (int x = 0; x < 150; x++) {
+            for (int x = 0; x < mapLength; x++) {
                 pix = (pixmap.getPixel(x, y + (level * LEVEL_PIXELBUFFER)) >>> 8) & 0xffffff;
-                int newY = pixmap.getHeight() - 1 - y;
+                int newY = pixmapHeight - 1 - y;
                 if (match(pix, START)) {
                     giana = new Giana(this, x, newY);
                 } else if (match(pix, DIAMOND)) {
@@ -141,7 +182,26 @@ public class Map {
 
                 } else if (SimpleImageType.containsColor(pix) != null) {
                     SimpleImageType imageType = SimpleImageType.containsColor(pix);
-                    simpleImages.add(new SimpleImage(x, newY, imageType));
+
+                    SimpleImage simpleImage = new SimpleImage(x, newY, imageType);
+
+                    switch (imageType) {
+                    case SPIRAL_WAGON:
+                        bonusLevelEndDoor = simpleImage;
+                        break;
+                    case MAGICWATER:
+                        bonusLevelDoor = simpleImage;
+                        break;
+                    default:
+                        break;
+                    }
+                    if (simpleImages.containsKey(imageType)) {
+                        simpleImages.get(imageType).add(simpleImage);
+                    } else {
+                        simpleImages.put(imageType, new ArrayList<SimpleImage>());
+                        simpleImages.get(imageType).add(simpleImage);
+                    }
+
                     if (imageType.colidable) {
                         for (int j = 0; j < imageType.height; j++) {
                             for (int i = 0; i < imageType.width; i++) {

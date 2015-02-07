@@ -8,11 +8,11 @@ public class FixedTrap {
     Vector2 pos = new Vector2();
     Rectangle bounds = new Rectangle();
     float stateTime = 0;
-    Map map;
+    GameMap map;
 
     FixedTrapType type;
 
-    public FixedTrap(Map map, float x, float y, FixedTrapType type) {
+    public FixedTrap(GameMap map, float x, float y, FixedTrapType type) {
         this.map = map;
         pos.x = type.moveHalfX ? x + 0.5f : x;
         pos.y = y;

@@ -10,7 +10,7 @@ public class TreatBox {
     Rectangle bounds = new Rectangle();
     float stateTime = 0;
     boolean active = true;
-    Map map;
+    GameMap map;
 
     enum TreatType {
         DIAMOND, BALL
@@ -18,7 +18,7 @@ public class TreatBox {
 
     TreatType type = TreatType.DIAMOND;
 
-    public TreatBox(Map map, float x, float y, TreatType type) {
+    public TreatBox(GameMap map, float x, float y, TreatType type) {
         super();
         this.type = type;
         this.map = map;

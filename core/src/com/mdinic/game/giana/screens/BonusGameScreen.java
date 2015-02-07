@@ -5,36 +5,26 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.mdinic.game.giana.GameMap;
+import com.mdinic.game.giana.Giana;
 import com.mdinic.game.giana.GianaState;
-import com.mdinic.game.giana.LevelConf;
 import com.mdinic.game.giana.MapRenderer;
 import com.mdinic.game.giana.OnscreenControlRenderer;
-import com.mdinic.game.giana.Sounds;
 
-public class GameScreen extends GianaSistersScreen {
+public class BonusGameScreen extends GianaSistersScreen {
     GameMap map;
+    GameMap oldMap;
     OnscreenControlRenderer controlRenderer;
 
-    boolean stopMusic = true;
-    boolean fromBonus = false;
-
-    public GameScreen(Game game, int level, Sounds sounds, MapRenderer renderer) {
+    public BonusGameScreen(Game game, GameMap oldMap, MapRenderer renderer) {
         super(game, renderer);
-
-        map = new GameMap(level, sounds);
-        renderer.setMap(map);
-    }
-
-    // from bonus
-    public GameScreen(Game game, GameMap oldMap, MapRenderer renderer, boolean fromBonus) {
-        super(game, renderer);
-        this.fromBonus = fromBonus;
-        map = oldMap;
-    }
-
-    public GameScreen(Game game, GameMap oldMap, MapRenderer renderer) {
-        super(game, renderer);
-        map = new GameMap(oldMap);
+        this.oldMap = oldMap;
+        this.map = new GameMap(0, oldMap.sounds, true);
+        this.map.level = oldMap.level;
+        this.map.lives = oldMap.lives;
+        this.map.score = oldMap.score;
+        this.map.giana.stateTime = oldMap.giana.stateTime;
+        this.map.time = oldMap.time;
+        this.map.diamondsCollected = oldMap.diamondsCollected;
     }
 
     @Override
@@ -42,8 +32,7 @@ public class GameScreen extends GianaSistersScreen {
         renderer.setMap(map);
         controlRenderer = new OnscreenControlRenderer(map, this);
 
-        if (!fromBonus)
-            map.sounds.play(LevelConf.values()[map.level].getMusic());
+        // map.sounds.play();
     }
 
     @Override
@@ -75,24 +64,37 @@ public class GameScreen extends GianaSistersScreen {
         Gdx.gl.glClearColor(map.r, map.g, map.b, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         renderer.render(delta);
-        if (map.level > 0)
-            controlRenderer.render();
 
-        if (map.endDoor != null) {
-            if (map.giana.bounds.overlaps(map.endDoor.bounds)) {
-                if (map.level == 0) {
-                    game.setScreen(new HighScoreScreen(game, map.sounds, renderer));
-                } else {
-                    game.setScreen(new LevelOverScreen(game, map, renderer));
-                }
+        controlRenderer.render();
+
+        if (map.bonusLevelEndDoor != null) {
+            if (map.giana.state != GianaState.RIDING && map.giana.bounds.overlaps(map.bonusLevelEndDoor.bounds)) {
+                map.giana.state = GianaState.RIDING;
+                map.giana.bounds.y = map.bonusLevelEndDoor.bounds.y;
             }
         }
 
-        if (map.bonusLevelDoor != null) {
-            if (map.giana.state != GianaState.DYING && map.giana.killerBounds.overlaps(map.bonusLevelDoor.bounds)) {
-                stopMusic = false;
-                game.setScreen(new BonusGameScreen(game, map, renderer));
+        if (map.giana.state == GianaState.RIDING) {
+            if (map.giana.pos.y >= 158) {
+
+                oldMap.giana.pos.y += 2;
+                oldMap.giana.bounds.y += 2;
+                oldMap.giana.state = GianaState.JUMP;
+                oldMap.giana.vel.y = Giana.JUMP_VELOCITY;
+                oldMap.giana.grounded = false;
+                oldMap.giana.stateTime = map.giana.stateTime;
+                oldMap.lives = map.lives;
+                oldMap.score = map.score;
+                oldMap.time = map.time;
+                oldMap.diamondsCollected = map.diamondsCollected;
+                oldMap.turnBonusDoorIntoSand();
+                game.setScreen(new GameScreen(game, oldMap, renderer, true));
+                return;
             }
+            map.bonusLevelEndDoor.bounds.y += 0.1f;
+            map.giana.bounds.y += 0.1f;
+            map.giana.pos.y = map.giana.bounds.y;
+
         }
 
     }
@@ -118,8 +120,7 @@ public class GameScreen extends GianaSistersScreen {
     @Override
     public void hide() {
         Gdx.app.debug("GianaSisters", "dispose game screen");
-        if (stopMusic)
-            map.sounds.stop(LevelConf.values()[map.level].getMusic());
+        // map.sounds.stop(LevelConf.values()[map.level].getMusic());
         controlRenderer.dispose();
     }
 

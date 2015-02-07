@@ -9,7 +9,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.mdinic.game.giana.screens.GianaSistersScreen;
 
 public class OnscreenControlRenderer {
-    Map map;
+    GameMap map;
     SpriteBatch batch;
 
     TextureRegion left;
@@ -26,7 +26,7 @@ public class OnscreenControlRenderer {
     int soundX = 480 - soundSize;
     int soundY = 320 - soundSize - 20;
 
-    public OnscreenControlRenderer(Map map, GianaSistersScreen screen) {
+    public OnscreenControlRenderer(GameMap map, GianaSistersScreen screen) {
         this.map = map;
         this.screen = screen;
         loadAssets();

@@ -6,7 +6,7 @@ import com.mdinic.game.giana.Sounds.Sfx;
 
 public class Tile {
 
-    Map map;
+    GameMap map;
     Vector2 pos = new Vector2();
     Rectangle bounds = new Rectangle();
     boolean active = true;
@@ -18,7 +18,7 @@ public class Tile {
 
     State state = State.NORMAL;
 
-    public Tile(Map map, float x, float y) {
+    public Tile(GameMap map, float x, float y) {
         this.map = map;
         pos.x = x;
         pos.y = y;

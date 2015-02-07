@@ -10,7 +10,7 @@ public class Monster {
     public boolean alive = true;
 
     public float stateTime = 0;
-    public Map map;
+    public GameMap map;
     public Rectangle bounds = new Rectangle();
 
     public Vector2 vel = new Vector2();
@@ -19,7 +19,7 @@ public class Monster {
     public int fx = 0;
     public int bx = 0;
 
-    public Monster(Map map, float x, float y) {
+    public Monster(GameMap map, float x, float y) {
 
         this.map = map;
         pos.x = x;

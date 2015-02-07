@@ -8,7 +8,7 @@ public class Bee extends Monster {
 
     int state = FORWARD;
 
-    public Bee(Map map, float x, float y) {
+    public Bee(GameMap map, float x, float y) {
         super(map, x, y);
         vel.set(-FORWARD_VEL, 0);
     }
@@ -20,11 +20,11 @@ public class Bee extends Monster {
         int left = map.tiles[ix - 1][map.tiles[0].length - 1 - iy];
         int right = map.tiles[ix + 1][map.tiles[0].length - 1 - iy];
 
-        if (left == Map.TILE) {
+        if (left == GameMap.TILE) {
             vel.x = FORWARD_VEL;
             fx = 1;
         }
-        if (right == Map.TILE) {
+        if (right == GameMap.TILE) {
             vel.x = -FORWARD_VEL;
             bx = 1;
         }

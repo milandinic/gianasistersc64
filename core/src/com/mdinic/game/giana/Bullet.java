@@ -9,7 +9,7 @@ public class Bullet {
 
     static final float DISTANCE = 8;
 
-    Map map;
+    GameMap map;
     boolean homing = true;
     float time = 0;
     Vector2 startPos = new Vector2();
@@ -29,7 +29,7 @@ public class Bullet {
     int sign;
     boolean active = true;
 
-    public Bullet(Map map, Vector2 gianaPos, int sign, boolean homing) {
+    public Bullet(GameMap map, Vector2 gianaPos, int sign, boolean homing) {
         float x = gianaPos.x;
         float y = gianaPos.y + 0.7f;
         this.map = map;
@@ -181,19 +181,19 @@ public class Bullet {
         int tile3 = tiles[p3x][map.tiles[0].length - 1 - p3y];
         int tile4 = tiles[p4x][map.tiles[0].length - 1 - p4y];
 
-        if (tile1 != Map.EMPTY)
+        if (tile1 != GameMap.EMPTY)
             r[0].set(p1x, p1y, 1, 1);
         else
             r[0].set(-1, -1, 0, 0);
-        if (tile2 != Map.EMPTY)
+        if (tile2 != GameMap.EMPTY)
             r[1].set(p2x, p2y, 1, 1);
         else
             r[1].set(-1, -1, 0, 0);
-        if (tile3 != Map.EMPTY)
+        if (tile3 != GameMap.EMPTY)
             r[2].set(p3x, p3y, 1, 1);
         else
             r[2].set(-1, -1, 0, 0);
-        if (tile4 != Map.EMPTY)
+        if (tile4 != GameMap.EMPTY)
             r[3].set(p4x, p4y, 1, 1);
         else
             r[3].set(-1, -1, 0, 0);

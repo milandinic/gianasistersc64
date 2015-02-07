@@ -7,12 +7,12 @@ public class SmallDiamoind {
     float stateTime = 0;
     Vector2 pos = new Vector2();
     Vector2 startPos = new Vector2();
-    Map map;
+    GameMap map;
     boolean active = true;
 
     boolean initSecondFly = true;
 
-    public SmallDiamoind(Map map, float x, float y) {
+    public SmallDiamoind(GameMap map, float x, float y) {
         super();
         this.map = map;
         pos.x = x + 0.3f;
