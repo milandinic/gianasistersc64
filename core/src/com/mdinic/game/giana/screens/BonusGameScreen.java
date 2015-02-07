@@ -18,7 +18,7 @@ public class BonusGameScreen extends GianaSistersScreen {
     public BonusGameScreen(Game game, GameMap oldMap, MapRenderer renderer) {
         super(game, renderer);
         this.oldMap = oldMap;
-        this.map = new GameMap(0, oldMap.sounds, true);
+        this.map = new GameMap(oldMap.level % 5, oldMap.sounds, true);
         this.map.level = oldMap.level;
         this.map.lives = oldMap.lives;
         this.map.score = oldMap.score;

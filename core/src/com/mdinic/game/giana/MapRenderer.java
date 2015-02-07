@@ -77,6 +77,7 @@ public class MapRenderer {
     private final Animation piranhaDownAnim;
     private final Animation waspRightAnim;
     private final Animation waspLeftAnim;
+    public final Animation yellowCristalAnim;
     java.util.Map<BrickColor, Animation> quicksandAnim = new HashMap<LevelConf.BrickColor, Animation>();
 
     java.util.Map<BrickColor, Animation> brickAnim = new HashMap<LevelConf.BrickColor, Animation>();
@@ -90,6 +91,9 @@ public class MapRenderer {
 
         fontBatch = new SpriteBatch();
         fontBatch.getProjectionMatrix().setToOrtho2D(0, 0, 480, 320);
+
+        yellowCristalAnim = new Animation(0.3f, new TextureRegion(new Texture(
+                Gdx.files.internal("data/yellow-cristal.png"))).split(11, 11)[0]);
 
         Texture sprites = new Texture(Gdx.files.internal("data/sprites.png"));
 
@@ -285,7 +289,13 @@ public class MapRenderer {
         this.map = map;
         this.cam.position.set(map.giana.pos.x, map.giana.pos.y, 0);
 
-        cam.position.set(10, map.tiles[0].length - SCENE_HEIGHT / 2 + 1, 0);
+        if (map.bonus)
+            cam.position.set(10, map.tiles[0].length - SCENE_HEIGHT / 2 + 1, 0);
+        else {
+            lerpTarget.set(map.giana.maxX, map.tiles[0].length - SCENE_HEIGHT / 2 + 1, 0);
+            cam.position.set(lerpTarget);
+        }
+
         cam.update();
     }
 
@@ -714,6 +724,7 @@ public class MapRenderer {
         disposeAnimation(lightningAnim);
         disposeAnimation(doubleLightningAnim);
         disposeAnimation(whiteCristalAnim);
+        disposeAnimation(yellowCristalAnim);
 
         batch.dispose();
     }

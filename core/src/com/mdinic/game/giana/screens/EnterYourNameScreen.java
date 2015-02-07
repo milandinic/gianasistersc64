@@ -110,7 +110,10 @@ public class EnterYourNameScreen extends GianaSistersScreen {
 
     @Override
     public void hide() {
+        left.getTexture().dispose();
+        right.getTexture().dispose();
         yellowFont.dispose();
+        batch.dispose();
     }
 
 }

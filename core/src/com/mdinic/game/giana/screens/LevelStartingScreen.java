@@ -66,5 +66,6 @@ public class LevelStartingScreen extends GianaSistersScreen {
     @Override
     public void hide() {
         batch.dispose();
+        yellowFont.dispose();
     }
 }

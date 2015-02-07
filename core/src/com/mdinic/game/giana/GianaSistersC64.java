@@ -1,7 +1,7 @@
 package com.mdinic.game.giana;
 
 import com.badlogic.gdx.Game;
-import com.mdinic.game.giana.screens.GameScreen;
+import com.mdinic.game.giana.screens.IntroScreen;
 import com.mdinic.game.giana.service.HighScoreService;
 import com.mdinic.game.giana.service.SettingsService;
 
@@ -13,7 +13,6 @@ public class GianaSistersC64 extends Game {
     MapRenderer renderer;
 
     public GianaSistersC64() {
-
         super();
     }
 
@@ -21,7 +20,8 @@ public class GianaSistersC64 extends Game {
     public void create() {
         sounds = new Sounds();
         renderer = new MapRenderer();
-        setScreen(new GameScreen(this, new Map(23, sounds), renderer));
+        // setScreen(new GameScreen(this, new GameMap(22, sounds), renderer));
+        setScreen(new IntroScreen(this, sounds, renderer));
     }
 
     @Override
@@ -29,6 +29,9 @@ public class GianaSistersC64 extends Game {
         super.dispose();
         sounds.dispose();
         renderer.dispose();
+
+        sounds = null;
+        renderer = null;
     }
 
     public HighScoreService getHighScoreService() {
