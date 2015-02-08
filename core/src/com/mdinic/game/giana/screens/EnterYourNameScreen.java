@@ -3,20 +3,15 @@ package com.mdinic.game.giana.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.FreeTypeFontParameter;
 import com.mdinic.game.giana.GameMap;
 import com.mdinic.game.giana.MapRenderer;
 import com.mdinic.game.giana.service.Score;
 
 public class EnterYourNameScreen extends GianaSistersScreen {
-    private BitmapFont yellowFont;
 
     private final GameMap oldMap;
 
@@ -40,17 +35,8 @@ public class EnterYourNameScreen extends GianaSistersScreen {
         right = buttons[0];
         left = buttons[1];
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/Giana.ttf"));
-        FreeTypeFontParameter parameter = new FreeTypeFontParameter();
-
-        parameter.size = 12;
-        yellowFont = generator.generateFont(parameter);
-
-        yellowFont.setColor(new Color(0.87f, 0.95f, 0.47f, 1));
-        generator.dispose();
-
         batch = new SpriteBatch();
-        batch.getProjectionMatrix().setToOrtho2D(0, 0, 480, 320);
+        batch.getProjectionMatrix().setToOrtho2D(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     }
 
     @Override
@@ -62,10 +48,10 @@ public class EnterYourNameScreen extends GianaSistersScreen {
 
         batch.draw(left, 0, 0);
 
-        yellowFont.draw(batch, "    CONGRATULATION!", 100, 220);
-        yellowFont.draw(batch, "YOU CAN TYPE YOUR NAME", 100, 200);
-        yellowFont.draw(batch, "  IN THE HALL OF FAME", 100, 180);
-        yellowFont.draw(batch, String.format("   YOUR SCORE %07d", oldMap.score), 100, 140);
+        renderer.yellowFont12.draw(batch, "    CONGRATULATION!", 100, 220);
+        renderer.yellowFont12.draw(batch, "YOU CAN TYPE YOUR NAME", 100, 200);
+        renderer.yellowFont12.draw(batch, "  IN THE HALL OF FAME", 100, 180);
+        renderer.yellowFont12.draw(batch, String.format("   YOUR SCORE %07d", oldMap.score), 100, 140);
 
         batch.draw(right, 480 - 64, 0);
         batch.end();
@@ -112,7 +98,6 @@ public class EnterYourNameScreen extends GianaSistersScreen {
     public void hide() {
         left.getTexture().dispose();
         right.getTexture().dispose();
-        yellowFont.dispose();
         batch.dispose();
     }
 

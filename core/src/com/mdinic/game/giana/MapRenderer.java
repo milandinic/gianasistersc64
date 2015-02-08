@@ -66,7 +66,10 @@ public class MapRenderer {
 
     java.util.Map<GoundMonsterType, Animation[]> groundMonsterAnimations = new HashMap<GoundMonsterType, Animation[]>();
 
-    private final BitmapFont font;
+    public final BitmapFont yellowFont10;
+    public final BitmapFont yellowFont12;
+    public BitmapFont whiteFont10;
+    public BitmapFont redFont10;
 
     java.util.Map<SimpleImageType, TextureRegion> simpleImageTextureRegions = new HashMap<SimpleImageType, TextureRegion>();
     java.util.Map<FixedTrapType, Animation> fixedTrapTypeAnim = new HashMap<FixedTrapType, Animation>();
@@ -280,8 +283,19 @@ public class MapRenderer {
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 
         parameter.size = 10;
-        font = generator.generateFont(parameter); // font size 12
-        font.setColor(new Color(0.87f, 0.95f, 0.47f, 1));
+        yellowFont10 = generator.generateFont(parameter); // font size 10
+        yellowFont10.setColor(new Color(0.87f, 0.95f, 0.47f, 1));
+
+        whiteFont10 = generator.generateFont(parameter);
+        whiteFont10.setColor(new Color(1, 1, 1, 1));
+
+        redFont10 = generator.generateFont(parameter);
+        redFont10.setColor(new Color(0.66f, 0.21f, 0.14f, 1));
+
+        parameter.size = 12;
+        yellowFont12 = generator.generateFont(parameter); // font size 12
+        yellowFont12.setColor(new Color(0.87f, 0.95f, 0.47f, 1));
+
         generator.dispose(); // don't forget to dispose to avoid memory leaks!
     }
 
@@ -292,7 +306,7 @@ public class MapRenderer {
         if (map.bonus)
             cam.position.set(10, map.tiles[0].length - SCENE_HEIGHT / 2 + 1, 0);
         else {
-            lerpTarget.set(map.giana.maxX, map.tiles[0].length - SCENE_HEIGHT / 2 + 1, 0);
+            lerpTarget.set(10, map.tiles[0].length - SCENE_HEIGHT / 2 + 1, 0);
             cam.position.set(lerpTarget);
         }
 
@@ -353,9 +367,9 @@ public class MapRenderer {
 
         String formatted = String.format("%06d         %02d       %02d         %02d      %02d", map.score,
                 map.diamondsCollected, map.lives, map.level, map.time);
-        font.draw(fontBatch, "GIANA       BONUS     LIVES     STAGE    TIME", 10, 315);
+        yellowFont10.draw(fontBatch, "GIANA       BONUS     LIVES     STAGE    TIME", 10, 315);
 
-        font.draw(fontBatch, formatted, 10, 305);
+        yellowFont10.draw(fontBatch, formatted, 10, 305);
 
         fontBatch.draw(whiteCristalAnim.getKeyFrame(stateTime, true), 130, 295);
 
@@ -655,6 +669,11 @@ public class MapRenderer {
     }
 
     public void dispose() {
+        yellowFont10.dispose();
+        yellowFont12.dispose();
+        whiteFont10.dispose();
+        redFont10.dispose();
+
         spawn.getTexture().dispose();
         dying.getTexture().dispose();
         endDoor.getTexture().dispose();
