@@ -18,7 +18,6 @@ public class GameMap {
     static int EMPTY = 0;
     static int TILE = 0xffffff;
     static int START = 0xff0000;
-    static int END = 0xff00ff;
 
     static int DIAMOND = 5570300;
     static int PIRANHA = 0x6a75ff;
@@ -62,7 +61,8 @@ public class GameMap {
     Array<Bee> bees = new Array<Bee>();
     Array<Fish> fishes = new Array<Fish>();
     Array<FixedTrap> fixedTraps = new Array<FixedTrap>();
-    public EndDoor endDoor;
+
+    public SimpleImage endDoor;
     public SimpleImage bonusLevelEndDoor;
     public SimpleImage bonusLevelDoor;
 
@@ -192,6 +192,9 @@ public class GameMap {
                     case MAGICWATER:
                         bonusLevelDoor = simpleImage;
                         break;
+                    case END_LEVEL_DOOR:
+                        endDoor = simpleImage;
+                        break;
                     default:
                         break;
                     }
@@ -218,8 +221,6 @@ public class GameMap {
                 } else if (match(pix, TREAT_BOX_BALL)) {
                     treatBoxes.add(new TreatBox(this, x, newY, TreatType.BALL));
                     tiles[x][y] = pix;
-                } else if (match(pix, END)) {
-                    endDoor = new EndDoor(x, newY);
                 } else {
                     if (tiles[x][y] == 0) {
                         tiles[x][y] = pix;
