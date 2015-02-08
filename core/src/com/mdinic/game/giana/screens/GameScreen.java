@@ -79,7 +79,7 @@ public class GameScreen extends GianaSistersScreen {
             controlRenderer.render();
 
         if (map.endDoor != null) {
-            if (map.giana.bounds.overlaps(map.endDoor.bounds)) {
+            if (map.endDoor.bounds.contains(map.giana.bounds)) {
                 if (map.level == 0) {
                     game.setScreen(new HighScoreScreen(game, map.sounds, renderer));
                 } else {
