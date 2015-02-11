@@ -20,6 +20,7 @@ public class AndroidLauncher extends AndroidApplication implements InternetConne
         GianaSistersC64 gianaSistersC64 = new GianaSistersC64();
         gianaSistersC64.setSettingsService(new SettingsServiceDroid(this));
         gianaSistersC64.setHighScoreService(new HighScoreServiceDroid(this, this));
+        gianaSistersC64.setGeneralService(new GeneralServiceDrod(this));
 
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
         config.useAccelerometer = false;

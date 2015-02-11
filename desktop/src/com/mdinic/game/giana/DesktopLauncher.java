@@ -9,6 +9,7 @@ public class DesktopLauncher {
         GianaSistersC64 gianaSistersC64 = new GianaSistersC64();
         gianaSistersC64.setHighScoreService(new HighScoreServiceDesktop());
         gianaSistersC64.setSettingsService(new SettingsServiceDesktop());
+        gianaSistersC64.setGeneralService(new GeneralServiceDesktop());
         new LwjglApplication(gianaSistersC64, config);
     }
 }

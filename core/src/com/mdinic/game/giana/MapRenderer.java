@@ -25,13 +25,13 @@ public class MapRenderer {
 
     public static final int SCENE_HEIGHT = 16;
     GameMap map;
-    OrthographicCamera cam;
+    public OrthographicCamera cam;
 
     float stateTime = 0;
     Vector3 lerpTarget = new Vector3();
 
-    SpriteBatch batch = new SpriteBatch(5460);
-    private final SpriteBatch fontBatch;
+    public SpriteBatch batch = new SpriteBatch(5460);
+    public final SpriteBatch fontBatch;
 
     Animation gianaLeft;
     Animation gianaRight;
@@ -87,6 +87,7 @@ public class MapRenderer {
 
     private final Animation lightningAnim;
     private final Animation doubleLightningAnim;
+    private float camY;
 
     public MapRenderer() {
 
@@ -299,17 +300,20 @@ public class MapRenderer {
         generator.dispose(); // don't forget to dispose to avoid memory leaks!
     }
 
-    public void setMap(GameMap map) {
+    public void setMap(GameMap map, boolean moveCamToStart) {
         this.map = map;
-        this.cam.position.set(map.giana.pos.x, map.giana.pos.y, 0);
+        camY = map.tiles[0].length - SCENE_HEIGHT / 2 + 1;
+        int x = (int) map.giana.pos.x;
 
-        if (map.bonus)
-            cam.position.set(10, map.tiles[0].length - SCENE_HEIGHT / 2 + 1, 0);
-        else {
-            lerpTarget.set(10, map.tiles[0].length - SCENE_HEIGHT / 2 + 1, 0);
-            cam.position.set(lerpTarget);
+        if (moveCamToStart) {
+            x = 10;
         }
 
+        if (x < 10) {
+            x = 10;
+        }
+        lerpTarget.set(x, camY, 0);
+        this.cam.position.set(x, camY, 0);
         cam.update();
     }
 
@@ -324,7 +328,7 @@ public class MapRenderer {
             camX = 134;
         }
 
-        cam.position.lerp(lerpTarget.set(camX, map.tiles[0].length - SCENE_HEIGHT / 2 + 1, 0), 4f * deltaTime);
+        cam.position.lerp(lerpTarget.set(camX, camY, 0), 4f * deltaTime);
         if (!map.bonus)
             cam.update();
 
@@ -480,6 +484,7 @@ public class MapRenderer {
             batch.draw(dying, map.giana.pos.x, map.giana.pos.y, 1, 1);
             return;
         }
+
         if (map.giana.active) {
             batch.draw(anim.getKeyFrame(map.giana.stateTime, true), map.giana.pos.x, map.giana.pos.y, 1, 1);
         }

@@ -30,7 +30,7 @@ public class BonusGameScreen extends GianaSistersScreen {
 
     @Override
     public void show() {
-        renderer.setMap(map);
+        renderer.setMap(map, true);
         controlRenderer = new OnscreenControlRenderer(map, this);
 
         // map.sounds.play();
