@@ -21,6 +21,7 @@ public class GameMap {
 
     static int DIAMOND = 5570300;
     static int PIRANHA = 0x6a75ff;
+    static int BALL = 0x6a0101;
 
     static int TREAT_BOX = 0xff8a00;
     static int TREAT_BOX_BALL = 0xffcb8d;
@@ -60,6 +61,7 @@ public class GameMap {
 
     Array<Bee> bees = new Array<Bee>();
     Array<Fish> fishes = new Array<Fish>();
+    Array<Ball> balls = new Array<Ball>();
     Array<FixedTrap> fixedTraps = new Array<FixedTrap>();
 
     public SimpleImage endDoor;
@@ -172,6 +174,8 @@ public class GameMap {
                     diamonds.add(new Diamond(this, x, newY));
                 } else if (match(pix, PIRANHA)) {
                     fishes.add(new Fish(this, x, newY));
+                } else if (match(pix, BALL)) {
+                    balls.add(new Ball(this, x, newY));
                 } else if (match(pix, QUICK_SAND)) {
                     quickSandArray.add(new QuickSand(this, x, newY));
                     tiles[x][y] = pix;
@@ -272,6 +276,10 @@ public class GameMap {
 
         for (Fish fish : fishes) {
             fish.update(deltaTime);
+        }
+
+        for (Ball ball : balls) {
+            ball.update(deltaTime);
         }
 
         for (Tile tile : tileArray) {

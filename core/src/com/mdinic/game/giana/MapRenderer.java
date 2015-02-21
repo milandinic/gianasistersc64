@@ -78,6 +78,10 @@ public class MapRenderer {
     private final Animation treatBallLeftAnim;
     private final Animation piranhaUpAnim;
     private final Animation piranhaDownAnim;
+
+    private final Animation ballDownAnim;
+    private final Animation ballUpAnim;
+
     private final Animation waspRightAnim;
     private final Animation waspLeftAnim;
     public final Animation yellowCristalAnim;
@@ -201,6 +205,11 @@ public class MapRenderer {
         }
 
         waspLeftAnim = new Animation(0.3f, waspRegionLeft);
+
+        TextureRegion[] ballRegions = new TextureRegion(new Texture(Gdx.files.internal("data/ball.png"))).split(24, 20)[0];
+
+        ballUpAnim = new Animation(0.2f, ballRegions[0], ballRegions[1], ballRegions[2]);
+        ballDownAnim = new Animation(1f, ballRegions[3]);
 
         piranhaUpAnim = new Animation(0.2f,
                 new TextureRegion(new Texture(Gdx.files.internal("data/piranha.png"))).split(20, 20)[0]);
@@ -342,6 +351,7 @@ public class MapRenderer {
 
         renderFixedTraps();
         renderPiranhas();
+        renderBalls();
         drawBlocks();
 
         renderSimpleImages();
@@ -589,6 +599,16 @@ public class MapRenderer {
         }
     }
 
+    private void renderBalls() {
+        for (Ball ball : map.balls) {
+            if (ball.state == Ball.FORWARD)
+                batch.draw(ballUpAnim.getKeyFrame(ball.stateTime, true), ball.pos.x, ball.pos.y, 1, 1);
+            else
+                batch.draw(ballDownAnim.getKeyFrame(ball.stateTime, true), ball.pos.x, ball.pos.y, 1, 1);
+
+        }
+    }
+
     private void renderQuickSand() {
         BrickColor color;
         if (map.bonus) {
@@ -749,6 +769,9 @@ public class MapRenderer {
         disposeAnimation(doubleLightningAnim);
         disposeAnimation(whiteCristalAnim);
         disposeAnimation(yellowCristalAnim);
+
+        disposeAnimation(ballUpAnim);
+        disposeAnimation(ballDownAnim);
 
         batch.dispose();
     }

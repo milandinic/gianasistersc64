@@ -15,7 +15,7 @@ public class GroundMonster extends Monster {
         this.type = type;
         this.bounds.width = type.width;
         this.bounds.height = type.height;
-        vel.set(1, 0);
+        vel.set(type.speed, 0);
     }
 
     public void update(float deltaTime) {
