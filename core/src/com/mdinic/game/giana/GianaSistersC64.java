@@ -22,7 +22,7 @@ public class GianaSistersC64 extends Game {
     public void create() {
         sounds = new Sounds();
         renderer = new MapRenderer();
-        // setScreen(new GameScreen(this, new GameMap(1, sounds), renderer));
+        // setScreen(new GameScreen(this, new GameMap(27, sounds), renderer));
         setScreen(new IntroScreen(this, sounds, renderer));
     }
 
