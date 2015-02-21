@@ -20,11 +20,11 @@ public class Bee extends Monster {
         int left = map.tiles[ix - 1][map.tiles[0].length - 1 - iy];
         int right = map.tiles[ix + 1][map.tiles[0].length - 1 - iy];
 
-        if (left == GameMap.TILE) {
+        if (map.isColidable(left)) {
             vel.x = FORWARD_VEL;
             fx = 1;
         }
-        if (right == GameMap.TILE) {
+        if (map.isColidable(right)) {
             vel.x = -FORWARD_VEL;
             bx = 1;
         }
@@ -47,9 +47,11 @@ public class Bee extends Monster {
         boolean change = false;
 
         if (state == FORWARD) {
-            change = map.isColidable(map.tiles[(int) Math.floor(pos.x) + fx][y]);
+            int newX = (int) Math.floor(pos.x) + fx;
+            change = newX < 0 || map.isColidable(map.tiles[newX][y]);
         } else {
-            change = map.isColidable(map.tiles[(int) Math.ceil(pos.x) + bx][y]);
+            int newX = (int) Math.ceil(pos.x) + bx;
+            change = newX < 0 || map.isColidable(map.tiles[newX][y]);
         }
         if (change) {
             pos.x -= vel.x * deltaTime;

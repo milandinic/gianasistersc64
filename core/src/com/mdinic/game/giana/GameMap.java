@@ -17,14 +17,16 @@ public class GameMap {
 
     static int EMPTY = 0;
     static int TILE = 0xffffff;
+
     static int START = 0xff0000;
 
     static int DIAMOND = 5570300;
     static int PIRANHA = 0x6a75ff;
     static int BALL = 0x6a0101;
 
-    static int TREAT_BOX = 0xff8a00;
-    static int TREAT_BOX_BALL = 0xffcb8d;
+    static int TREAT_BOX_DIAMOND = 0xff8a00;
+    static int TREAT_BOX_USED = 0xffffaf;
+    static int TREAT_BOX = 0xffcb8d;
 
     static int BEE = 0xd2a285;
     static int QUICK_SAND = 0xA45A04;
@@ -86,9 +88,10 @@ public class GameMap {
             throw new IllegalStateException("Giana not on the map");
         }
 
+        colidableColors.add(TREAT_BOX_DIAMOND);
         colidableColors.add(TREAT_BOX);
-        colidableColors.add(TREAT_BOX_BALL);
         colidableColors.add(TILE);
+        colidableColors.add(TREAT_BOX_USED);
         colidableColors.add(QUICK_SAND);
     }
 
@@ -122,9 +125,10 @@ public class GameMap {
             throw new IllegalStateException("End door not on the map");
         }
 
+        colidableColors.add(TREAT_BOX_DIAMOND);
         colidableColors.add(TREAT_BOX);
-        colidableColors.add(TREAT_BOX_BALL);
         colidableColors.add(TILE);
+        colidableColors.add(TREAT_BOX_USED);
         colidableColors.add(QUICK_SAND);
     }
 
@@ -219,12 +223,17 @@ public class GameMap {
                 } else if (FixedTrapType.containsColor(pix) != null) {
                     FixedTrapType type = FixedTrapType.containsColor(pix);
                     fixedTraps.add(new FixedTrap(this, x, newY, type));
-                } else if (match(pix, TREAT_BOX)) {
+                } else if (match(pix, TREAT_BOX_DIAMOND)) {
                     treatBoxes.add(new TreatBox(this, x, newY, TreatType.DIAMOND));
                     tiles[x][y] = pix;
-                } else if (match(pix, TREAT_BOX_BALL)) {
+                } else if (match(pix, TREAT_BOX)) {
                     treatBoxes.add(new TreatBox(this, x, newY, TreatType.BALL));
                     tiles[x][y] = pix;
+                } else if (match(pix, TREAT_BOX_USED)) {
+                    tiles[x][y] = pix;
+                    TreatBox treatBox = new TreatBox(this, x, newY, TreatType.DIAMOND);
+                    treatBox.active = false;
+                    treatBoxes.add(treatBox);
                 } else {
                     if (tiles[x][y] == 0) {
                         tiles[x][y] = pix;
