@@ -47,7 +47,7 @@ public class GroundMonster extends Monster {
 
         killByGiana(type.canBeKilled);
 
-        tryToKilGiana();
+        tryToKillGiana();
 
         pos.x = bounds.x;
         pos.y = bounds.y;

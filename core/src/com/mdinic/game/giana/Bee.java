@@ -69,7 +69,7 @@ public class Bee extends Monster {
 
         killByGiana(true);
 
-        tryToKilGiana();
+        tryToKillGiana();
     }
 
 }

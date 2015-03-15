@@ -33,6 +33,8 @@ public class MapRenderer {
     public SpriteBatch batch = new SpriteBatch(5460);
     public final SpriteBatch fontBatch;
 
+    Animation spiderAnim;
+
     Animation gianaLeft;
     Animation gianaRight;
     Animation gianaJumpLeft;
@@ -289,6 +291,9 @@ public class MapRenderer {
 
         spawn = gianaSmallRight[0];
 
+        spiderAnim = new Animation(0.1f, new TextureRegion(new Texture(Gdx.files.internal("data/spider.png"))).split(
+                46, 20)[0]);
+
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/Giana.ttf"));
         FreeTypeFontParameter parameter = new FreeTypeFontParameter();
 
@@ -368,10 +373,19 @@ public class MapRenderer {
 
         renderGiana();
 
+        renderBoss();
+
         batch.end();
 
         if (!map.demo) {
             renderUpperText();
+        }
+    }
+
+    private void renderBoss() {
+        if (map.boss != null) {
+            batch.draw(spiderAnim.getKeyFrame(map.boss.stateTime, true), map.boss.pos.x, map.boss.pos.y,
+                    map.boss.bounds.width, map.boss.bounds.height);
         }
     }
 
@@ -772,6 +786,7 @@ public class MapRenderer {
 
         disposeAnimation(ballUpAnim);
         disposeAnimation(ballDownAnim);
+        disposeAnimation(spiderAnim);
 
         batch.dispose();
     }

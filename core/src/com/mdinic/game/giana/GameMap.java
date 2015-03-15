@@ -31,6 +31,8 @@ public class GameMap {
     static int BEE = 0xd2a285;
     static int QUICK_SAND = 0xA45A04;
 
+    static int SPIDER = 0xeef11c;
+
     static int LEVEL_PIXELBUFFER = 20;
 
     List<Integer> colidableColors = new ArrayList<Integer>();
@@ -65,6 +67,8 @@ public class GameMap {
     Array<Fish> fishes = new Array<Fish>();
     Array<Ball> balls = new Array<Ball>();
     Array<FixedTrap> fixedTraps = new Array<FixedTrap>();
+
+    Boss boss;
 
     public SimpleImage endDoor;
     public SimpleImage bonusLevelEndDoor;
@@ -174,6 +178,8 @@ public class GameMap {
                 int newY = pixmapHeight - 1 - y;
                 if (match(pix, START)) {
                     giana = new Giana(this, x, newY);
+                } else if (match(pix, SPIDER)) {
+                    boss = new Boss(this, x, newY);
                 } else if (match(pix, DIAMOND)) {
                     diamonds.add(new Diamond(this, x, newY));
                 } else if (match(pix, PIRANHA)) {
@@ -299,6 +305,9 @@ public class GameMap {
             sand.update(deltaTime);
         }
 
+        if (boss != null) {
+            boss.update(deltaTime);
+        }
     }
 
     public boolean isDeadly(int tileId) {

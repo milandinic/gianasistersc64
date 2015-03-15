@@ -12,7 +12,7 @@ public abstract class GianaSistersScreen implements Screen {
 
     public static final int SCREEN_WIDTH = 480;
     public static final int SCREEN_HEIGHT = 320;
-    public static final int LEVEL_COUNT = 29;
+    public static final int LEVEL_COUNT = 30;
 
     public GianaSistersScreen(Game game, MapRenderer renderer) {
         this.game = game;

@@ -48,7 +48,7 @@ public class Monster {
         }
     }
 
-    protected void tryToKilGiana() {
+    protected void tryToKillGiana() {
         if (alive && map.giana.bounds.overlaps(bounds) && !map.demo) {
             if (map.giana.state != GianaState.DYING) {
                 map.giana.state = GianaState.DYING;
