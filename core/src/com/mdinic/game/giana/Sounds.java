@@ -25,11 +25,11 @@ public class Sounds {
     private final Sound brickDestroySfx;
     private final Sound treatBoxCoinSfx;
     private final Sound fireBulletSfx;
-
+    private final Sound spiderDeadSfx;
     private final Sound treatSfx;
 
     public enum Sfx {
-        JUMP, KILL, DYING, POWERUP, BRICK_DESTROY, TREAT_BOX_COIN, DIAMOND, TREAT, FIRE_BULLET
+        JUMP, KILL, DYING, POWERUP, BRICK_DESTROY, TREAT_BOX_COIN, DIAMOND, TREAT, FIRE_BULLET, SPIDER_DEAD
     };
 
     public enum BgMusic {
@@ -53,6 +53,7 @@ public class Sounds {
         treatBoxCoinSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/treatboxcoin.mp3"));
         treatSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/treat.mp3"));
         fireBulletSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/fire.mp3"));
+        spiderDeadSfx = Gdx.audio.newSound(Gdx.files.internal("data/sfx/spiderDead.mp3"));
     }
 
     public void dispose() {
@@ -73,6 +74,7 @@ public class Sounds {
         treatBoxCoinSfx.dispose();
         fireBulletSfx.dispose();
         treatSfx.dispose();
+        spiderDeadSfx.dispose();
     }
 
     public void setMute(boolean mute) {
@@ -149,6 +151,9 @@ public class Sounds {
         case FIRE_BULLET:
             fireBulletSfx.play();
             break;
+        case SPIDER_DEAD:
+            spiderDeadSfx.play();
+            break;
         default:
             break;
         }
@@ -194,6 +199,9 @@ public class Sounds {
             break;
         case FIRE_BULLET:
             fireBulletSfx.stop();
+            break;
+        case SPIDER_DEAD:
+            spiderDeadSfx.stop();
             break;
         default:
             break;

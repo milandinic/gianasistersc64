@@ -68,7 +68,7 @@ public class GameMap {
     Array<Ball> balls = new Array<Ball>();
     Array<FixedTrap> fixedTraps = new Array<FixedTrap>();
 
-    Boss boss;
+    Spider boss;
 
     public SimpleImage endDoor;
     public SimpleImage bonusLevelEndDoor;
@@ -179,7 +179,7 @@ public class GameMap {
                 if (match(pix, START)) {
                     giana = new Giana(this, x, newY);
                 } else if (match(pix, SPIDER)) {
-                    boss = new Boss(this, x, newY);
+                    boss = new Spider(this, x, newY);
                 } else if (match(pix, DIAMOND)) {
                     diamonds.add(new Diamond(this, x, newY));
                 } else if (match(pix, PIRANHA)) {

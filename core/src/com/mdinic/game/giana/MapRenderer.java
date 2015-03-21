@@ -34,6 +34,7 @@ public class MapRenderer {
     public final SpriteBatch fontBatch;
 
     Animation spiderAnim;
+    TextureRegion spiderDead;
 
     Animation gianaLeft;
     Animation gianaRight;
@@ -291,6 +292,9 @@ public class MapRenderer {
 
         spawn = gianaSmallRight[0];
 
+        spiderDead = new TextureRegion(new Texture(Gdx.files.internal("data/spider.png"))).split(46, 20)[0][0];
+        spiderDead.flip(false, true);
+
         spiderAnim = new Animation(0.1f, new TextureRegion(new Texture(Gdx.files.internal("data/spider.png"))).split(
                 46, 20)[0]);
 
@@ -373,7 +377,7 @@ public class MapRenderer {
 
         renderGiana();
 
-        renderBoss();
+        renderSpider();
 
         batch.end();
 
@@ -382,10 +386,15 @@ public class MapRenderer {
         }
     }
 
-    private void renderBoss() {
-        if (map.boss != null) {
-            batch.draw(spiderAnim.getKeyFrame(map.boss.stateTime, true), map.boss.pos.x, map.boss.pos.y,
-                    map.boss.bounds.width, map.boss.bounds.height);
+    private void renderSpider() {
+        Monster boss = map.boss;
+        if (boss != null) {
+            if (boss.alive) {
+                batch.draw(spiderAnim.getKeyFrame(boss.stateTime, true), boss.pos.x, boss.pos.y, boss.bounds.width,
+                        boss.bounds.height);
+            } else {
+                batch.draw(spiderDead, boss.pos.x, boss.pos.y, boss.bounds.width, boss.bounds.height);
+            }
         }
     }
 
@@ -656,7 +665,6 @@ public class MapRenderer {
                     batch.draw(waspLeftDead, bee.pos.x, bee.pos.y, 1, 1);
 
             }
-
         }
     }
 
@@ -721,6 +729,7 @@ public class MapRenderer {
         waspLeftDead.getTexture().dispose();
         waspRightDead.getTexture().dispose();
         strawberry.getTexture().dispose();
+        spiderDead.getTexture().dispose();
 
         for (Entry<BrickColor, TextureRegion> entry : tileTexture.entrySet()) {
             entry.getValue().getTexture().dispose();
