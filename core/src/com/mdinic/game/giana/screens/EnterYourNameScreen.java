@@ -87,7 +87,7 @@ public class EnterYourNameScreen extends GianaSistersScreen {
                 public void canceled() {
                     game.setScreen(new HighScoreScreen(game, oldMap.sounds, renderer));
                 }
-            }, "", score != null ? score.getName() : "");
+            }, "", score != null ? score.getName() : "", "");
 
         } else if (rightButton && processKeys) {
             game.setScreen(new HighScoreScreen(game, oldMap.sounds, renderer));
