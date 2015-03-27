@@ -15,7 +15,7 @@ public class AndroidLauncher extends AndroidApplication implements InternetConne
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Parse.initialize(this, "AKmNv40ZmUudVezreRT6NpGOBmH6D4gSOCtdnHOe", "kBM5rL0mW3zHD6ifZl9mTU5aqHPqd3Ye33k6P3CP");
+        Parse.initialize(this, "", "");
 
         GianaSistersC64 gianaSistersC64 = new GianaSistersC64();
         gianaSistersC64.setSettingsService(new SettingsServiceDroid(this));
