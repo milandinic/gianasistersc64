@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
+import com.mdinic.game.giana.service.InternetConnectionChecker;
 import com.parse.Parse;
 
 public class AndroidLauncher extends AndroidApplication implements InternetConnectionChecker {
