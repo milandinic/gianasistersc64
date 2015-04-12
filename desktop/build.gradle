@@ -3,25 +3,8 @@ apply plugin: "java"
 sourceCompatibility = 1.6
 sourceSets.main.java.srcDirs = [ "src/" ]
 
-sourceSets.test.java.srcDirs = ["test/"]
-
-project.ext.mainClassName = "com.mdinic.game.giana.DesktopLauncher"
+project.ext.mainClassName = "com.mdinic.game.giana.desktop.DesktopLauncher"
 project.ext.assetsDir = new File("../android/assets");
-
-dependencies {
-compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
-
-
-testCompile group: 'junit', name: 'junit', version: '4.+'
-
-testCompile "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"               
-testCompile "com.badlogicgames.gdx:gdx:$gdxVersion"                                
-testCompile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"       
-testCompile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"                          
-testCompile "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
-
-}
-
 
 task run(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
@@ -48,7 +31,7 @@ eclipse {
     project {
         name = appName + "-desktop"
         linkedResource name: 'assets', type: '2', location: 'PARENT-1-PROJECT_LOC/android/assets'
-    }   
+    }
 }
 
 task afterEclipseImport(description: "Post processing after project generation", group: "IDE") {
