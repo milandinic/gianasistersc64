@@ -30,6 +30,7 @@ public class Giana {
 
     public GianaState state;
     public float stateTime = 0;
+    boolean wasJumping = false;
     int dir = RIGHT;
     GameMap map;
     public boolean grounded = false;
@@ -177,11 +178,18 @@ public class Giana {
                 map.sounds.play(Sfx.FIRE_BULLET);
             }
 
-        if ((Gdx.input.isKeyPressed(Keys.W) || jumpButton) && state != GianaState.JUMP && grounded) {
+        boolean jumpPressed = Gdx.input.isKeyPressed(Keys.W) || jumpButton;
+        if (jumpPressed && state != GianaState.JUMP && grounded) {
+            wasJumping = true;
             map.sounds.play(Sfx.JUMP);
             state = GianaState.JUMP;
             vel.y = JUMP_VELOCITY;
             grounded = false;
+        }
+
+        if (!jumpPressed && state == GianaState.JUMP && !grounded && wasJumping && vel.y > 0) {
+            wasJumping = false;
+            vel.y = 2;
         }
 
         if (Gdx.input.isKeyPressed(Keys.A) || leftButton) {

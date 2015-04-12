@@ -1,29 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-  <classpathentry kind="output" path="bin"/>
-  <classpathentry kind="src" path="src"/>
-  <classpathentry kind="src" path="test"/>
-  <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER" exported="true"/>
-  <classpathentry kind="src" path="/gianasistersc64-core" exported="true"/>
-  <classpathentry sourcepath="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-lwjgl/1.0-SNAPSHOT/78fcdbb936e2d4140b012b9a0b6606e34c45834d/gdx-backend-lwjgl-1.0-SNAPSHOT-sources.jar" kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-lwjgl/1.0-SNAPSHOT/bd35283151e6a361f3fc765df6d17a3e1093da03/gdx-backend-lwjgl-1.0-SNAPSHOT.jar" exported="true"/>
-  <classpathentry kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-platform/1.0-SNAPSHOT/25862e86870663953fa13ed34d24a9bf47929a1d/gdx-platform-1.0-SNAPSHOT-natives-desktop.jar" exported="true"/>
-  <classpathentry kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-freetype-platform/1.0-SNAPSHOT/653fe679d308e43bd2e8402a1c86238e66840bae/gdx-freetype-platform-1.0-SNAPSHOT-natives-desktop.jar" exported="true"/>
-  <classpathentry sourcepath="/home/mdinic/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/a6c32b40bf3d76eca54e3c601e5d1470c86fcdfa/junit-4.12-sources.jar" kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/junit/junit/4.12/2973d150c0dc1fefe998f834810d68f278ea58ec/junit-4.12.jar" exported="true"/>
-  <classpathentry sourcepath="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-headless/1.0-SNAPSHOT/f71dc5856525f695dda0fdf476c5678ba324ca14/gdx-backend-headless-1.0-SNAPSHOT-sources.jar" kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-backend-headless/1.0-SNAPSHOT/5bc16af085bf1591dfdbc7c7a822dbbc0bd51eea/gdx-backend-headless-1.0-SNAPSHOT.jar" exported="true"/>
-  <classpathentry sourcepath="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.0-SNAPSHOT/56dbe5a756ae1efd82f80dd92ed45d1adcc5d83f/gdx-1.0-SNAPSHOT-sources.jar" kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx/1.0-SNAPSHOT/e544ea790a29a33485f683895bfa6507d805e91d/gdx-1.0-SNAPSHOT.jar" exported="true"/>
-  <classpathentry sourcepath="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-box2d/1.0-SNAPSHOT/e4cb68f9b5d0e7cc3540acc69ae11bdb6cd7306b/gdx-box2d-1.0-SNAPSHOT-sources.jar" kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-box2d/1.0-SNAPSHOT/90d1659fe78586f2a5a167566f420be8a3cce0a1/gdx-box2d-1.0-SNAPSHOT.jar" exported="true"/>
-  <classpathentry kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.gdx/gdx-box2d-platform/1.0-SNAPSHOT/7ef32741059e2877dbeff594ac308e0de6f03336/gdx-box2d-platform-1.0-SNAPSHOT-natives-desktop.jar" exported="true"/>
-  <classpathentry kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/org.lwjgl.lwjgl/lwjgl-platform/2.9.1/aa9aae879af8eb378e22cfc64db56ec2ca9a44d1/lwjgl-platform-2.9.1-natives-linux.jar" exported="true"/>
-  <classpathentry kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/org.lwjgl.lwjgl/lwjgl-platform/2.9.1/2d12c83fdfbc04ecabf02c7bc8cc54d034f0daac/lwjgl-platform-2.9.1-natives-osx.jar" exported="true"/>
-  <classpathentry kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/org.lwjgl.lwjgl/lwjgl-platform/2.9.1/4c517eca808522457dd95ee8fc1fbcdbb602efbe/lwjgl-platform-2.9.1-natives-windows.jar" exported="true"/>
-  <classpathentry sourcepath="/home/mdinic/.gradle/caches/modules-2/files-2.1/net.java.jutils/jutils/1.0.0/d18678a00b216863206a1bb6190507e02a32971b/jutils-1.0.0-sources.jar" kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/net.java.jutils/jutils/1.0.0/e12fe1fda814bd348c1579329c86943d2cd3c6a6/jutils-1.0.0.jar" exported="true"/>
-  <classpathentry sourcepath="/home/mdinic/.gradle/caches/modules-2/files-2.1/net.java.jinput/jinput/2.0.5/82604cfeb87b9ab70ed70aa19a137de8ceb21504/jinput-2.0.5-sources.jar" kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/net.java.jinput/jinput/2.0.5/39c7796b469a600f72380316f6b1f11db6c2c7c4/jinput-2.0.5.jar" exported="true"/>
-  <classpathentry sourcepath="/home/mdinic/.gradle/caches/modules-2/files-2.1/org.lwjgl.lwjgl/lwjgl/2.9.1/ccedb5b6f96913c6f78bc10249e747ded90baa51/lwjgl-2.9.1-sources.jar" kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/org.lwjgl.lwjgl/lwjgl/2.9.1/f58c5aabcef0e41718a564be9f8e412fff8db847/lwjgl-2.9.1.jar" exported="true"/>
-  <classpathentry kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/net.java.jinput/jinput-platform/2.0.5/7ff832a6eb9ab6a767f1ade2b548092d0fa64795/jinput-platform-2.0.5-natives-linux.jar" exported="true"/>
-  <classpathentry kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/net.java.jinput/jinput-platform/2.0.5/53f9c919f34d2ca9de8c51fc4e1e8282029a9232/jinput-platform-2.0.5-natives-osx.jar" exported="true"/>
-  <classpathentry kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/net.java.jinput/jinput-platform/2.0.5/385ee093e01f587f30ee1c8a2ee7d408fd732e16/jinput-platform-2.0.5-natives-windows.jar" exported="true"/>
-  <classpathentry sourcepath="/home/mdinic/.gradle/caches/modules-2/files-2.1/org.lwjgl.lwjgl/lwjgl_util/2.9.1/9f350d8a760247f2ae88e996b55f8f7121346c79/lwjgl_util-2.9.1-sources.jar" kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/org.lwjgl.lwjgl/lwjgl_util/2.9.1/290d7ba8a1bd9566f5ddf16ad06f09af5ec9b20e/lwjgl_util-2.9.1.jar" exported="true"/>
-  <classpathentry sourcepath="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.jlayer/jlayer/1.0.1-gdx/f1c4ffebc5e4f68be914404faab580c20de8ea1f/jlayer-1.0.1-gdx-sources.jar" kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/com.badlogicgames.jlayer/jlayer/1.0.1-gdx/7cca83cec5c1b2f011362f4d85aabd71a73b049d/jlayer-1.0.1-gdx.jar" exported="true"/>
-  <classpathentry sourcepath="/home/mdinic/.gradle/caches/modules-2/files-2.1/org.jcraft/jorbis/0.0.17/5446be5d62e4c6b347c8e6cd28dc00a936417ba2/jorbis-0.0.17-sources.jar" kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/org.jcraft/jorbis/0.0.17/8872d22b293e8f5d7d56ff92be966e6dc28ebdc6/jorbis-0.0.17.jar" exported="true"/>
-  <classpathentry sourcepath="/home/mdinic/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/1dc37250fbc78e23a65a67fbbaf71d2e9cbc3c0b/hamcrest-core-1.3-sources.jar" kind="lib" path="/home/mdinic/.gradle/caches/modules-2/files-2.1/org.hamcrest/hamcrest-core/1.3/42a25dc3219429f0e5d060061f71acb49bf010a0/hamcrest-core-1.3.jar" exported="true"/>
-  <classpathentry kind="src" path="assets"/>
+	<classpathentry kind="src" path="assets"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry exported="true" kind="con" path="org.springsource.ide.eclipse.gradle.classpathcontainer"/>
+	<classpathentry kind="output" path="bin"/>
 </classpath>
