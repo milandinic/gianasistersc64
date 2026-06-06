@@ -1,6 +1,8 @@
 package com.mdinic.game.giana;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.mdinic.game.giana.screens.IntroScreen;
 import com.mdinic.game.giana.service.GeneralService;
 import com.mdinic.game.giana.service.HighScoreService;
@@ -20,6 +22,12 @@ public class GianaSistersC64 extends Game {
 
     @Override
     public void create() {
+        // libGDX backends default to LOG_INFO, which swallows Gdx.app.debug().
+        // Raise to LOG_DEBUG so debug() lines (desktop console / Android logcat)
+        // are actually emitted. Set here in create() because it runs once after
+        // Gdx.app is live and before any screen shows; the Lwjgl3Application
+        // constructor blocks in the render loop, so the launcher is too late.
+        Gdx.app.setLogLevel(Application.LOG_DEBUG);
         sounds = new Sounds();
         renderer = new MapRenderer();
         // setScreen(new GameScreen(this, new GameMap(27, sounds), renderer));

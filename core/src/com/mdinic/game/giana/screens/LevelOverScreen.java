@@ -65,7 +65,7 @@ public class LevelOverScreen extends GianaSistersScreen {
 
     @Override
     public void hide() {
-        Gdx.app.debug("GianaSisters", "dispose intro");
+        Gdx.app.debug("GianaByte", "dispose intro");
         batch.dispose();
     }
 }

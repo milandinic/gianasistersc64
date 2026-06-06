@@ -13,6 +13,13 @@ Install the Supabase CLI, then from the repo root:
 
 `SUPABASE_URL` and `SUPABASE_SERVICE_ROLE_KEY` are injected automatically.
 
+`submit-score` is called anonymously by the game and is protected by the HMAC,
+not by a JWT, so JWT verification must be **off** for it. `supabase/config.toml`
+sets `verify_jwt = false` for the function, which `supabase functions deploy`
+honors. (If you deploy without that config, add `--no-verify-jwt`.) If the gateway
+still rejects calls with `401 {"code":"UNAUTHORIZED_NO_AUTH_HEADER"}`, the function
+was deployed with JWT verification on — redeploy with the config above.
+
 ## 3. Point the game at it
 Copy `android/assets/highscore.properties.example` to
 `android/assets/highscore.properties` and fill in:

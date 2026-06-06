@@ -191,11 +191,16 @@ public class SupabaseHighScoreService implements HighScoreService {
         if (best == null || best.getScore() < score.getScore()) {
             saveMyBest(score);
         }
+        // Without a backend + secret we cannot sign the score, and an unsigned
+        // entry can never pass the server's HMAC check — queuing it would only
+        // poison the outbox and block every later submission. The local best is
+        // already saved above, so just stop here when offline-only.
+        if (!config.isConfigured()) {
+            return;
+        }
         long ts = System.currentTimeMillis();
-        String sig = config.isConfigured()
-                ? ScoreCodec.hmacSha256Hex(config.secret,
-                        ScoreCodec.signingString(score.getName(), score.getScore(), score.getLevel(), ts))
-                : "";
+        String sig = ScoreCodec.hmacSha256Hex(config.secret,
+                ScoreCodec.signingString(score.getName(), score.getScore(), score.getLevel(), ts));
         enqueue(new PendingSubmit(score.getName(), score.getScore(), score.getLevel(), ts, sig));
         flushOutbox();
     }
@@ -228,6 +233,15 @@ public class SupabaseHighScoreService implements HighScoreService {
         // Attempt each entry; on success remove it. Process the head; the
         // response callback re-invokes flush for the remainder.
         final PendingSubmit head = box.get(0);
+        // Self-heal: an entry with no signature (e.g. queued by an older build
+        // before config was loaded) can never be accepted and would block the
+        // queue forever. Drop it and move on to the next.
+        if (head.sig == null || head.sig.trim().isEmpty()) {
+            box.remove(0);
+            writeOutbox(box);
+            flushOutbox();
+            return;
+        }
         postJson(config.functionsUrl + "/submit-score", ScoreCodec.submitBody(head), new Consumer() {
             public void ok(String body) {
                 setLastNetworkOk(true);
@@ -236,7 +250,17 @@ public class SupabaseHighScoreService implements HighScoreService {
                     current.remove(0);
                     writeOutbox(current);
                 }
-                flushOutbox(); // next entry, if any
+                if (readOutbox().isEmpty()) {
+                    // Queue drained: the just-inserted score(s) are now in the
+                    // table, so re-read the leaderboard. Without this the screen
+                    // that triggered the submit shows the pre-insert list (the
+                    // reads raced ahead of the write) and the new entry only
+                    // appears on the next visit. HighScoreScreen polls
+                    // haveScoreUpdate() each frame, so this refreshes live.
+                    fetch();
+                } else {
+                    flushOutbox(); // more entries queued: submit the next one
+                }
             }
 
             public void fail() {
