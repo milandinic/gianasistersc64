@@ -4,7 +4,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-A libGDX clone of the C64 platformer "Giana Sisters". It is a Gradle multi-project build with three modules: `core` (all game logic, platform-agnostic), `desktop` (LWJGL launcher), and `android` (Android launcher + the canonical asset directory). Pins libGDX 1.5.4 and targets Java 1.6 source compatibility.
+A libGDX clone of the C64 platformer "Giana Sisters". It is a Gradle multi-project build with three modules: `core` (all game logic, platform-agnostic), `desktop` (LWJGL3 launcher), and `android` (Android launcher + the canonical asset directory). Uses libGDX 1.14.2 on Gradle 9.5.1 and the Android Gradle Plugin 8.13.
+
+### Toolchain (important, non-obvious)
+
+The build **runs on JDK 26** (the only JDK on PATH) but **emits Java 17 bytecode** (`options.release = 17` for `core`/`desktop` in the root `build.gradle`). Java 17 is required because Android's dexer (D8/R8) cannot consume Java 26 bytecode. Desktop runs fine on the JDK 26 runtime with Java 17 bytecode.
+
+The **android module is pinned to a JDK 21 toolchain** (`java { toolchain { languageVersion = 21 } }` in `android/build.gradle`), because AGP 8.13's `JdkImageTransform` runs `jlink`, and JDK 26's `jlink` rejects the Android platform `java.base`. Corretto 21 is registered via `org.gradle.java.installations.paths` in `gradle.properties`. If that JDK is removed, the Android build breaks — any JDK 17–21 registered the same way will do. `core`/`desktop` keep the JDK 26 toolchain.
 
 ## Build & Run
 
@@ -12,13 +18,13 @@ Use the Gradle wrapper (`./gradlew` / `gradlew.bat`).
 
 - Run on desktop: `./gradlew desktop:run`
 - Build a runnable fat jar: `./gradlew desktop:dist` → `desktop/build/libs/`
-- Build Android APK: `./gradlew android:assembleDebug` (requires Android SDK; create `local.properties` with `sdk.dir=...`)
+- Build Android APK: `./gradlew android:assembleDebug` → `android/build/outputs/apk/debug/android-debug.apk` (requires the Android SDK and `local.properties` with `sdk.dir=...`; also requires a JDK 17–21 registered for the android toolchain — see Toolchain above)
 - Install/launch on a connected device: `./gradlew android:run`
 - Compile everything: `./gradlew build`
 
 ### Tests
 
-The only test is `desktop/test/com/mdinic/game/giana/MapTest.java` (JUnit 4). It is a smoke test that loads every level pixmap (`new GameMap(i, null)` for all levels) to verify each level parses and contains a Giana start + end door. It needs the LWJGL natives and the assets working directory. Note: `desktop/build.gradle` declares only `src/` as a source dir, so the `test/` dir is not wired into the Gradle build — run it from the IDE (Eclipse/IntelliJ), or add the test sourceSet to Gradle first.
+The only test is `desktop/test/com/mdinic/game/giana/MapTest.java` (JUnit 4). It is a smoke test that loads every level pixmap (`new GameMap(i, null)` for all levels) to verify each level parses and contains a Giana start + end door. It uses the libGDX **headless backend** (`HeadlessApplication`) for `Gdx.files`/`Pixmap`, and `desktop/build.gradle` wires the `test/` dir into the Gradle build with `workingDir = ../android/assets`. Run it with `./gradlew desktop:test`.
 
 ## Assets
 
@@ -28,7 +34,7 @@ There is **one** asset directory: `android/assets/data/`. The desktop module doe
 
 ### Platform abstraction via services
 
-`core` defines three service interfaces in `core/.../service/`: `HighScoreService`, `SettingsService`, `GeneralService`. Each platform provides its own implementations (`*Desktop` in `desktop/`, `*Droid`/`*Drod` in `android/`). The launcher (`DesktopLauncher`, `AndroidLauncher`) constructs the platform implementations and injects them into the `GianaSistersC64` game object via setters before starting libGDX. Core code reaches them through `getGame().getHighScoreService()` etc. **Any platform-specific capability (persistence, network high scores, exit dialogs) must go through a service interface — never call platform APIs from `core`.** Android high scores use Parse/Bolts.
+`core` defines three service interfaces in `core/.../service/`: `HighScoreService`, `SettingsService`, `GeneralService`. Each platform provides its own implementations (`*Desktop` in `desktop/`, `*Droid`/`*Drod` in `android/`). The launcher (`DesktopLauncher`, `AndroidLauncher`) constructs the platform implementations and injects them into the `GianaSistersC64` game object via setters before starting libGDX. Core code reaches them through `getGame().getHighScoreService()` etc. **Any platform-specific capability (persistence, network high scores, exit dialogs) must go through a service interface — never call platform APIs from `core`.** Android high scores were originally backed by Parse/Bolts; that backend is dead (servers shut down 2017) and has been **removed**. `HighScoreServiceDroid` is now a local-only (SharedPreferences) stub — online high scores are deferred to a future iteration.
 
 ### Screen flow
 
@@ -55,6 +61,8 @@ To add or change a map element you typically: (1) edit the level PNG with the ri
 ## Conventions & gotchas
 
 - Several identifiers have entrenched typos that are part of the public API — keep using them as-is: `GoundMonsterType`, `SmallDiamoind`, `collectDiamound()`, `GeneralServiceDrod`.
-- `desktop/build.gradle` sets `mainClassName = "com.mdinic.game.giana.desktop.DesktopLauncher"`, but the actual class is `com.mdinic.game.giana.DesktopLauncher` (no `.desktop` package). The `desktop:run` task works because it uses the runtime classpath/JavaExec; the `dist` jar manifest main-class may be wrong. Launch from the IDE against `DesktopLauncher` if `dist` misbehaves.
+- The desktop backend is **LWJGL3** (`Lwjgl3Application`/`Lwjgl3ApplicationConfiguration` in `DesktopLauncher`). On JDK 26, LWJGL 3.3.3 prints a benign `Unsupported JNI version detected` warning at startup — it runs fine; a future LWJGL bump would clear it.
+- libGDX's `Animation` is generic (`Animation<TextureRegion>`); all `MapRenderer` animation fields/locals are typed accordingly. The two `groundMonsterAnimations` arrays use raw `new Animation[]` on purpose (generic array creation is illegal in Java) — this is the source of the lone unchecked-operations note during `core` compile.
+- `core` emits Java 17 bytecode (not 26) so the shared jar is dexable by Android; see Toolchain above.
 - `delta` is clamped to `0.06f` max per frame in `GameScreen.render()` to keep physics stable on slow frames.
-- `Keys.BACK` (Android) drives pause; touching the screen un-pauses.
+- `Keys.BACK` (Android) drives pause (`Gdx.input.setCatchKey(Keys.BACK, true)`); touching the screen un-pauses.
