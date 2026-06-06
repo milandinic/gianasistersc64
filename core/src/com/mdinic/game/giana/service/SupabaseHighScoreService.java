@@ -86,12 +86,19 @@ public class SupabaseHighScoreService implements HighScoreService {
     static SupabaseConfig loadConfig() {
         try {
             FileHandle fh = Gdx.files.internal("highscore.properties");
-            if (!fh.exists()) {
-                return SupabaseConfig.fromProperties(null);
+            Properties p = null;
+            if (fh.exists()) {
+                p = new Properties();
+                p.load(fh.read());
             }
-            Properties p = new Properties();
-            p.load(fh.read());
-            return SupabaseConfig.fromProperties(p);
+            // Env vars override the file per-value; with no file, env-only still
+            // works. System.getenv is plain JDK and returns null on Android, so
+            // the Android path stays file -> offline.
+            return SupabaseConfig.fromSources(p, new EnvLookup() {
+                public String get(String name) {
+                    return System.getenv(name);
+                }
+            });
         } catch (Exception e) {
             Gdx.app.error("HighScore", "config load failed, offline mode", e);
             return SupabaseConfig.fromProperties(null);
