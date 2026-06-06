@@ -2,6 +2,16 @@
 # project values. highscore.properties is gitignored. If it is missing or any
 # value is blank, the game runs with offline-only high scores (cached lists,
 # queued submits) and never contacts the network.
+#
+# For local development (e.g. IntelliJ IDEA), you can instead set these as
+# environment variables, which OVERRIDE the file per-value (handy to keep
+# secrets off disk). In an IDEA run configuration use the "Environment
+# variables" field:
+#   GIANA_SUPABASE_URL            -> supabase.url
+#   GIANA_SUPABASE_ANON_KEY       -> supabase.anonKey
+#   GIANA_SUPABASE_FUNCTIONS_URL  -> supabase.functionsUrl
+#   GIANA_SCORE_SECRET            -> score.secret
+# Env vars alone are sufficient even with no highscore.properties present.
 supabase.url=https://YOUR_PROJECT.supabase.co
 supabase.anonKey=YOUR_ANON_KEY
 supabase.functionsUrl=https://YOUR_PROJECT.functions.supabase.co
