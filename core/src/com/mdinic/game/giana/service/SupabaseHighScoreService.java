@@ -36,8 +36,9 @@ public class SupabaseHighScoreService implements HighScoreService {
 
     private static final int LIMIT = 5;
 
-    final SupabaseConfig config;
-    private final Preferences prefs;
+    SupabaseConfig config;
+    private Preferences prefs;
+    private boolean initialized;
     private final Object lock = new Object();
 
     private List<Score> scores = new ArrayList<Score>();
@@ -47,16 +48,38 @@ public class SupabaseHighScoreService implements HighScoreService {
     private boolean haveTodaysUpdate = true;
     private boolean lastNetworkOk = false;
 
+    /**
+     * Production constructor. The launchers build the service in
+     * main()/onCreate(), BEFORE libGDX populates the static {@code Gdx.*}
+     * handles, so this MUST NOT touch Gdx. All Gdx-dependent setup is deferred
+     * to {@link #ensureInit()}, which runs lazily on the first method call
+     * (always after libGDX has initialized).
+     */
     public SupabaseHighScoreService() {
-        this(loadConfig(), Gdx.app.getPreferences(PREFS));
     }
 
-    /** Constructor seam for tests. */
+    /** Constructor seam for tests: injects config + prefs and initializes eagerly. */
     SupabaseHighScoreService(SupabaseConfig config, Preferences prefs) {
         this.config = config;
         this.prefs = prefs;
+        init();
+    }
+
+    /** Runs the Gdx-dependent setup exactly once. Safe to call on every method entry. */
+    private synchronized void ensureInit() {
+        if (initialized) {
+            return;
+        }
+        this.config = loadConfig();
+        this.prefs = Gdx.app.getPreferences(PREFS);
+        init();
+    }
+
+    /** Loads cached lists and flushes the outbox. Requires config + prefs set. */
+    private void init() {
         scores = ScoreStore.scoresFromJson(prefs.getString(K_ALLTIME, ""));
         todaysScores = ScoreStore.scoresFromJson(prefs.getString(K_TODAYS, ""));
+        initialized = true;
         flushOutbox();
     }
 
@@ -79,6 +102,7 @@ public class SupabaseHighScoreService implements HighScoreService {
 
     @Override
     public boolean haveScoreUpdate() {
+        ensureInit();
         synchronized (lock) {
             return haveUpdate;
         }
@@ -86,6 +110,7 @@ public class SupabaseHighScoreService implements HighScoreService {
 
     @Override
     public boolean haveTodaysScoreUpdate() {
+        ensureInit();
         synchronized (lock) {
             return haveTodaysUpdate;
         }
@@ -93,6 +118,7 @@ public class SupabaseHighScoreService implements HighScoreService {
 
     @Override
     public List<Score> getScoreUpdate() {
+        ensureInit();
         synchronized (lock) {
             haveUpdate = false;
             return new ArrayList<Score>(scores);
@@ -101,6 +127,7 @@ public class SupabaseHighScoreService implements HighScoreService {
 
     @Override
     public List<Score> getTodaysScoreUpdate() {
+        ensureInit();
         synchronized (lock) {
             haveTodaysUpdate = false;
             return new ArrayList<Score>(todaysScores);
@@ -111,11 +138,13 @@ public class SupabaseHighScoreService implements HighScoreService {
 
     @Override
     public void fetchHighScores() {
+        ensureInit();
         fetch();
     }
 
     @Override
     public void fetchTodaysHighScores(boolean saveLocalScoreToWeb) {
+        ensureInit();
         fetch();
         if (saveLocalScoreToWeb) {
             flushOutbox();
@@ -150,6 +179,7 @@ public class SupabaseHighScoreService implements HighScoreService {
 
     @Override
     public void saveHighScore(Score score) {
+        ensureInit();
         Score best = getMyBest();
         if (best == null || best.getScore() < score.getScore()) {
             saveMyBest(score);
@@ -212,6 +242,7 @@ public class SupabaseHighScoreService implements HighScoreService {
 
     @Override
     public Score getMyBest() {
+        ensureInit();
         int s = prefs.getInteger(K_BEST_SCORE, 0);
         if (s == 0) {
             return null;
@@ -230,6 +261,7 @@ public class SupabaseHighScoreService implements HighScoreService {
 
     @Override
     public boolean internetAvailable() {
+        ensureInit();
         return config.isConfigured() && lastNetworkOk;
     }
 
@@ -239,6 +271,7 @@ public class SupabaseHighScoreService implements HighScoreService {
 
     @Override
     public boolean goodForHighScores(int score) {
+        ensureInit();
         synchronized (lock) {
             if (todaysScores.size() < LIMIT) {
                 return true;
