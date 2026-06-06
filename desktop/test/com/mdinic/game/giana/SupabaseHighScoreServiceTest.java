@@ -13,6 +13,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.headless.HeadlessApplication;
 import com.badlogic.gdx.backends.headless.HeadlessApplicationConfiguration;
 import com.mdinic.game.giana.service.Score;
@@ -22,19 +23,37 @@ public class SupabaseHighScoreServiceTest {
 
     private HeadlessApplication app;
 
+    /**
+     * Name of the libGDX Preferences the service persists to. Mirrors
+     * SupabaseHighScoreService.PREFS (package-private in another package, so we
+     * repeat the literal here). The headless backend stores these on disk
+     * (~/.prefs/giana-highscores), so without clearing them a saved best from a
+     * prior run leaks into the next, breaking test isolation.
+     */
+    private static final String PREFS = "giana-highscores";
+
     @Before
     public void setUp() {
         HeadlessApplicationConfiguration config = new HeadlessApplicationConfiguration();
         app = new HeadlessApplication(new ApplicationAdapter() {
         }, config);
+        clearPrefs();
     }
 
     @After
     public void tearDown() {
+        clearPrefs();
         if (app != null) {
             app.exit();
             app = null;
         }
+    }
+
+    /** Wipes the on-disk Preferences so each test starts and ends with a clean slate. */
+    private static void clearPrefs() {
+        Preferences prefs = Gdx.app.getPreferences(PREFS);
+        prefs.clear();
+        prefs.flush();
     }
 
     /**
