@@ -2,6 +2,7 @@ package com.mdinic.game.giana;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
@@ -60,5 +61,41 @@ public class ScoreCodecTest {
     @Test
     public void utcMidnightIso_truncatesToDayStart() {
         assertEquals("2023-11-14T00:00:00Z", ScoreCodec.utcMidnightIso(1700000000000L));
+    }
+
+    @Test
+    public void parseScores_readsNameScoreLevelArray() {
+        String json = "[{\"name\":\"Maria\",\"score\":1630,\"level\":2},"
+                + "{\"name\":\"Milan\",\"score\":1530,\"level\":1}]";
+        java.util.List<com.mdinic.game.giana.service.Score> out = ScoreCodec.parseScores(json);
+        assertEquals(2, out.size());
+        assertEquals("Maria", out.get(0).getName());
+        assertEquals(1630, out.get(0).getScore());
+        assertEquals(2, out.get(0).getLevel());
+        assertEquals("Milan", out.get(1).getName());
+    }
+
+    @Test
+    public void parseScores_emptyArray_returnsEmpty() {
+        assertEquals(0, ScoreCodec.parseScores("[]").size());
+    }
+
+    @Test
+    public void parseScores_nullOrBlank_returnsEmpty() {
+        assertEquals(0, ScoreCodec.parseScores(null).size());
+        assertEquals(0, ScoreCodec.parseScores("   ").size());
+    }
+
+    @Test
+    public void submitBody_containsAllSignedFields() {
+        com.mdinic.game.giana.service.PendingSubmit ps =
+            new com.mdinic.game.giana.service.PendingSubmit("Giana", 1260, 3, 1700000000000L, "deadbeef");
+        String body = ScoreCodec.submitBody(ps);
+        // libGDX Json emits compact JSON; assert each field/value pair is present.
+        assertTrue(body.contains("\"name\":\"Giana\""));
+        assertTrue(body.contains("\"score\":1260"));
+        assertTrue(body.contains("\"level\":3"));
+        assertTrue(body.contains("\"ts\":1700000000000"));
+        assertTrue(body.contains("\"sig\":\"deadbeef\""));
     }
 }

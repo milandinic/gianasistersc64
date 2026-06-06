@@ -4,8 +4,13 @@ import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.TimeZone;
+
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.JsonValue;
 
 /** Pure, side-effect-free helpers for encoding/signing scores. No Gdx.net here. */
 public final class ScoreCodec {
@@ -53,5 +58,46 @@ public final class ScoreCodec {
         } catch (Exception e) {
             throw new RuntimeException("HMAC failure", e);
         }
+    }
+
+    public static List<Score> parseScores(String json) {
+        List<Score> out = new ArrayList<Score>();
+        if (json == null || json.trim().isEmpty()) {
+            return out;
+        }
+        JsonValue root = new JsonReader().parse(json);
+        if (root == null) {
+            return out;
+        }
+        for (JsonValue v = root.child; v != null; v = v.next) {
+            out.add(new Score(v.getString("name", ""), v.getInt("score", 0), v.getInt("level", 0)));
+        }
+        return out;
+    }
+
+    /** Compact JSON body for the submit-score Edge Function. Numbers stay unquoted. */
+    public static String submitBody(PendingSubmit ps) {
+        return "{\"name\":" + jsonQuote(ps.name) + ",\"score\":" + ps.score + ",\"level\":" + ps.level
+                + ",\"ts\":" + ps.ts + ",\"sig\":" + jsonQuote(ps.sig) + "}";
+    }
+
+    static String jsonQuote(String raw) {
+        String s = raw == null ? "" : raw;
+        StringBuilder sb = new StringBuilder("\"");
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if (c == '"' || c == '\\') {
+                sb.append('\\').append(c);
+            } else if (c == '\n') {
+                sb.append("\\n");
+            } else if (c == '\r') {
+                sb.append("\\r");
+            } else if (c == '\t') {
+                sb.append("\\t");
+            } else {
+                sb.append(c);
+            }
+        }
+        return sb.append('"').toString();
     }
 }
