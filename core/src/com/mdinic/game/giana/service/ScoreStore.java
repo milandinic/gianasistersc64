@@ -40,6 +40,36 @@ public final class ScoreStore {
         return out;
     }
 
+    public static String outboxToJson(List<PendingSubmit> items) {
+        StringBuilder sb = new StringBuilder("[");
+        for (int i = 0; i < items.size(); i++) {
+            PendingSubmit p = items.get(i);
+            if (i > 0) {
+                sb.append(',');
+            }
+            sb.append("{\"name\":").append(quote(p.name)).append(",\"score\":").append(p.score)
+                    .append(",\"level\":").append(p.level).append(",\"ts\":").append(p.ts)
+                    .append(",\"sig\":").append(quote(p.sig)).append('}');
+        }
+        return sb.append(']').toString();
+    }
+
+    public static List<PendingSubmit> outboxFromJson(String json) {
+        List<PendingSubmit> out = new ArrayList<PendingSubmit>();
+        if (json == null || json.trim().isEmpty()) {
+            return out;
+        }
+        JsonValue root = new JsonReader().parse(json);
+        if (root == null) {
+            return out;
+        }
+        for (JsonValue v = root.child; v != null; v = v.next) {
+            out.add(new PendingSubmit(v.getString("name", ""), v.getInt("score", 0), v.getInt("level", 0),
+                    v.getLong("ts", 0L), v.getString("sig", "")));
+        }
+        return out;
+    }
+
     private static String quote(String raw) {
         String s = raw == null ? "" : raw;
         StringBuilder sb = new StringBuilder("\"");

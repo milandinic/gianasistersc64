@@ -34,4 +34,30 @@ public class ScoreStoreTest {
         assertEquals(0, ScoreStore.scoresFromJson(null).size());
         assertEquals(0, ScoreStore.scoresFromJson("").size());
     }
+
+    @Test
+    public void outbox_roundTrips() {
+        java.util.List<com.mdinic.game.giana.service.PendingSubmit> in =
+            new java.util.ArrayList<com.mdinic.game.giana.service.PendingSubmit>();
+        in.add(new com.mdinic.game.giana.service.PendingSubmit("Giana", 1260, 3, 1700000000000L, "abc123"));
+        in.add(new com.mdinic.game.giana.service.PendingSubmit("Anna", 999, 1, 1700000001111L, "def456"));
+
+        String s = com.mdinic.game.giana.service.ScoreStore.outboxToJson(in);
+        java.util.List<com.mdinic.game.giana.service.PendingSubmit> out =
+            com.mdinic.game.giana.service.ScoreStore.outboxFromJson(s);
+
+        assertEquals(2, out.size());
+        assertEquals("Giana", out.get(0).name);
+        assertEquals(1260, out.get(0).score);
+        assertEquals(3, out.get(0).level);
+        assertEquals(1700000000000L, out.get(0).ts);
+        assertEquals("abc123", out.get(0).sig);
+        assertEquals("Anna", out.get(1).name);
+    }
+
+    @Test
+    public void outboxFromJson_nullOrBlank_returnsEmpty() {
+        assertEquals(0, com.mdinic.game.giana.service.ScoreStore.outboxFromJson(null).size());
+        assertEquals(0, com.mdinic.game.giana.service.ScoreStore.outboxFromJson("").size());
+    }
 }
