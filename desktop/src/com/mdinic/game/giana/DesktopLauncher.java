@@ -7,7 +7,7 @@ public class DesktopLauncher {
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setTitle("Giana Byte");
-        config.setWindowedMode(480, 320);
+        config.setWindowedMode(940, 640);
         GianaSistersC64 gianaSistersC64 = new GianaSistersC64();
         gianaSistersC64.setHighScoreService(new HighScoreServiceDesktop());
         gianaSistersC64.setSettingsService(new SettingsServiceDesktop());
