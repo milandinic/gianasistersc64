@@ -23,10 +23,35 @@ public class SupabaseConfig {
     }
 
     public static SupabaseConfig fromProperties(Properties p) {
-        if (p == null) {
-            return new SupabaseConfig("", "", "", "");
+        return fromSources(p, new EnvLookup() {
+            public String get(String name) {
+                return null;
+            }
+        });
+    }
+
+    /**
+     * Resolves each value as: environment variable (if non-blank) wins over the
+     * file property. {@code fileProps} may be {@code null} (no file present), in
+     * which case only the environment is consulted.
+     */
+    public static SupabaseConfig fromSources(Properties fileProps, EnvLookup env) {
+        return new SupabaseConfig(
+                pick(env.get("GIANA_SUPABASE_URL"), prop(fileProps, "supabase.url")),
+                pick(env.get("GIANA_SUPABASE_ANON_KEY"), prop(fileProps, "supabase.anonKey")),
+                pick(env.get("GIANA_SUPABASE_FUNCTIONS_URL"), prop(fileProps, "supabase.functionsUrl")),
+                pick(env.get("GIANA_SCORE_SECRET"), prop(fileProps, "score.secret")));
+    }
+
+    private static String prop(Properties p, String key) {
+        return p == null ? null : p.getProperty(key);
+    }
+
+    /** Env value if present and non-blank, otherwise the file value. */
+    private static String pick(String envValue, String fileValue) {
+        if (envValue != null && !envValue.trim().isEmpty()) {
+            return envValue;
         }
-        return new SupabaseConfig(p.getProperty("supabase.url"), p.getProperty("supabase.anonKey"),
-                p.getProperty("supabase.functionsUrl"), p.getProperty("score.secret"));
+        return fileValue;
     }
 }
