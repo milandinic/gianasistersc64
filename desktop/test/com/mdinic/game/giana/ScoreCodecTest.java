@@ -38,4 +38,27 @@ public class ScoreCodecTest {
         String expected = "009269c8313759bf08197f67cb04c64f44060887040fe31914270af99117c256";
         assertEquals(expected, ScoreCodec.hmacSha256Hex("s3cr3t", "Giana|1260|3|1700000000000"));
     }
+
+    @Test
+    public void allTimeUrl_ordersByScoreDescLimit5() {
+        String url = ScoreCodec.allTimeUrl("https://proj.supabase.co");
+        assertEquals(
+            "https://proj.supabase.co/rest/v1/scores?select=name,score,level&order=score.desc&limit=5",
+            url);
+    }
+
+    @Test
+    public void todaysUrl_addsCreatedAtGteFilter() {
+        // 1700000000000 ms = 2023-11-14T22:13:20Z; UTC midnight of that day is 2023-11-14T00:00:00Z
+        String url = ScoreCodec.todaysUrl("https://proj.supabase.co", 1700000000000L);
+        assertEquals(
+            "https://proj.supabase.co/rest/v1/scores?select=name,score,level"
+                + "&created_at=gte.2023-11-14T00:00:00Z&order=score.desc&limit=5",
+            url);
+    }
+
+    @Test
+    public void utcMidnightIso_truncatesToDayStart() {
+        assertEquals("2023-11-14T00:00:00Z", ScoreCodec.utcMidnightIso(1700000000000L));
+    }
 }
