@@ -5,8 +5,13 @@ import java.util.List;
 import java.util.Properties;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net.HttpMethods;
+import com.badlogic.gdx.Net.HttpRequest;
+import com.badlogic.gdx.Net.HttpResponse;
+import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.net.HttpRequestBuilder;
 
 /**
  * Online high-score service backed by Supabase, shared by all platforms via
@@ -117,9 +122,30 @@ public class SupabaseHighScoreService implements HighScoreService {
         }
     }
 
-    /** Network no-op placeholder; replaced in the next task. */
     void fetch() {
-        // Offline skeleton: nothing to do; cached lists already loaded.
+        if (!config.isConfigured()) {
+            return; // offline: cached lists already serve the screen
+        }
+        getJson(ScoreCodec.allTimeUrl(config.url), new Consumer() {
+            public void ok(String body) {
+                setLastNetworkOk(true);
+                applyAllTime(ScoreCodec.parseScores(body));
+            }
+
+            public void fail() {
+                setLastNetworkOk(false);
+            }
+        });
+        getJson(ScoreCodec.todaysUrl(config.url, System.currentTimeMillis()), new Consumer() {
+            public void ok(String body) {
+                setLastNetworkOk(true);
+                applyTodays(ScoreCodec.parseScores(body));
+            }
+
+            public void fail() {
+                setLastNetworkOk(false);
+            }
+        });
     }
 
     @Override
@@ -154,9 +180,32 @@ public class SupabaseHighScoreService implements HighScoreService {
         writeOutbox(box);
     }
 
-    /** Network no-op placeholder; replaced in the next task. */
     void flushOutbox() {
-        // Offline skeleton: keep queued entries until network wiring exists.
+        if (!config.isConfigured()) {
+            return;
+        }
+        final List<PendingSubmit> box = readOutbox();
+        if (box.isEmpty()) {
+            return;
+        }
+        // Attempt each entry; on success remove it. Process the head; the
+        // response callback re-invokes flush for the remainder.
+        final PendingSubmit head = box.get(0);
+        postJson(config.functionsUrl + "/submit-score", ScoreCodec.submitBody(head), new Consumer() {
+            public void ok(String body) {
+                setLastNetworkOk(true);
+                List<PendingSubmit> current = readOutbox();
+                if (!current.isEmpty()) {
+                    current.remove(0);
+                    writeOutbox(current);
+                }
+                flushOutbox(); // next entry, if any
+            }
+
+            public void fail() {
+                setLastNetworkOk(false); // keep entry; retry later
+            }
+        });
     }
 
     // --- personal best -------------------------------------------------------
@@ -221,5 +270,51 @@ public class SupabaseHighScoreService implements HighScoreService {
         }
         prefs.putString(K_TODAYS, ScoreStore.scoresToJson(fresh));
         prefs.flush();
+    }
+
+    // --- HTTP plumbing -------------------------------------------------------
+
+    private interface Consumer {
+        void ok(String body);
+
+        void fail();
+    }
+
+    private void getJson(String url, final Consumer cb) {
+        HttpRequest req = new HttpRequestBuilder().newRequest().method(HttpMethods.GET).url(url)
+                .header("apikey", config.anonKey).header("Authorization", "Bearer " + config.anonKey)
+                .header("Accept", "application/json").timeout(10000).build();
+        send(req, cb);
+    }
+
+    private void postJson(String url, String body, final Consumer cb) {
+        HttpRequest req = new HttpRequestBuilder().newRequest().method(HttpMethods.POST).url(url)
+                .header("Content-Type", "application/json").header("Accept", "application/json")
+                .content(body).timeout(10000).build();
+        send(req, cb);
+    }
+
+    private void send(HttpRequest req, final Consumer cb) {
+        Gdx.net.sendHttpRequest(req, new HttpResponseListener() {
+            public void handleHttpResponse(HttpResponse httpResponse) {
+                int status = httpResponse.getStatus().getStatusCode();
+                String body = httpResponse.getResultAsString();
+                if (status >= 200 && status < 300) {
+                    cb.ok(body);
+                } else {
+                    Gdx.app.error("HighScore", "HTTP " + status + ": " + body);
+                    cb.fail();
+                }
+            }
+
+            public void failed(Throwable t) {
+                Gdx.app.error("HighScore", "request failed", t);
+                cb.fail();
+            }
+
+            public void cancelled() {
+                cb.fail();
+            }
+        });
     }
 }
