@@ -2,6 +2,15 @@ plugins {
     id "com.android.application"
 }
 
+// AGP 8.13's JdkImageTransform runs jlink under this toolchain. JDK 26's jlink
+// rejects the Android platform java.base, so pin the Android module to JDK 21
+// (core/desktop keep the JDK 26 toolchain set in the root build.gradle).
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
 android {
     namespace "com.mdinic.game.giana"
     compileSdk 36
