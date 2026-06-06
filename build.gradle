@@ -22,6 +22,12 @@ project(":desktop") {
         }
     }
 
+    // Build/run on JDK 26, but emit Java 17 bytecode so the shared core jar
+    // is consumable by Android's dexer (D8/R8 maxes out at Java 17 bytecode).
+    tasks.withType(JavaCompile).configureEach {
+        options.release = 17
+    }
+
     dependencies {
         implementation project(":core")
         implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
@@ -40,6 +46,11 @@ project(":core") {
         toolchain {
             languageVersion = JavaLanguageVersion.of(26)
         }
+    }
+
+    // Emit Java 17 bytecode (Android's dexer cannot consume Java 26 bytecode).
+    tasks.withType(JavaCompile).configureEach {
+        options.release = 17
     }
 
     dependencies {

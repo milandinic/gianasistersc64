@@ -24,3 +24,9 @@ proguard/
 
 # Log Files
 *.log
+
+# libGDX native libs extracted into android/libs by copyAndroidNatives at build time
+android/libs/armeabi-v7a/
+android/libs/arm64-v8a/
+android/libs/x86/
+android/libs/x86_64/

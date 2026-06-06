@@ -4,6 +4,9 @@ pluginManagement {
         mavenCentral()
         gradlePluginPortal()
     }
+    plugins {
+        id 'com.android.application' version '8.13.0'
+    }
 }
 
 dependencyResolutionManagement {
@@ -16,5 +19,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = 'gianasisters64'
-// android re-added in Task 5 after core/desktop verified
-include 'desktop', 'core'
+include 'desktop', 'core', 'android'
