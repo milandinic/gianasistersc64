@@ -1,15 +1,17 @@
 package com.mdinic.game.giana;
 
-import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
-import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
+import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
 public class DesktopLauncher {
     public static void main(String[] arg) {
-        LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
+        Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
+        config.setTitle("Giana Byte");
+        config.setWindowedMode(480, 320);
         GianaSistersC64 gianaSistersC64 = new GianaSistersC64();
         gianaSistersC64.setHighScoreService(new HighScoreServiceDesktop());
         gianaSistersC64.setSettingsService(new SettingsServiceDesktop());
         gianaSistersC64.setGeneralService(new GeneralServiceDesktop());
-        new LwjglApplication(gianaSistersC64, config);
+        new Lwjgl3Application(gianaSistersC64, config);
     }
 }

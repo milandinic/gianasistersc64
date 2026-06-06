@@ -64,7 +64,7 @@ public class GameScreen extends GianaSistersScreen {
                 return false;
             }
         });
-        Gdx.input.setCatchBackKey(true);
+        Gdx.input.setCatchKey(Keys.BACK, true);
     }
 
     @Override

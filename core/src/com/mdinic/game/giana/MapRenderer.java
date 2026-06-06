@@ -33,27 +33,27 @@ public class MapRenderer {
     public SpriteBatch batch = new SpriteBatch(5460);
     public final SpriteBatch fontBatch;
 
-    Animation spiderAnim;
+    Animation<TextureRegion> spiderAnim;
     TextureRegion spiderDead;
 
-    Animation gianaLeft;
-    Animation gianaRight;
-    Animation gianaJumpLeft;
-    Animation gianaJumpRight;
-    Animation gianaIdleLeft;
-    Animation gianaIdleRight;
-    Animation gianaBigLeft;
-    Animation gianaBigRight;
-    Animation gianaBigJumpLeft;
-    Animation gianaBigJumpRight;
-    Animation gianaBigIdleLeft;
-    Animation gianaBigIdleRight;
-    Animation gianaDead;
-    Animation gianaGrow;
-    Animation smallDiamondAnim;
-    Animation diamondAnim;
-    java.util.Map<BrickColor, Animation> treatBoxAnim = new HashMap<BrickColor, Animation>();
-    Animation whiteCristalAnim;
+    Animation<TextureRegion> gianaLeft;
+    Animation<TextureRegion> gianaRight;
+    Animation<TextureRegion> gianaJumpLeft;
+    Animation<TextureRegion> gianaJumpRight;
+    Animation<TextureRegion> gianaIdleLeft;
+    Animation<TextureRegion> gianaIdleRight;
+    Animation<TextureRegion> gianaBigLeft;
+    Animation<TextureRegion> gianaBigRight;
+    Animation<TextureRegion> gianaBigJumpLeft;
+    Animation<TextureRegion> gianaBigJumpRight;
+    Animation<TextureRegion> gianaBigIdleLeft;
+    Animation<TextureRegion> gianaBigIdleRight;
+    Animation<TextureRegion> gianaDead;
+    Animation<TextureRegion> gianaGrow;
+    Animation<TextureRegion> smallDiamondAnim;
+    Animation<TextureRegion> diamondAnim;
+    java.util.Map<BrickColor, Animation<TextureRegion>> treatBoxAnim = new HashMap<BrickColor, Animation<TextureRegion>>();
+    Animation<TextureRegion> whiteCristalAnim;
 
     java.util.Map<BrickColor, TextureRegion> tileTexture = new HashMap<BrickColor, TextureRegion>();
 
@@ -67,7 +67,7 @@ public class MapRenderer {
     TextureRegion waspRightDead;
     TextureRegion strawberry;
 
-    java.util.Map<GoundMonsterType, Animation[]> groundMonsterAnimations = new HashMap<GoundMonsterType, Animation[]>();
+    java.util.Map<GoundMonsterType, Animation<TextureRegion>[]> groundMonsterAnimations = new HashMap<GoundMonsterType, Animation<TextureRegion>[]>();
 
     public final BitmapFont yellowFont10;
     public final BitmapFont yellowFont12;
@@ -75,25 +75,25 @@ public class MapRenderer {
     public BitmapFont redFont10;
 
     java.util.Map<SimpleImageType, TextureRegion> simpleImageTextureRegions = new HashMap<SimpleImageType, TextureRegion>();
-    java.util.Map<FixedTrapType, Animation> fixedTrapTypeAnim = new HashMap<FixedTrapType, Animation>();
+    java.util.Map<FixedTrapType, Animation<TextureRegion>> fixedTrapTypeAnim = new HashMap<FixedTrapType, Animation<TextureRegion>>();
 
-    private final Animation treatBallRightAnim;
-    private final Animation treatBallLeftAnim;
-    private final Animation piranhaUpAnim;
-    private final Animation piranhaDownAnim;
+    private final Animation<TextureRegion> treatBallRightAnim;
+    private final Animation<TextureRegion> treatBallLeftAnim;
+    private final Animation<TextureRegion> piranhaUpAnim;
+    private final Animation<TextureRegion> piranhaDownAnim;
 
-    private final Animation ballDownAnim;
-    private final Animation ballUpAnim;
+    private final Animation<TextureRegion> ballDownAnim;
+    private final Animation<TextureRegion> ballUpAnim;
 
-    private final Animation waspRightAnim;
-    private final Animation waspLeftAnim;
-    public final Animation yellowCristalAnim;
-    java.util.Map<BrickColor, Animation> quicksandAnim = new HashMap<LevelConf.BrickColor, Animation>();
+    private final Animation<TextureRegion> waspRightAnim;
+    private final Animation<TextureRegion> waspLeftAnim;
+    public final Animation<TextureRegion> yellowCristalAnim;
+    java.util.Map<BrickColor, Animation<TextureRegion>> quicksandAnim = new HashMap<LevelConf.BrickColor, Animation<TextureRegion>>();
 
-    java.util.Map<BrickColor, Animation> brickAnim = new HashMap<LevelConf.BrickColor, Animation>();
+    java.util.Map<BrickColor, Animation<TextureRegion>> brickAnim = new HashMap<LevelConf.BrickColor, Animation<TextureRegion>>();
 
-    private final Animation lightningAnim;
-    private final Animation doubleLightningAnim;
+    private final Animation<TextureRegion> lightningAnim;
+    private final Animation<TextureRegion> doubleLightningAnim;
     private float camY;
 
     public MapRenderer() {
@@ -103,7 +103,7 @@ public class MapRenderer {
         fontBatch = new SpriteBatch();
         fontBatch.getProjectionMatrix().setToOrtho2D(0, 0, 480, 320);
 
-        yellowCristalAnim = new Animation(0.3f, new TextureRegion(new Texture(
+        yellowCristalAnim = new Animation<TextureRegion>(0.3f, new TextureRegion(new Texture(
                 Gdx.files.internal("data/yellow-cristal.png"))).split(11, 11)[0]);
 
         Texture sprites = new Texture(Gdx.files.internal("data/sprites.png"));
@@ -112,13 +112,13 @@ public class MapRenderer {
             Texture brick = new Texture(Gdx.files.internal("data/bricks-" + color.getName() + ".png"));
 
             TextureRegion[] brickRegion = new TextureRegion(brick).split(24, 16)[0];
-            brickAnim.put(color, new Animation(0.1f, brickRegion[1], brickRegion[2], brickRegion[3], brickRegion[4]));
+            brickAnim.put(color, new Animation<TextureRegion>(0.1f, brickRegion[1], brickRegion[2], brickRegion[3], brickRegion[4]));
 
             tileTexture.put(color, brickRegion[0]);
 
             quicksandAnim.put(
                     color,
-                    new Animation(0.1f, new TextureRegion(new Texture(Gdx.files.internal("data/quicksand-"
+                    new Animation<TextureRegion>(0.1f, new TextureRegion(new Texture(Gdx.files.internal("data/quicksand-"
                             + color.getName() + ".png"))).split(20, 20)[0]));
 
             // treat box
@@ -136,7 +136,7 @@ public class MapRenderer {
             for (int i = treatboxRegion.length - 1; i >= 0; i--) {
                 tbArray.add(treatboxRegion[i]);
             }
-            treatBoxAnim.put(color, new Animation(0.2f, tbArray.toArray(new TextureRegion[10])));
+            treatBoxAnim.put(color, new Animation<TextureRegion>(0.2f, tbArray.toArray(new TextureRegion[10])));
         }
 
         bullet = new TextureRegion(new Texture(Gdx.files.internal("data/bullet.png")));
@@ -158,10 +158,10 @@ public class MapRenderer {
         simpleImageTextureRegions.put(SimpleImageType.SPIRAL, new TextureRegion(sprites, 40, 374, 24, 23));
         simpleImageTextureRegions.put(SimpleImageType.MAGICWATER, new TextureRegion(sprites, 227, 270, 28, 3));
 
-        smallDiamondAnim = new Animation(0.1f, new TextureRegion(new Texture(
+        smallDiamondAnim = new Animation<TextureRegion>(0.1f, new TextureRegion(new Texture(
                 Gdx.files.internal("data/smalldiamond.png"))).split(8, 8)[0]);
 
-        whiteCristalAnim = new Animation(0.3f, new TextureRegion(new Texture(
+        whiteCristalAnim = new Animation<TextureRegion>(0.3f, new TextureRegion(new Texture(
                 Gdx.files.internal("data/white-cristal.png"))).split(11, 11)[0]);
 
         Texture gianaTexture = new Texture(Gdx.files.internal("data/giana.png"));
@@ -171,10 +171,10 @@ public class MapRenderer {
         Texture fireTexture = new Texture(Gdx.files.internal("data/fire.png"));
         Texture waterTexture = new Texture(Gdx.files.internal("data/water.png"));
 
-        Animation waterAnim = new Animation(0.1f, new TextureRegion(waterTexture).split(24, 12)[0]);
-        Animation fireAnim = new Animation(0.1f, new TextureRegion(fireTexture).split(27, 16)[0]);
-        Animation movingSpikesAnim = new Animation(0.3f, new TextureRegion(movingSpikesTexture).split(48, 16)[0]);
-        Animation triangleAnim = new Animation(1f, new TextureRegion(sprites, 381, 140, 24, 24));
+        Animation<TextureRegion> waterAnim = new Animation<TextureRegion>(0.1f, new TextureRegion(waterTexture).split(24, 12)[0]);
+        Animation<TextureRegion> fireAnim = new Animation<TextureRegion>(0.1f, new TextureRegion(fireTexture).split(27, 16)[0]);
+        Animation<TextureRegion> movingSpikesAnim = new Animation<TextureRegion>(0.3f, new TextureRegion(movingSpikesTexture).split(48, 16)[0]);
+        Animation<TextureRegion> triangleAnim = new Animation<TextureRegion>(1f, new TextureRegion(sprites, 381, 140, 24, 24));
 
         fixedTrapTypeAnim.put(FixedTrapType.FIRE, fireAnim);
         fixedTrapTypeAnim.put(FixedTrapType.MOVING_SPIKES, movingSpikesAnim);
@@ -193,7 +193,7 @@ public class MapRenderer {
 
         TextureRegion[] waspRightRegion = new TextureRegion(new Texture(Gdx.files.internal("data/wasp.png"))).split(24,
                 20)[0];
-        waspRightAnim = new Animation(0.3f, waspRightRegion);
+        waspRightAnim = new Animation<TextureRegion>(0.3f, waspRightRegion);
 
         TextureRegion[] waspRegionLeft = new TextureRegion(new Texture(Gdx.files.internal("data/wasp.png"))).split(24,
                 20)[0];
@@ -207,14 +207,14 @@ public class MapRenderer {
             textureRegion.flip(true, false);
         }
 
-        waspLeftAnim = new Animation(0.3f, waspRegionLeft);
+        waspLeftAnim = new Animation<TextureRegion>(0.3f, waspRegionLeft);
 
         TextureRegion[] ballRegions = new TextureRegion(new Texture(Gdx.files.internal("data/ball.png"))).split(24, 20)[0];
 
-        ballUpAnim = new Animation(0.2f, ballRegions[0], ballRegions[1], ballRegions[2]);
-        ballDownAnim = new Animation(1f, ballRegions[3]);
+        ballUpAnim = new Animation<TextureRegion>(0.2f, ballRegions[0], ballRegions[1], ballRegions[2]);
+        ballDownAnim = new Animation<TextureRegion>(1f, ballRegions[3]);
 
-        piranhaUpAnim = new Animation(0.2f,
+        piranhaUpAnim = new Animation<TextureRegion>(0.2f,
                 new TextureRegion(new Texture(Gdx.files.internal("data/piranha.png"))).split(20, 20)[0]);
 
         TextureRegion[] piranhaDownRegion = new TextureRegion(new Texture(Gdx.files.internal("data/piranha.png")))
@@ -222,32 +222,33 @@ public class MapRenderer {
         for (TextureRegion textureRegion : piranhaDownRegion) {
             textureRegion.flip(false, true);
         }
-        piranhaDownAnim = new Animation(0.2f, piranhaDownRegion);
+        piranhaDownAnim = new Animation<TextureRegion>(0.2f, piranhaDownRegion);
 
         TextureRegion groundMonstersRegion = new TextureRegion(groundMonstersTexture);
         groundMonstersRegion.setRegion(0, 0, 240, 20);
 
         groundMonsterAnimations.put(GoundMonsterType.OWL,
-                new Animation[] { new Animation(0.2f, groundMonstersRegion.split(24, 20)[0]) });
+                new Animation[] { new Animation<TextureRegion>(0.2f, groundMonstersRegion.split(24, 20)[0]) });
 
         groundMonstersRegion.setRegion(240, 0, 240, 20);
 
         groundMonsterAnimations.put(GoundMonsterType.JELLY,
-                new Animation[] { new Animation(0.2f, groundMonstersRegion.split(24, 20)[0]) });
+                new Animation[] { new Animation<TextureRegion>(0.2f, groundMonstersRegion.split(24, 20)[0]) });
+        // raw Animation[] above intentional: generic array creation is illegal in Java
 
-        diamondAnim = new Animation(0.3f, new TextureRegion(diamondTexture).split(16, 16)[0]);
+        diamondAnim = new Animation<TextureRegion>(0.3f, new TextureRegion(diamondTexture).split(16, 16)[0]);
 
         TextureRegion treatBallRegion = new TextureRegion(gianaTexture, 0, 88, 175, 18);
 
         TextureRegion[] treatBall = treatBallRegion.split(22, 18)[0];
-        treatBallRightAnim = new Animation(0.1f, treatBall);
+        treatBallRightAnim = new Animation<TextureRegion>(0.1f, treatBall);
         List<TextureRegion> asList = Arrays.asList(treatBall.clone());
         Collections.reverse(asList);
-        treatBallLeftAnim = new Animation(0.1f, asList.toArray(new TextureRegion[treatBall.length]));
+        treatBallLeftAnim = new Animation<TextureRegion>(0.1f, asList.toArray(new TextureRegion[treatBall.length]));
 
-        lightningAnim = new Animation(0.1f,
+        lightningAnim = new Animation<TextureRegion>(0.1f,
                 new TextureRegion(new Texture(Gdx.files.internal("data/lightning.png"))).split(9, 15)[0]);
-        doubleLightningAnim = new Animation(0.1f, new TextureRegion(new Texture(
+        doubleLightningAnim = new Animation<TextureRegion>(0.1f, new TextureRegion(new Texture(
                 Gdx.files.internal("data/double_lightning.png"))).split(19, 15)[0]);
 
         strawberry = new TextureRegion(new Texture(Gdx.files.internal("data/strawberry.png")));
@@ -258,14 +259,14 @@ public class MapRenderer {
         gianaBigRegion.setRegion(0, 154, 189, 28);
         TextureRegion[] gianaBLeft = gianaBigRegion.split(27, 28)[0];
 
-        gianaBigRight = new Animation(0.1f, gianaBRight[1], gianaBRight[2], gianaBRight[3], gianaBRight[4]);
-        gianaBigLeft = new Animation(0.1f, gianaBLeft[1], gianaBLeft[2], gianaBLeft[3], gianaBLeft[4]);
+        gianaBigRight = new Animation<TextureRegion>(0.1f, gianaBRight[1], gianaBRight[2], gianaBRight[3], gianaBRight[4]);
+        gianaBigLeft = new Animation<TextureRegion>(0.1f, gianaBLeft[1], gianaBLeft[2], gianaBLeft[3], gianaBLeft[4]);
 
-        gianaBigJumpRight = new Animation(0.1f, gianaBRight[5]);
-        gianaBigJumpLeft = new Animation(0.1f, gianaBLeft[5]);
+        gianaBigJumpRight = new Animation<TextureRegion>(0.1f, gianaBRight[5]);
+        gianaBigJumpLeft = new Animation<TextureRegion>(0.1f, gianaBLeft[5]);
 
-        gianaBigIdleRight = new Animation(0.5f, gianaBRight[0]);
-        gianaBigIdleLeft = new Animation(0.5f, gianaBLeft[0]);
+        gianaBigIdleRight = new Animation<TextureRegion>(0.5f, gianaBRight[0]);
+        gianaBigIdleLeft = new Animation<TextureRegion>(0.5f, gianaBLeft[0]);
 
         TextureRegion gianaRegion = new TextureRegion(gianaTexture);
         gianaRegion.setRegion(0, 0, 189, 28);
@@ -277,25 +278,25 @@ public class MapRenderer {
         dying = gianaRegion.split(27, 28)[0][0];
 
         gianaRegion.setRegion(27, 59, 27 * 3, 28);
-        gianaGrow = new Animation(0.1f, gianaRegion.split(27, 28)[0]);
+        gianaGrow = new Animation<TextureRegion>(0.1f, gianaRegion.split(27, 28)[0]);
 
-        gianaDead = new Animation(0.2f, dying);
+        gianaDead = new Animation<TextureRegion>(0.2f, dying);
 
-        gianaRight = new Animation(0.1f, gianaSmallRight[1], gianaSmallRight[2], gianaSmallRight[3], gianaSmallRight[4]);
-        gianaLeft = new Animation(0.1f, gianaSmallLeft[1], gianaSmallLeft[2], gianaSmallLeft[3], gianaSmallLeft[4]);
+        gianaRight = new Animation<TextureRegion>(0.1f, gianaSmallRight[1], gianaSmallRight[2], gianaSmallRight[3], gianaSmallRight[4]);
+        gianaLeft = new Animation<TextureRegion>(0.1f, gianaSmallLeft[1], gianaSmallLeft[2], gianaSmallLeft[3], gianaSmallLeft[4]);
 
-        gianaJumpRight = new Animation(0.1f, gianaSmallRight[5]);
-        gianaJumpLeft = new Animation(0.1f, gianaSmallLeft[5]);
+        gianaJumpRight = new Animation<TextureRegion>(0.1f, gianaSmallRight[5]);
+        gianaJumpLeft = new Animation<TextureRegion>(0.1f, gianaSmallLeft[5]);
 
-        gianaIdleRight = new Animation(0.5f, gianaSmallRight[0]);
-        gianaIdleLeft = new Animation(0.5f, gianaSmallLeft[0]);
+        gianaIdleRight = new Animation<TextureRegion>(0.5f, gianaSmallRight[0]);
+        gianaIdleLeft = new Animation<TextureRegion>(0.5f, gianaSmallLeft[0]);
 
         spawn = gianaSmallRight[0];
 
         spiderDead = new TextureRegion(new Texture(Gdx.files.internal("data/spider.png"))).split(46, 20)[0][0];
         spiderDead.flip(false, true);
 
-        spiderAnim = new Animation(0.1f, new TextureRegion(new Texture(Gdx.files.internal("data/spider.png"))).split(
+        spiderAnim = new Animation<TextureRegion>(0.1f, new TextureRegion(new Texture(Gdx.files.internal("data/spider.png"))).split(
                 46, 20)[0]);
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("data/Giana.ttf"));
@@ -447,7 +448,7 @@ public class MapRenderer {
     }
 
     private void renderGiana() {
-        Animation anim = null;
+        Animation<TextureRegion> anim = null;
 
         if (GianaPower.isBig(map.giana.power)) {
 
@@ -587,7 +588,7 @@ public class MapRenderer {
     private void renderFixedTraps() {
         for (int i = 0; i < map.fixedTraps.size; i++) {
             FixedTrap trap = map.fixedTraps.get(i);
-            Animation anim = fixedTrapTypeAnim.get(trap.type);
+            Animation<TextureRegion> anim = fixedTrapTypeAnim.get(trap.type);
 
             batch.draw(anim.getKeyFrame(trap.stateTime, true), trap.pos.x, trap.pos.y, trap.bounds.width,
                     trap.bounds.height);
@@ -597,7 +598,7 @@ public class MapRenderer {
     private void renderGroundMonsters() {
         for (int i = 0; i < map.groundMonsters.size; i++) {
             GroundMonster monster = map.groundMonsters.get(i);
-            Animation[] animations = groundMonsterAnimations.get(monster.type);
+            Animation<TextureRegion>[] animations = groundMonsterAnimations.get(monster.type);
             if (animations.length == 0) {
                 throw new IllegalStateException("ground monster type is not supported " + monster.type);
             } else {
@@ -705,8 +706,8 @@ public class MapRenderer {
             textureRegion.flip(true, false);
         }
 
-        Animation animLeft = new Animation(speed, leftRegion);
-        Animation animRight = new Animation(speed, rightRegion);
+        Animation<TextureRegion> animLeft = new Animation<TextureRegion>(speed, leftRegion);
+        Animation<TextureRegion> animRight = new Animation<TextureRegion>(speed, rightRegion);
 
         if (swap)
             groundMonsterAnimations.put(type, new Animation[] { animLeft, animRight });
@@ -739,7 +740,7 @@ public class MapRenderer {
             entry.getValue().getTexture().dispose();
         }
 
-        for (Entry<FixedTrapType, Animation> entry : fixedTrapTypeAnim.entrySet()) {
+        for (Entry<FixedTrapType, Animation<TextureRegion>> entry : fixedTrapTypeAnim.entrySet()) {
             disposeAnimation(entry.getValue());
         }
 
@@ -747,21 +748,21 @@ public class MapRenderer {
             entry.getValue().getTexture().dispose();
         }
 
-        for (Entry<GoundMonsterType, Animation[]> entry : groundMonsterAnimations.entrySet()) {
-            for (Animation animation : entry.getValue()) {
+        for (Entry<GoundMonsterType, Animation<TextureRegion>[]> entry : groundMonsterAnimations.entrySet()) {
+            for (Animation<TextureRegion> animation : entry.getValue()) {
                 disposeAnimation(animation);
             }
         }
 
-        for (Entry<BrickColor, Animation> entry : treatBoxAnim.entrySet()) {
+        for (Entry<BrickColor, Animation<TextureRegion>> entry : treatBoxAnim.entrySet()) {
             disposeAnimation(entry.getValue());
         }
 
-        for (Entry<BrickColor, Animation> entry : quicksandAnim.entrySet()) {
+        for (Entry<BrickColor, Animation<TextureRegion>> entry : quicksandAnim.entrySet()) {
             disposeAnimation(entry.getValue());
         }
 
-        for (Entry<BrickColor, Animation> entry : brickAnim.entrySet()) {
+        for (Entry<BrickColor, Animation<TextureRegion>> entry : brickAnim.entrySet()) {
             disposeAnimation(entry.getValue());
         }
 
@@ -800,7 +801,7 @@ public class MapRenderer {
         batch.dispose();
     }
 
-    void disposeAnimation(Animation anim) {
+    void disposeAnimation(Animation<TextureRegion> anim) {
         TextureRegion[] keyFrames = anim.getKeyFrames();
         for (TextureRegion textureRegion : keyFrames) {
             textureRegion.getTexture().dispose();
