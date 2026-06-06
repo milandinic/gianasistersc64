@@ -25,6 +25,9 @@ proguard/
 # Log Files
 *.log
 
+# IntelliJ IDEA project files
+.idea/
+
 # libGDX native libs extracted into android/libs by copyAndroidNatives at build time
 android/libs/armeabi-v7a/
 android/libs/arm64-v8a/
