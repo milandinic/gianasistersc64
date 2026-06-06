@@ -1,10 +1,14 @@
 apply plugin: "java"
 
-sourceSets.main.java.srcDirs = [ "src/" ]
-sourceSets.test.java.srcDirs = [ "test/" ]
-
 project.ext.mainClassName = "com.mdinic.game.giana.DesktopLauncher"
 project.ext.assetsDir = new File("../android/assets")
+
+sourceSets.main.java.srcDirs = [ "src/" ]
+sourceSets.test.java.srcDirs = [ "test/" ]
+// Put the shared asset dir on the runtime classpath so Gdx.files.internal("data/...")
+// resolves regardless of working directory (e.g. the IDE's direct main() launch,
+// which does not honor the `run` task's workingDir).
+sourceSets.main.resources.srcDirs += project.assetsDir
 
 tasks.register("run", JavaExec) {
     dependsOn classes
