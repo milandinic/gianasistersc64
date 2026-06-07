@@ -12,6 +12,9 @@ public class SmallDiamoind {
 
     boolean initSecondFly = true;
 
+    /** Float-up speed in units/sec (was 0.1/frame at the original 60 FPS). */
+    private static final float FLY_VEL = 6f;
+
     public SmallDiamoind(GameMap map, float x, float y) {
         super();
         this.map = map;
@@ -26,14 +29,14 @@ public class SmallDiamoind {
         stateTime += deltaTime;
 
         if (stateTime < 0.3f) {
-            pos.y += 0.1f;
+            pos.y += FLY_VEL * deltaTime;
         } else if (stateTime < 0.5f) {
         } else if (stateTime < 0.8f) {
             if (initSecondFly) {
                 initSecondFly = false;
                 pos = startPos;
             }
-            pos.y += 0.1f;
+            pos.y += FLY_VEL * deltaTime;
         } else {
             active = false;
         }

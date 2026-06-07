@@ -112,7 +112,7 @@ public class GameMap {
     public void turnBonusDoorIntoSand() {
         quickSandArray.add(new QuickSand(this, bonusLevelDoor.bounds.x, bonusLevelDoor.bounds.y));
         int y = pixmapHeight - 1 - (int) bonusLevelDoor.bounds.y;
-        tiles[(int) bonusLevelDoor.bounds.x][y] = QUICK_SAND;
+        setTile((int) bonusLevelDoor.bounds.x, y, QUICK_SAND);
 
         bonusLevelDoor.bounds.width = 0;
         bonusLevelDoor.bounds.height = 0;
@@ -147,6 +147,27 @@ public class GameMap {
 
     public boolean isColidable(int value) {
         return colidableColors.contains(value) || SimpleImageType.containsColor(value) != null;
+    }
+
+    /**
+     * Reads {@code tiles[x][y]}, returning {@code fallback} when either index is
+     * out of range instead of throwing. Entities compute tile coordinates from
+     * their position and can step off the grid edges (e.g. a dead bee falling
+     * below the floor), so every positional tile lookup must go through this.
+     */
+    public int tileAt(int x, int y, int fallback) {
+        if (x < 0 || x >= tiles.length || y < 0 || y >= tiles[0].length) {
+            return fallback;
+        }
+        return tiles[x][y];
+    }
+
+    /** Writes {@code tiles[x][y] = value}, ignoring the write if out of range. */
+    public void setTile(int x, int y, int value) {
+        if (x < 0 || x >= tiles.length || y < 0 || y >= tiles[0].length) {
+            return;
+        }
+        tiles[x][y] = value;
     }
 
     public void loadBinary(int level, String filename) {

@@ -92,8 +92,12 @@ public class BonusGameScreen extends GianaSistersScreen {
                 game.setScreen(new GameScreen(game, oldMap, renderer, true));
                 return;
             }
-            map.bonusLevelEndDoor.bounds.y += 0.1f;
-            map.giana.bounds.y += 0.1f;
+            // Ride-up lift: was 0.1/frame (6 units/sec at 60 FPS); delta-scale
+            // so the ascent takes the same time at any frame rate. The one-shot
+            // += 2 hop above runs once on the state change and stays as-is.
+            float lift = 6f * delta;
+            map.bonusLevelEndDoor.bounds.y += lift;
+            map.giana.bounds.y += lift;
             map.giana.pos.y = map.giana.bounds.y;
 
         }
@@ -120,7 +124,7 @@ public class BonusGameScreen extends GianaSistersScreen {
 
     @Override
     public void hide() {
-        Gdx.app.debug("GianaSisters", "dispose game screen");
+        Gdx.app.debug("GianaByte", "dispose game screen");
         // map.sounds.stop(LevelConf.values()[map.level].getMusic());
         controlRenderer.dispose();
     }

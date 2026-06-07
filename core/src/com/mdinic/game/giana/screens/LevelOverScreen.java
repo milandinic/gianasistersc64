@@ -10,8 +10,13 @@ import com.mdinic.game.giana.Sounds.BgMusic;
 
 public class LevelOverScreen extends GianaSistersScreen {
 
+    /** Bonus-tally drain rate in time-units/sec (one unit -> +10 score). Matches
+     *  the original "1 unit per frame at 60 FPS" feel, now frame-independent. */
+    private static final float TALLY_RATE = 60f;
+
     private float time = 0;
     private float stateTime = 0;
+    private float tallyAcc = 0;
     private SpriteBatch batch;
     private final GameMap oldMap;
 
@@ -40,8 +45,15 @@ public class LevelOverScreen extends GianaSistersScreen {
         renderer.yellowFont10.draw(batch, "TIME    BONUS   SCORE", 100, 180);
 
         if (oldMap.time > 0) {
-            oldMap.score += 10;
-            oldMap.time--;
+            // Drain the time bonus at a fixed rate regardless of frame rate.
+            // Accumulate fractional units and convert whole units to +10 score
+            // (was 1 unit + 10 score per frame, i.e. 60/sec at the old 60 FPS).
+            tallyAcc += TALLY_RATE * delta;
+            while (tallyAcc >= 1f && oldMap.time > 0) {
+                tallyAcc -= 1f;
+                oldMap.score += 10;
+                oldMap.time--;
+            }
         } else {
             time += delta;
         }
@@ -65,7 +77,7 @@ public class LevelOverScreen extends GianaSistersScreen {
 
     @Override
     public void hide() {
-        Gdx.app.debug("GianaSisters", "dispose intro");
+        Gdx.app.debug("GianaByte", "dispose intro");
         batch.dispose();
     }
 }

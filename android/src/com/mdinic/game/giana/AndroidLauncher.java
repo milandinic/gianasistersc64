@@ -8,18 +8,16 @@ import android.os.Bundle;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.mdinic.game.giana.service.InternetConnectionChecker;
-import com.parse.Parse;
+import com.mdinic.game.giana.service.SupabaseHighScoreService;
 
 public class AndroidLauncher extends AndroidApplication implements InternetConnectionChecker {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Parse.initialize(this, "", "");
-
         GianaSistersC64 gianaSistersC64 = new GianaSistersC64();
         gianaSistersC64.setSettingsService(new SettingsServiceDroid(this));
-        gianaSistersC64.setHighScoreService(new HighScoreServiceDroid(this, this));
+        gianaSistersC64.setHighScoreService(new SupabaseHighScoreService());
         gianaSistersC64.setGeneralService(new GeneralServiceDrod(this));
 
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
@@ -35,5 +33,4 @@ public class AndroidLauncher extends AndroidApplication implements InternetConne
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
-
 }

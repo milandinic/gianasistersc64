@@ -16,6 +16,8 @@ public class Giana {
     static final float GRAVITY = 20.0f;
     static final float MAX_VEL = 6f;
     static final float DAMP = 0.90f;
+    /** Intro auto-walk speed in units/sec (was 0.1/frame at the original 60 FPS). */
+    static final float DEMO_WALK_VEL = 6f;
 
     Rectangle nowayCollidableRect = new Rectangle(-1, -1, 0, 0);
 
@@ -118,7 +120,10 @@ public class Giana {
             }
 
             if (map.demo) {
-                bounds.x += 0.1f;
+                // Auto-walk in the intro. Was 0.1/frame (6 units/sec at the
+                // original 60 FPS); delta-scale so it walks the same speed at
+                // any frame rate.
+                bounds.x += DEMO_WALK_VEL * deltaTime;
                 pos.x = bounds.x;
                 maxX = pos.x;
             } else {
@@ -271,27 +276,14 @@ public class Giana {
         int p4x = (int) bounds.x;
         int p4y = (int) (bounds.y + bounds.height);
 
-        int[][] tiles = map.tiles;
-        int tile1 = 0;
-        int tile2 = 0;
-        int tile3 = 0;
-        int tile4 = 0;
-
-        int y = map.tiles[0].length - 1 - p1y;
-        if (y > 0)
-            tile1 = tiles[p1x][y]; // to the right
-
-        y = map.tiles[0].length - 1 - p2y;
-        if (y > 0)
-            tile2 = tiles[p2x][y];// to the left
-
-        y = map.tiles[0].length - 1 - p3y;
-        if (y > 0)
-            tile3 = tiles[p3x][y]; // up
-
-        y = map.tiles[0].length - 1 - p4y;
-        if (y > 0)
-            tile4 = tiles[p4x][y];// down
+        // tileAt fully bounds both axes (the old `y > 0` guard missed the upper
+        // y bound and never checked x, so going off a left/right edge or above
+        // the map could throw). Out-of-range reads as EMPTY.
+        int h = map.tiles[0].length;
+        int tile1 = map.tileAt(p1x, h - 1 - p1y, GameMap.EMPTY); // to the right
+        int tile2 = map.tileAt(p2x, h - 1 - p2y, GameMap.EMPTY); // to the left
+        int tile3 = map.tileAt(p3x, h - 1 - p3y, GameMap.EMPTY); // up
+        int tile4 = map.tileAt(p4x, h - 1 - p4y, GameMap.EMPTY); // down
 
         if (state != GianaState.DYING
                 && (map.isDeadly(tile1) || map.isDeadly(tile2) || map.isDeadly(tile3) || map.isDeadly(tile4))) {

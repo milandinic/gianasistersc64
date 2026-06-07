@@ -17,8 +17,8 @@ public class Bee extends Monster {
         int ix = (int) pos.x;
         int iy = (int) pos.y;
 
-        int left = map.tiles[ix - 1][map.tiles[0].length - 1 - iy];
-        int right = map.tiles[ix + 1][map.tiles[0].length - 1 - iy];
+        int left = map.tileAt(ix - 1, map.tiles[0].length - 1 - iy, 0);
+        int right = map.tileAt(ix + 1, map.tiles[0].length - 1 - iy, 0);
 
         if (map.isColidable(left)) {
             vel.x = FORWARD_VEL;
@@ -37,7 +37,10 @@ public class Bee extends Monster {
         if (alive) {
             pos.add(vel.x * deltaTime, vel.y * deltaTime);
         } else {
-            if (map.isColidable(map.tiles[(int) Math.floor(pos.x) + fx][y])) {
+            // A dead bee falls (vel.y = -8). Once it drops below the map (or off
+            // any edge) the tile cell is out of range; tileAt returns 0 there
+            // (not colidable), so it keeps falling without running off the array.
+            if (map.isColidable(map.tileAt((int) Math.floor(pos.x) + fx, y, 0))) {
                 return;
             } else {
                 vel.set(0, -8);
@@ -48,10 +51,10 @@ public class Bee extends Monster {
 
         if (state == FORWARD) {
             int newX = (int) Math.floor(pos.x) + fx;
-            change = newX < 0 || map.isColidable(map.tiles[newX][y]);
+            change = newX < 0 || map.isColidable(map.tileAt(newX, y, 0));
         } else {
             int newX = (int) Math.ceil(pos.x) + bx;
-            change = newX < 0 || map.isColidable(map.tiles[newX][y]);
+            change = newX < 0 || map.isColidable(map.tileAt(newX, y, 0));
         }
         if (change) {
             pos.x -= vel.x * deltaTime;

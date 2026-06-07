@@ -64,7 +64,7 @@ public class GameScreen extends GianaSistersScreen {
                 return false;
             }
         });
-        Gdx.input.setCatchBackKey(true);
+        Gdx.input.setCatchKey(Keys.BACK, true);
     }
 
     @Override
@@ -153,7 +153,7 @@ public class GameScreen extends GianaSistersScreen {
 
     @Override
     public void hide() {
-        Gdx.app.debug("GianaSisters", "dispose game screen");
+        Gdx.app.debug("GianaByte", "dispose game screen");
         if (stopMusic)
             map.sounds.stop(LevelConf.values()[map.level].getMusic());
         controlRenderer.dispose();

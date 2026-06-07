@@ -148,9 +148,13 @@ public class Treat {
             return;
         }
 
+        // y guards keep the "treat left the play area -> deactivate" behavior;
+        // tileAt keeps the array access in range on both axes (line 146 bounds
+        // x from below but not above, so a treat drifting off the right edge
+        // could otherwise throw).
         int y = map.tiles[0].length - 1 - p1y;
         if (y > 0 && map.tiles[0].length > y)
-            tile1 = tiles[p1x][y]; // to the right
+            tile1 = map.tileAt(p1x, y, GameMap.EMPTY); // to the right
         else {
             active = false;
             return;
@@ -158,7 +162,7 @@ public class Treat {
 
         y = map.tiles[0].length - 1 - p2y;
         if (y > 0)
-            tile2 = tiles[p2x][y];// to the left
+            tile2 = map.tileAt(p2x, y, GameMap.EMPTY);// to the left
         else {
             active = false;
             return;
@@ -166,7 +170,7 @@ public class Treat {
 
         y = map.tiles[0].length - 1 - p4y;
         if (y > 0)
-            tile4 = tiles[p4x][y];// down
+            tile4 = map.tileAt(p4x, y, GameMap.EMPTY);// down
         else {
             active = false;
             return;

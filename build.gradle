@@ -1,27 +1,12 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:1.0.0'
-    }
-}
-
 allprojects {
-    apply plugin: "eclipse"
-    apply plugin: "idea"
-
     version = '1.0'
     ext {
         appName = 'gianasisters64'
-        gdxVersion = '1.5.4'
-        roboVMVersion = '1.0.0-beta-04'
-        box2DLightsVersion = '1.3'
-        ashleyVersion = '1.3.1'
-        aiVersion = '1.5.0'
+        gdxVersion = '1.14.2'
     }
 
     repositories {
+        google()
         mavenCentral()
         maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
         maven { url "https://oss.sonatype.org/content/repositories/releases/" }
@@ -31,46 +16,45 @@ allprojects {
 project(":desktop") {
     apply plugin: "java"
 
-
-    dependencies {
-        compile project(":core")
-        compile "com.badlogicgames.gdx:gdx-backend-lwjgl:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
-        compile "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
-        testCompile group: 'junit', name: 'junit', version: '4.+'
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(26)
+        }
     }
-}
 
-project(":android") {
-    apply plugin: "android"
-
-    configurations { natives }
+    // Build/run on JDK 26, but emit Java 17 bytecode so the shared core jar
+    // is consumable by Android's dexer (D8/R8 maxes out at Java 17 bytecode).
+    tasks.withType(JavaCompile).configureEach {
+        options.release = 17
+    }
 
     dependencies {
-        compile project(":core")
-        compile "com.badlogicgames.gdx:gdx-backend-android:$gdxVersion"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a"
-        natives "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86"
-        compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
-        natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi"
-        natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-armeabi-v7a"
-        natives "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-x86"
-		compile "com.parse.bolts:bolts-android:1.1.2"
-		compile fileTree(dir: "libs", include: "*.jar")        
+        implementation project(":core")
+        implementation "com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion"
+        implementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
+        implementation "com.badlogicgames.gdx:gdx-freetype-platform:$gdxVersion:natives-desktop"
+        testImplementation "junit:junit:4.13.2"
+        testImplementation "com.badlogicgames.gdx:gdx-backend-headless:$gdxVersion"
+        testImplementation "com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop"
     }
 }
 
 project(":core") {
     apply plugin: "java"
 
+    java {
+        toolchain {
+            languageVersion = JavaLanguageVersion.of(26)
+        }
+    }
+
+    // Emit Java 17 bytecode (Android's dexer cannot consume Java 26 bytecode).
+    tasks.withType(JavaCompile).configureEach {
+        options.release = 17
+    }
 
     dependencies {
-        compile "com.badlogicgames.gdx:gdx:$gdxVersion"
-        compile "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
+        implementation "com.badlogicgames.gdx:gdx:$gdxVersion"
+        implementation "com.badlogicgames.gdx:gdx-freetype:$gdxVersion"
     }
-}
-
-tasks.eclipse.doLast {
-    delete ".project"
 }
