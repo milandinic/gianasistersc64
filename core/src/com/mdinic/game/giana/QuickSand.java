@@ -41,7 +41,7 @@ public class QuickSand {
 
             case GONE:
                 active = false;
-                map.tiles[(int) pos.x][map.tiles[0].length - 1 - (int) pos.y] = 0;
+                map.setTile((int) pos.x, map.tiles[0].length - 1 - (int) pos.y, 0);
                 break;
             default:
                 break;

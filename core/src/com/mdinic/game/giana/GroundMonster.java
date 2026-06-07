@@ -25,14 +25,16 @@ public class GroundMonster extends Monster {
 
         boolean change = false;
         int y = map.tiles[0].length - 1 - (int) Math.floor(bounds.y);
+        // tileAt guards both axes: x can leave the grid at a map edge and y+1
+        // can step past the top row, either of which would otherwise throw.
         if (state == FORWARD) {
-            // System.out.println("fw");
-            change = map.isColidable(map.tiles[(int) Math.ceil(bounds.x)][y]);
-            change = change || map.tiles[(int) Math.ceil(bounds.x)][y + 1] == 0;
+            int x = (int) Math.ceil(bounds.x);
+            change = map.isColidable(map.tileAt(x, y, GameMap.EMPTY));
+            change = change || map.tileAt(x, y + 1, GameMap.EMPTY) == 0;
         } else {
-            // System.out.println("bw");
-            change = map.isColidable(map.tiles[(int) Math.floor(bounds.x)][y]);
-            change = change || map.tiles[(int) Math.floor(bounds.x)][y + 1] == 0;
+            int x = (int) Math.floor(bounds.x);
+            change = map.isColidable(map.tileAt(x, y, GameMap.EMPTY));
+            change = change || map.tileAt(x, y + 1, GameMap.EMPTY) == 0;
         }
         if (change) {
             bounds.x -= vel.x * deltaTime;

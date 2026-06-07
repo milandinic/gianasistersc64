@@ -171,15 +171,14 @@ public class Bullet {
         int p4x = (int) bounds.x;
         int p4y = (int) (bounds.y + bounds.height);
 
-        if (map.tiles[0].length - 2 - p1y < 0) {
-            return;
-        }
-
-        int[][] tiles = map.tiles;
-        int tile1 = tiles[p1x][map.tiles[0].length - 1 - p1y];
-        int tile2 = tiles[p2x][map.tiles[0].length - 1 - p2y];
-        int tile3 = tiles[p3x][map.tiles[0].length - 1 - p3y];
-        int tile4 = tiles[p4x][map.tiles[0].length - 1 - p4y];
+        // A bullet can travel off any map edge before being disposed; tileAt
+        // returns EMPTY for out-of-range cells so the lookups never run off the
+        // grid (replaces the old partial guard that only bounded p1y).
+        int h = map.tiles[0].length;
+        int tile1 = map.tileAt(p1x, h - 1 - p1y, GameMap.EMPTY);
+        int tile2 = map.tileAt(p2x, h - 1 - p2y, GameMap.EMPTY);
+        int tile3 = map.tileAt(p3x, h - 1 - p3y, GameMap.EMPTY);
+        int tile4 = map.tileAt(p4x, h - 1 - p4y, GameMap.EMPTY);
 
         if (tile1 != GameMap.EMPTY)
             r[0].set(p1x, p1y, 1, 1);

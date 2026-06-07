@@ -39,6 +39,8 @@ public class EnterYourNameScreen extends GianaSistersScreen {
     private float blinkTime = 0;
     /** True while a touch is held, so one tap fires at most one action. */
     private boolean touchConsumed = false;
+    /** Latch so the screen leaves (and submits) at most once. */
+    private boolean submitted = false;
 
     public EnterYourNameScreen(Game game, GameMap oldMap, MapRenderer renderer) {
         super(game, renderer);
@@ -68,8 +70,9 @@ public class EnterYourNameScreen extends GianaSistersScreen {
                     }
                     return true;
                 }
-                if (character == '\r' || character == '\n') { // enter -> confirm
-                    confirm();
+                if (character == '\r' || character == '\n') {
+                    // Enter is handled in keyDown(); swallow it here so the
+                    // newline isn't appended, but don't confirm twice.
                     return true;
                 }
                 char c = Character.toUpperCase(character);
@@ -168,6 +171,14 @@ public class EnterYourNameScreen extends GianaSistersScreen {
     }
 
     private void confirm() {
+        // setScreen() only takes effect next frame, so without this latch a
+        // second trigger in the same frame (e.g. keyTyped + keyDown both firing
+        // for one Enter, or a held key) would submit the score twice, landing
+        // duplicate leaderboard rows that differ only by a few ms in ts.
+        if (submitted) {
+            return;
+        }
+        submitted = true;
         Gdx.input.setOnscreenKeyboardVisible(false);
         String typed = name.toString().trim();
         if (!typed.isEmpty()) {
@@ -177,6 +188,10 @@ public class EnterYourNameScreen extends GianaSistersScreen {
     }
 
     private void skip() {
+        if (submitted) {
+            return;
+        }
+        submitted = true;
         Gdx.input.setOnscreenKeyboardVisible(false);
         game.setScreen(new HighScoreScreen(game, oldMap.sounds, renderer));
     }
