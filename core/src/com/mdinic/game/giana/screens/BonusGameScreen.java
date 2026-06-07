@@ -30,6 +30,7 @@ public class BonusGameScreen extends GianaSistersScreen {
 
     @Override
     public void show() {
+        super.show();
         renderer.setMap(map, true);
         controlRenderer = new OnscreenControlRenderer(map, this);
 
@@ -124,7 +125,7 @@ public class BonusGameScreen extends GianaSistersScreen {
 
     @Override
     public void hide() {
-        Gdx.app.debug("GianaByte", "dispose game screen");
+        super.hide();
         // map.sounds.stop(LevelConf.values()[map.level].getMusic());
         controlRenderer.dispose();
     }

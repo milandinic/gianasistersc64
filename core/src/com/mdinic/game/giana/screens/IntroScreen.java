@@ -23,7 +23,7 @@ public class IntroScreen extends GianaSistersScreen {
 
     @Override
     public void show() {
-        Gdx.app.debug("GianaByte", "show Intro screen");
+        super.show();
         map.sounds.setMute(!getGame().getSettingsService().isSoundEnabled());
         map.sounds.play(BgMusic.INTRO);
     }
@@ -72,6 +72,7 @@ public class IntroScreen extends GianaSistersScreen {
 
     @Override
     public void hide() {
+        super.hide();
         map.sounds.stop(BgMusic.INTRO);
     }
 

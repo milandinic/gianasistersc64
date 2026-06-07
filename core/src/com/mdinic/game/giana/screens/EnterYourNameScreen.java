@@ -49,7 +49,7 @@ public class EnterYourNameScreen extends GianaSistersScreen {
 
     @Override
     public void show() {
-
+        super.show();
         Texture texture = new Texture(Gdx.files.internal("data/scoresprites.png"));
         TextureRegion[] buttons = TextureRegion.split(texture, 64, 64)[0];
         right = buttons[0];
@@ -198,6 +198,7 @@ public class EnterYourNameScreen extends GianaSistersScreen {
 
     @Override
     public void hide() {
+        super.hide();
         Gdx.input.setInputProcessor(null);
         Gdx.input.setOnscreenKeyboardVisible(false);
         left.getTexture().dispose();

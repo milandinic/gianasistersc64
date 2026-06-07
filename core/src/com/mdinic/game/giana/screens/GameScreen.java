@@ -41,6 +41,7 @@ public class GameScreen extends GianaSistersScreen {
 
     @Override
     public void show() {
+        super.show();
         map.sounds.setMute(!getGame().getSettingsService().isSoundEnabled());
 
         controlRenderer = new OnscreenControlRenderer(map, this);
@@ -153,7 +154,7 @@ public class GameScreen extends GianaSistersScreen {
 
     @Override
     public void hide() {
-        Gdx.app.debug("GianaByte", "dispose game screen");
+        super.hide();
         if (stopMusic)
             map.sounds.stop(LevelConf.values()[map.level].getMusic());
         controlRenderer.dispose();

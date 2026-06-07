@@ -1,5 +1,7 @@
 package com.mdinic.game.giana.service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /** Immutable Supabase connection config, loaded from a properties source. */
@@ -20,6 +22,27 @@ public class SupabaseConfig {
     /** True only when every value is present and non-blank. */
     public boolean isConfigured() {
         return !url.isEmpty() && !anonKey.isEmpty() && !functionsUrl.isEmpty() && !secret.isEmpty();
+    }
+
+    /**
+     * The property keys whose values are blank — empty when {@link #isConfigured()}.
+     * Used to log exactly which config values are missing at startup.
+     */
+    public List<String> missingKeys() {
+        List<String> missing = new ArrayList<String>();
+        if (url.isEmpty()) {
+            missing.add("supabase.url");
+        }
+        if (anonKey.isEmpty()) {
+            missing.add("supabase.anonKey");
+        }
+        if (functionsUrl.isEmpty()) {
+            missing.add("supabase.functionsUrl");
+        }
+        if (secret.isEmpty()) {
+            missing.add("score.secret");
+        }
+        return missing;
     }
 
     public static SupabaseConfig fromProperties(Properties p) {
