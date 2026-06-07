@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.Properties;
 
 import org.junit.Test;
@@ -121,5 +122,31 @@ public class SupabaseConfigTest {
         };
 
         assertFalse(SupabaseConfig.fromSources(null, empty).isConfigured());
+    }
+
+    @Test
+    public void missingKeys_allPresent_isEmpty() {
+        SupabaseConfig c = SupabaseConfig.fromProperties(fullProps());
+
+        assertTrue(c.missingKeys().isEmpty());
+    }
+
+    @Test
+    public void missingKeys_allBlank_listsAllFour() {
+        SupabaseConfig c = SupabaseConfig.fromProperties(null);
+
+        assertEquals(Arrays.asList("supabase.url", "supabase.anonKey", "supabase.functionsUrl", "score.secret"),
+                c.missingKeys());
+    }
+
+    @Test
+    public void missingKeys_partial_listsOnlyTheBlanks() {
+        Properties p = new Properties();
+        p.setProperty("supabase.url", "https://proj.supabase.co");
+        p.setProperty("score.secret", "s3cr3t");
+        // anonKey, functionsUrl missing
+
+        assertEquals(Arrays.asList("supabase.anonKey", "supabase.functionsUrl"),
+                SupabaseConfig.fromProperties(p).missingKeys());
     }
 }

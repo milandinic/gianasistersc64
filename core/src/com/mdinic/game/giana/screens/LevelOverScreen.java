@@ -27,7 +27,7 @@ public class LevelOverScreen extends GianaSistersScreen {
 
     @Override
     public void show() {
-
+        super.show();
         batch = new SpriteBatch();
         batch.getProjectionMatrix().setToOrtho2D(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -77,7 +77,7 @@ public class LevelOverScreen extends GianaSistersScreen {
 
     @Override
     public void hide() {
-        Gdx.app.debug("GianaByte", "dispose intro");
+        super.hide();
         batch.dispose();
     }
 }

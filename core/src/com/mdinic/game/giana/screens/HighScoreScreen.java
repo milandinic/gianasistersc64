@@ -32,6 +32,7 @@ public class HighScoreScreen extends GianaSistersScreen {
 
     @Override
     public void show() {
+        super.show();
         batch = new SpriteBatch();
         batch.getProjectionMatrix().setToOrtho2D(0, 0, SCREEN_WIDTH, 320);
 
@@ -113,7 +114,7 @@ public class HighScoreScreen extends GianaSistersScreen {
 
     @Override
     public void hide() {
-        Gdx.app.debug("HighScoreScreen", "dispose intro");
+        super.hide();
         batch.dispose();
         sounds.stop(BgMusic.HIGHSCORES);
     }

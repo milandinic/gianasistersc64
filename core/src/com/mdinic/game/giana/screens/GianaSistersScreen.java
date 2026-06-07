@@ -1,6 +1,7 @@
 package com.mdinic.game.giana.screens;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.mdinic.game.giana.GianaSistersC64;
 import com.mdinic.game.giana.MapRenderer;
@@ -29,10 +30,14 @@ public abstract class GianaSistersScreen implements Screen {
 
     @Override
     public void show() {
+        // Subclasses override and call super.show() first, so this logs every
+        // screen load with the concrete screen's class name as the tag.
+        Gdx.app.debug(getClass().getSimpleName(), "show (load)");
     }
 
     @Override
     public void hide() {
+        Gdx.app.debug(getClass().getSimpleName(), "hide (dispose)");
     }
 
     @Override

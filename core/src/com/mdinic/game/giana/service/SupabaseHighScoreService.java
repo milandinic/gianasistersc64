@@ -94,11 +94,16 @@ public class SupabaseHighScoreService implements HighScoreService {
             // Env vars override the file per-value; with no file, env-only still
             // works. System.getenv is plain JDK and returns null on Android, so
             // the Android path stays file -> offline.
-            return SupabaseConfig.fromSources(p, new EnvLookup() {
+            SupabaseConfig c = SupabaseConfig.fromSources(p, new EnvLookup() {
                 public String get(String name) {
                     return System.getenv(name);
                 }
             });
+            if (!c.isConfigured()) {
+                Gdx.app.error("HighScore", "config incomplete, running offline — missing: "
+                        + String.join(", ", c.missingKeys()));
+            }
+            return c;
         } catch (Exception e) {
             Gdx.app.error("HighScore", "config load failed, offline mode", e);
             return SupabaseConfig.fromProperties(null);
@@ -160,12 +165,16 @@ public class SupabaseHighScoreService implements HighScoreService {
 
     void fetch() {
         if (!config.isConfigured()) {
+            Gdx.app.debug("HighScore", "fetch skipped, offline (config incomplete)");
             return; // offline: cached lists already serve the screen
         }
+        Gdx.app.debug("HighScore", "fetching leaderboards from " + config.url);
         getJson(ScoreCodec.allTimeUrl(config.url), new Consumer() {
             public void ok(String body) {
                 setLastNetworkOk(true);
-                applyAllTime(ScoreCodec.parseScores(body));
+                List<Score> fresh = ScoreCodec.parseScores(body);
+                Gdx.app.debug("HighScore", "received " + fresh.size() + " all-time scores");
+                applyAllTime(fresh);
             }
 
             public void fail() {
@@ -175,7 +184,9 @@ public class SupabaseHighScoreService implements HighScoreService {
         getJson(ScoreCodec.todaysUrl(config.url, System.currentTimeMillis()), new Consumer() {
             public void ok(String body) {
                 setLastNetworkOk(true);
-                applyTodays(ScoreCodec.parseScores(body));
+                List<Score> fresh = ScoreCodec.parseScores(body);
+                Gdx.app.debug("HighScore", "received " + fresh.size() + " todays scores");
+                applyTodays(fresh);
             }
 
             public void fail() {
@@ -187,6 +198,8 @@ public class SupabaseHighScoreService implements HighScoreService {
     @Override
     public void saveHighScore(Score score) {
         ensureInit();
+        Gdx.app.debug("HighScore", "saving score name=" + score.getName() + " score=" + score.getScore()
+                + " level=" + score.getLevel());
         Score best = getMyBest();
         if (best == null || best.getScore() < score.getScore()) {
             saveMyBest(score);
@@ -196,6 +209,7 @@ public class SupabaseHighScoreService implements HighScoreService {
         // poison the outbox and block every later submission. The local best is
         // already saved above, so just stop here when offline-only.
         if (!config.isConfigured()) {
+            Gdx.app.debug("HighScore", "offline: score saved locally only, not submitted");
             return;
         }
         long ts = System.currentTimeMillis();
@@ -242,6 +256,7 @@ public class SupabaseHighScoreService implements HighScoreService {
             flushOutbox();
             return;
         }
+        Gdx.app.debug("HighScore", "submitting queued score to submit-score (" + box.size() + " in outbox)");
         postJson(config.functionsUrl + "/submit-score", ScoreCodec.submitBody(head), new Consumer() {
             public void ok(String body) {
                 setLastNetworkOk(true);
@@ -250,6 +265,7 @@ public class SupabaseHighScoreService implements HighScoreService {
                     current.remove(0);
                     writeOutbox(current);
                 }
+                Gdx.app.debug("HighScore", "submit accepted, " + readOutbox().size() + " entries remain");
                 if (readOutbox().isEmpty()) {
                     // Queue drained: the just-inserted score(s) are now in the
                     // table, so re-read the leaderboard. Without this the screen
