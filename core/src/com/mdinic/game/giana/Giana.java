@@ -16,6 +16,8 @@ public class Giana {
     static final float GRAVITY = 20.0f;
     static final float MAX_VEL = 6f;
     static final float DAMP = 0.90f;
+    /** Intro auto-walk speed in units/sec (was 0.1/frame at the original 60 FPS). */
+    static final float DEMO_WALK_VEL = 6f;
 
     Rectangle nowayCollidableRect = new Rectangle(-1, -1, 0, 0);
 
@@ -118,7 +120,10 @@ public class Giana {
             }
 
             if (map.demo) {
-                bounds.x += 0.1f;
+                // Auto-walk in the intro. Was 0.1/frame (6 units/sec at the
+                // original 60 FPS); delta-scale so it walks the same speed at
+                // any frame rate.
+                bounds.x += DEMO_WALK_VEL * deltaTime;
                 pos.x = bounds.x;
                 maxX = pos.x;
             } else {

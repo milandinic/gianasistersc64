@@ -9,6 +9,13 @@ public class DesktopLauncher {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
         config.setTitle("Giana Byte");
         config.setWindowedMode(940, 640);
+        // The game was tuned at ~60 FPS. LWJGL3 otherwise renders at the
+        // monitor's refresh rate (e.g. 165 Hz), which speeds up any remaining
+        // frame-coupled logic. Cap to 60 with vsync so the desktop feel matches
+        // the original; the game logic is also being made delta-independent so
+        // it stays correct at any rate (e.g. on high-refresh phones).
+        config.useVsync(true);
+        config.setForegroundFPS(60);
         GianaSistersC64 gianaSistersC64 = new GianaSistersC64();
         gianaSistersC64.setHighScoreService(new SupabaseHighScoreService());
         gianaSistersC64.setSettingsService(new SettingsServiceDesktop());
