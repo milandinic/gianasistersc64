@@ -96,8 +96,10 @@ public class SupabaseHighScoreServiceTest {
 
         // No highscore.properties on the test classpath => offline.
         assertFalse(svc.internetAvailable());
-        // Fewer than the limit of cached today's scores => any score qualifies.
+        // Fewer than the limit of cached today's scores => any positive score
+        // qualifies, but a zero score never does even with free slots.
         assertTrue(svc.goodForHighScores(10));
+        assertFalse(svc.goodForHighScores(0));
         assertNull(svc.getMyBest());
 
         svc.fetchHighScores();

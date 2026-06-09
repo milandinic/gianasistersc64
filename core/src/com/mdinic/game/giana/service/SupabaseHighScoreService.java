@@ -47,6 +47,13 @@ public class SupabaseHighScoreService implements HighScoreService {
     private boolean haveUpdate = true;
     private boolean haveTodaysUpdate = true;
     private boolean lastNetworkOk = false;
+    /**
+     * True while a submit-score POST is awaiting its response. Guards against
+     * double-submitting the same outbox head when {@code flushOutbox()} is
+     * triggered again (e.g. by a screen) before the in-flight POST returns and
+     * removes the head. Read/written under {@link #lock}.
+     */
+    private boolean submitInFlight = false;
 
     /**
      * Production constructor. The launchers build the service in
@@ -157,10 +164,15 @@ public class SupabaseHighScoreService implements HighScoreService {
     @Override
     public void fetchTodaysHighScores(boolean saveLocalScoreToWeb) {
         ensureInit();
-        fetch();
-        if (saveLocalScoreToWeb) {
-            flushOutbox();
+        // When asked to also push the local score, flush FIRST. If that starts a
+        // submit, the POST's success callback re-fetches the leaderboard after
+        // the insert lands — so an up-front fetch() here would only read the
+        // stale pre-insert list and get immediately superseded. Skip it in that
+        // case; otherwise (nothing queued) fetch now so the screen still loads.
+        if (saveLocalScoreToWeb && flushOutbox()) {
+            return;
         }
+        fetch();
     }
 
     void fetch() {
@@ -236,25 +248,56 @@ public class SupabaseHighScoreService implements HighScoreService {
         writeOutbox(box);
     }
 
-    void flushOutbox() {
+    /**
+     * Attempts to submit the outbox head, if any.
+     *
+     * @return true if a submit-score POST is in flight — either this call
+     *         started one, or one was already running. In both cases that POST's
+     *         success callback re-fetches the leaderboard after the insert lands,
+     *         so callers should NOT also fetch up-front: a pre-insert read is
+     *         wasted and the callback's post-insert fetch supersedes it. Returns
+     *         false only when no submit will happen: offline, the queue is empty,
+     *         or only unsignable poison entries were dropped — then the caller
+     *         must fetch itself for the screen to load.
+     */
+    boolean flushOutbox() {
         if (!config.isConfigured()) {
-            return;
+            return false;
+        }
+        // A submit-score POST removes its head only when the response lands. If
+        // flushOutbox() runs again in that window (saveHighScore flushes, then
+        // HighScoreScreen.show() flushes too) it would re-read the same head and
+        // POST it a second time — double-inserting the score and firing a second
+        // follow-up fetch. Claim the in-flight slot first; if it's already taken,
+        // that running POST will re-fetch, so report a submit is in flight.
+        synchronized (lock) {
+            if (submitInFlight) {
+                return true;
+            }
+            submitInFlight = true;
         }
         final List<PendingSubmit> box = readOutbox();
         if (box.isEmpty()) {
-            return;
+            synchronized (lock) {
+                submitInFlight = false;
+            }
+            return false;
         }
         // Attempt each entry; on success remove it. Process the head; the
         // response callback re-invokes flush for the remainder.
         final PendingSubmit head = box.get(0);
         // Self-heal: an entry with no signature (e.g. queued by an older build
         // before config was loaded) can never be accepted and would block the
-        // queue forever. Drop it and move on to the next.
+        // queue forever. Drop it and move on to the next. No POST went out, so
+        // release the slot before recursing; the recursive call's result tells
+        // the caller whether the next entry started a submit.
         if (head.sig == null || head.sig.trim().isEmpty()) {
             box.remove(0);
             writeOutbox(box);
-            flushOutbox();
-            return;
+            synchronized (lock) {
+                submitInFlight = false;
+            }
+            return flushOutbox();
         }
         Gdx.app.debug("HighScore", "submitting queued score to submit-score (" + box.size() + " in outbox)");
         postJson(config.functionsUrl + "/submit-score", ScoreCodec.submitBody(head), new Consumer() {
@@ -266,6 +309,11 @@ public class SupabaseHighScoreService implements HighScoreService {
                     writeOutbox(current);
                 }
                 Gdx.app.debug("HighScore", "submit accepted, " + readOutbox().size() + " entries remain");
+                // Release the slot before any follow-up flush/fetch so the next
+                // queued entry can be submitted.
+                synchronized (lock) {
+                    submitInFlight = false;
+                }
                 if (readOutbox().isEmpty()) {
                     // Queue drained: the just-inserted score(s) are now in the
                     // table, so re-read the leaderboard. Without this the screen
@@ -281,8 +329,12 @@ public class SupabaseHighScoreService implements HighScoreService {
 
             public void fail() {
                 setLastNetworkOk(false); // keep entry; retry later
+                synchronized (lock) {
+                    submitInFlight = false;
+                }
             }
         });
+        return true; // a POST is now in flight; its callback will re-fetch
     }
 
     // --- personal best -------------------------------------------------------
@@ -320,6 +372,12 @@ public class SupabaseHighScoreService implements HighScoreService {
     public boolean goodForHighScores(int score) {
         ensureInit();
         synchronized (lock) {
+            // A zero score never belongs on the board, even when the list has
+            // free slots — otherwise dying immediately would still prompt for a
+            // name on a near-empty leaderboard.
+            if (score <= 0) {
+                return false;
+            }
             if (todaysScores.size() < LIMIT) {
                 return true;
             }

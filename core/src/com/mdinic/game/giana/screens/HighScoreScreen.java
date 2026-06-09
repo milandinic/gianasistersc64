@@ -36,7 +36,9 @@ public class HighScoreScreen extends GianaSistersScreen {
         batch = new SpriteBatch();
         batch.getProjectionMatrix().setToOrtho2D(0, 0, SCREEN_WIDTH, 320);
 
-        getGame().getHighScoreService().fetchHighScores();
+        // fetchTodaysHighScores already fetches both leaderboards (all-time +
+        // today's) and, with true, flushes the outbox — no need to also call
+        // fetchHighScores(), which would just repeat the same two requests.
         getGame().getHighScoreService().fetchTodaysHighScores(true);
 
         sounds.play(BgMusic.HIGHSCORES);
