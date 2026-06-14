@@ -11,22 +11,51 @@ java {
     }
 }
 
+// Release signing credentials are read from local.properties (gitignored), not
+// hardcoded. Keys: giana.keystore.file / .storePassword / .keyAlias / .keyPassword.
+// If any are absent the release build stays UNSIGNED (so CI/other contributors are
+// not blocked) — you then sign manually or let Play App Signing handle it.
+// See KEYSTORE_SETUP.md. The previous app's key was lost; this keystore MUST be
+// backed up and the Play listing MUST use Play App Signing so a future loss is a
+// recoverable upload-key reset rather than a dead listing.
+def keystorePropsFile = rootProject.file("local.properties")
+def keystoreProps = new Properties()
+if (keystorePropsFile.exists()) {
+    keystorePropsFile.withInputStream { keystoreProps.load(it) }
+}
+def hasReleaseSigning = keystoreProps.getProperty("giana.keystore.file")?.trim()
+
 android {
     namespace "com.mdinic.game.giana"
     compileSdk 36
 
     defaultConfig {
-        applicationId "com.mdinic.game.giana"
+        // NOTE: distinct from the original com.mdinic.game.giana, whose Play listing
+        // is permanently frozen (lost signing key). This is the relaunch identity and
+        // is itself permanent on Play once published — do not change it again.
+        applicationId "com.mdinic.game.giana.reborn"
         // libGDX 1.14.2 gdx-backend-android requires minSdk >= 21; 19 cannot build.
         minSdk 21
         targetSdk 36
-        versionCode 18
-        versionName "1.17"
+        // Fresh listing starts its own versionCode sequence at 1.
+        versionCode 1
+        versionName "2.0"
     }
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
+    }
+
+    signingConfigs {
+        if (hasReleaseSigning) {
+            release {
+                storeFile rootProject.file(keystoreProps.getProperty("giana.keystore.file"))
+                storePassword keystoreProps.getProperty("giana.keystore.storePassword")
+                keyAlias keystoreProps.getProperty("giana.keystore.keyAlias")
+                keyPassword keystoreProps.getProperty("giana.keystore.keyPassword")
+            }
+        }
     }
 
     sourceSets {
@@ -42,6 +71,11 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            // Only attach the release signing config if credentials were found in
+            // local.properties; otherwise the build produces an unsigned release.
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            }
         }
     }
 }

@@ -16,8 +16,13 @@ gen/
 .gradle/
 build/
 
-# Local configuration file (sdk path, etc)
+# Local configuration file (sdk path, signing credentials, etc)
 local.properties
+
+# Release signing keystore — NEVER commit. The previous app's key was lost;
+# keep this file backed up OUTSIDE the repo. See KEYSTORE_SETUP.md.
+*.jks
+*.keystore
 
 # High-score backend config (Supabase URL/keys/secret); see highscore.properties.example
 android/assets/highscore.properties

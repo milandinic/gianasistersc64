@@ -7,7 +7,7 @@ import com.mdinic.game.giana.service.SupabaseHighScoreService;
 public class DesktopLauncher {
     public static void main(String[] arg) {
         Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-        config.setTitle("Giana Byte");
+        config.setTitle("Giana Byte Reborn");
         config.setWindowedMode(940, 640);
         // The game was tuned at ~60 FPS. LWJGL3 otherwise renders at the
         // monitor's refresh rate (e.g. 165 Hz), which speeds up any remaining
