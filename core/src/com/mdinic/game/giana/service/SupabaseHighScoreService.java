@@ -29,6 +29,8 @@ public class SupabaseHighScoreService implements HighScoreService {
     static final String PREFS = "giana-highscores";
     static final String K_ALLTIME = "cache.alltime";
     static final String K_TODAYS = "cache.todays";
+    /** UTC day (yyyy-MM-ddT00:00:00Z) the cached today's-board was fetched for. */
+    static final String K_TODAYS_DAY = "cache.todays.day";
     static final String K_OUTBOX = "outbox";
     static final String K_BEST_NAME = "best.name";
     static final String K_BEST_SCORE = "best.score";
@@ -40,6 +42,17 @@ public class SupabaseHighScoreService implements HighScoreService {
     private Preferences prefs;
     private boolean initialized;
     private final Object lock = new Object();
+
+    /**
+     * Time source for the UTC-day comparison. Defaults to system time; the
+     * test-seam constructor can replace it so the day-boundary logic is
+     * deterministic. Mirrors the {@link EnvLookup} seam.
+     */
+    private Clock clock = new Clock() {
+        public long now() {
+            return System.currentTimeMillis();
+        }
+    };
 
     private List<Score> scores = new ArrayList<Score>();
     private List<Score> todaysScores = new ArrayList<Score>();
@@ -65,11 +78,21 @@ public class SupabaseHighScoreService implements HighScoreService {
     public SupabaseHighScoreService() {
     }
 
-    /** Constructor seam for tests: injects config + prefs and initializes eagerly. */
-    SupabaseHighScoreService(SupabaseConfig config, Preferences prefs) {
+    /** Constructor seam for tests: injects config + prefs + clock and initializes eagerly. */
+    SupabaseHighScoreService(SupabaseConfig config, Preferences prefs, Clock clock) {
         this.config = config;
         this.prefs = prefs;
+        this.clock = clock;
         init();
+    }
+
+    /** Constructor seam for tests: injects config + prefs and initializes eagerly. */
+    SupabaseHighScoreService(SupabaseConfig config, Preferences prefs) {
+        this(config, prefs, new Clock() {
+            public long now() {
+                return System.currentTimeMillis();
+            }
+        });
     }
 
     /** Runs the Gdx-dependent setup exactly once. Safe to call on every method entry. */
