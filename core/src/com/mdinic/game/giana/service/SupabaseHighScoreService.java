@@ -395,13 +395,23 @@ public class SupabaseHighScoreService implements HighScoreService {
     @Override
     public boolean goodForHighScores(int score) {
         ensureInit();
+        // A zero score never belongs on the board, even when the list has free
+        // slots — otherwise dying immediately would still prompt for a name on a
+        // near-empty leaderboard.
+        if (score <= 0) {
+            return false;
+        }
+        // If the cached today's-board is from a previous UTC day (or was never
+        // stamped — e.g. an existing install, or before the first fetch), we
+        // cannot trust it to represent today. Treat the board as empty so any
+        // positive score prompts for a name; the server is the real judge of
+        // whether the queued submit actually lands.
+        String cachedDay = prefs.getString(K_TODAYS_DAY, "");
+        String currentDay = ScoreCodec.utcMidnightIso(clock.now());
+        if (!currentDay.equals(cachedDay)) {
+            return true;
+        }
         synchronized (lock) {
-            // A zero score never belongs on the board, even when the list has
-            // free slots — otherwise dying immediately would still prompt for a
-            // name on a near-empty leaderboard.
-            if (score <= 0) {
-                return false;
-            }
             if (todaysScores.size() < LIMIT) {
                 return true;
             }

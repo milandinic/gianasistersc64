@@ -82,4 +82,46 @@ public class SupabaseHighScoreServiceDailyTest {
         assertEquals(ScoreCodec.utcMidnightIso(DAY_2026_06_29_NOON),
                 prefs.getString(SupabaseHighScoreService.K_TODAYS_DAY, ""));
     }
+
+    /** Same-day full board: a score below the lowest entry does NOT qualify. */
+    @Test
+    public void goodForHighScores_sameDayFullBoard_lowScore_false() {
+        SupabaseHighScoreService svc =
+                new SupabaseHighScoreService(OFFLINE, prefs, fixedClock(DAY_2026_06_29_NOON));
+        svc.applyTodays(fullBoard(), DAY_2026_06_29_NOON); // stamps today
+
+        assertFalse(svc.goodForHighScores(10)); // 10 < lowest (1000)
+    }
+
+    /** Stale stamp (yesterday) with a full board: board treated empty, positive score qualifies. */
+    @Test
+    public void goodForHighScores_staleDayFullBoard_positiveScore_true() {
+        SupabaseHighScoreService svc =
+                new SupabaseHighScoreService(OFFLINE, prefs, fixedClock(DAY_2026_06_29_NOON));
+        // Stamp the board for the PRIOR day, then advance "now" to today.
+        svc.applyTodays(fullBoard(), DAY_2026_06_28_NOON);
+
+        assertTrue(svc.goodForHighScores(10)); // stale day => empty board => any score>0 qualifies
+    }
+
+    /** Missing stamp (existing install / never fetched): positive score qualifies. */
+    @Test
+    public void goodForHighScores_missingStamp_positiveScore_true() {
+        // Seed a full cached board directly, with NO day stamp.
+        prefs.putString(SupabaseHighScoreService.K_TODAYS, ScoreStore.scoresToJson(fullBoard()));
+        prefs.flush();
+        SupabaseHighScoreService svc =
+                new SupabaseHighScoreService(OFFLINE, prefs, fixedClock(DAY_2026_06_29_NOON));
+
+        assertTrue(svc.goodForHighScores(10)); // no stamp => stale => empty board
+    }
+
+    /** A zero score never qualifies, regardless of stamp. */
+    @Test
+    public void goodForHighScores_zeroScore_false_evenWhenStale() {
+        SupabaseHighScoreService svc =
+                new SupabaseHighScoreService(OFFLINE, prefs, fixedClock(DAY_2026_06_29_NOON));
+        // No applyTodays => no stamp => stale, but a zero score still must not qualify.
+        assertFalse(svc.goodForHighScores(0));
+    }
 }
