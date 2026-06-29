@@ -216,12 +216,13 @@ public class SupabaseHighScoreService implements HighScoreService {
                 setLastNetworkOk(false);
             }
         });
-        getJson(ScoreCodec.todaysUrl(config.url, System.currentTimeMillis()), new Consumer() {
+        final long now = clock.now();
+        getJson(ScoreCodec.todaysUrl(config.url, now), new Consumer() {
             public void ok(String body) {
                 setLastNetworkOk(true);
                 List<Score> fresh = ScoreCodec.parseScores(body);
                 Gdx.app.debug("HighScore", "received " + fresh.size() + " todays scores");
-                applyTodays(fresh);
+                applyTodays(fresh, now);
             }
 
             public void fail() {
@@ -424,12 +425,13 @@ public class SupabaseHighScoreService implements HighScoreService {
         prefs.flush();
     }
 
-    void applyTodays(List<Score> fresh) {
+    void applyTodays(List<Score> fresh, long now) {
         synchronized (lock) {
             todaysScores = fresh;
             haveTodaysUpdate = true;
         }
         prefs.putString(K_TODAYS, ScoreStore.scoresToJson(fresh));
+        prefs.putString(K_TODAYS_DAY, ScoreCodec.utcMidnightIso(now));
         prefs.flush();
     }
 
