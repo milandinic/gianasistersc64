@@ -105,12 +105,19 @@ public class SupabaseHighScoreService implements HighScoreService {
         init();
     }
 
-    /** Loads cached lists and flushes the outbox. Requires config + prefs set. */
+    /** Loads cached lists, flushes the outbox, and proactively refreshes the board. */
     private void init() {
         scores = ScoreStore.scoresFromJson(prefs.getString(K_ALLTIME, ""));
         todaysScores = ScoreStore.scoresFromJson(prefs.getString(K_TODAYS, ""));
         initialized = true;
-        flushOutbox();
+        // Refresh the leaderboards at launch so the qualification gate sees a
+        // current-day board well before any death. If flushOutbox() started (or
+        // found) a submit in flight it returns true; that POST's callback already
+        // re-fetches after the insert, so we must NOT fetch again here. Only
+        // fetch when no submit will run (offline, empty queue, or drained).
+        if (!flushOutbox()) {
+            fetch();
+        }
     }
 
     static SupabaseConfig loadConfig() {
