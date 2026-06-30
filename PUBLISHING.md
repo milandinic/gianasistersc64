@@ -110,6 +110,12 @@ Google requires the **`.aab`** (Android App Bundle) format for new apps — not 
 
 Output: `android\build\outputs\bundle\release\android-release.aab`
 
+A pre-flight check (`verifyReleasePrereqs`) runs automatically before
+`bundleRelease`/`assembleRelease` and **fails the build** if the release isn't
+configured. It requires `android/assets/highscore.properties` to exist and
+`local.properties` to contain at least four `giana.keystore` lines (step 3). If you
+see `release prerequisites missing:`, create those files before building.
+
 This is the file you upload to Play. (An APK for sideload testing comes from
 `.\gradlew android:assembleRelease` → `android\build\outputs\apk\release\`, but Play
 takes the `.aab`.)

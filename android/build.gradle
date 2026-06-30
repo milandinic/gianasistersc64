@@ -124,3 +124,39 @@ tasks.matching { it.name.startsWith("merge") && it.name.endsWith("JniLibFolders"
 tasks.named("preBuild").configure {
     dependsOn "copyAndroidNatives"
 }
+
+// Pre-flight gate for release builds: fail fast (before producing a bundle/APK)
+// if the release isn't properly configured. Checks that the Supabase high-score
+// config asset is present and that local.properties carries the signing keys.
+// Reports only presence/counts — never the value of any giana.keystore.* line.
+tasks.register("verifyReleasePrereqs") {
+    doLast {
+        def problems = []
+
+        def highScoreProps = file("assets/highscore.properties")
+        if (!highScoreProps.exists()) {
+            problems << "android/assets/highscore.properties not found"
+        }
+
+        def keystoreLineCount = 0
+        if (keystorePropsFile.exists()) {
+            keystorePropsFile.eachLine { line ->
+                if (line.contains("giana.keystore")) {
+                    keystoreLineCount++
+                }
+            }
+        }
+        if (keystoreLineCount < 4) {
+            problems << "local.properties has ${keystoreLineCount} lines containing 'giana.keystore' (need at least 4)"
+        }
+
+        if (!problems.isEmpty()) {
+            throw new GradleException(
+                "release prerequisites missing:\n  - " + problems.join("\n  - "))
+        }
+    }
+}
+
+tasks.matching { it.name == "bundleRelease" || it.name == "assembleRelease" }.configureEach {
+    dependsOn "verifyReleasePrereqs"
+}
